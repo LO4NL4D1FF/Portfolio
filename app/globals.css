@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 244, 244, 244;
+  --background-start-rgb: 26, 28, 44;
+  --background-end-rgb: 26, 28, 44;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background-color: rgb(var(--background-start-rgb));
+  color: rgb(var(--foreground-rgb));
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+body {
+  font-family: 'VT323', monospace;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Pixel perfect rendering */
+canvas, img {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Custom scrollbar - pixel art style */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1c2c;
+  border: 2px solid #29366f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ffcd75;
+  border: 2px solid #ef7d57;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ef7d57;
+}
+
+/* Disable text selection on interactive elements */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* CRT screen effect */
+@keyframes crt-flicker {
+  0% { opacity: 0.97; }
+  50% { opacity: 1; }
+  100% { opacity: 0.97; }
+}
+
+.crt-effect {
+  animation: crt-flicker 0.15s infinite;
+}
+
+.crt-scanlines {
+  position: relative;
+}
+
+.crt-scanlines::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Pixel border utility */
+.pixel-border {
+  border: 4px solid;
+  border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='M0 0h4v4H0zM8 0h4v4H8zM0 8h4v4H0zM8 8h4v4H8z' fill='%23f4f4f4'/%3E%3C/svg%3E");
+  border-image-slice: 4;
+  border-image-repeat: repeat;
+}
+
+/* Text outline for better readability */
+.text-outline {
+  text-shadow:
+    -2px -2px 0 #0d0d0d,
+     2px -2px 0 #0d0d0d,
+    -2px  2px 0 #0d0d0d,
+     2px  2px 0 #0d0d0d;
+}
+
+/* Retro button press effect */
+.btn-press:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px rgba(13, 13, 13, 0.8);
+}
+
+/* Pixel grid background */
+.pixel-grid {
+  background-image:
+    linear-gradient(rgba(244, 244, 244, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 244, 244, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Safe area support for mobile */
+.safe-area-top {
+  padding-top: max(env(safe-area-inset-top), 12px);
+}
+
+.safe-area-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom), 12px);
+}
+
+/* Pixel art corners */
+.pixel-corners {
+  clip-path: polygon(
+    0 8px, 8px 8px, 8px 0,
+    calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px,
+    100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%,
+    8px 100%, 8px calc(100% - 8px), 0 calc(100% - 8px)
+  );
+}

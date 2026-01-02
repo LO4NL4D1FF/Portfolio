@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(del next.config.js)",
+      "Bash(npm run dev:*)",
+      "Bash(dir:*)",
+      "Bash(del Windows11Desktop.tsx Windows11Taskbar.tsx Windows11StartMenu.tsx Windows11Window.tsx AppViewWin11.tsx ServicesViewWin11.tsx FileExplorerView.tsx SettingsView.tsx PhoneMockup.tsx AppIcon.tsx AppGrid.tsx AppView.tsx ServicesView.tsx StatusBar.tsx HomeScreen.tsx)",
+      "Bash(npm run build:*)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)",
+      "Bash(rm nul)"
+    ]
+  }
+}
