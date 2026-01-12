@@ -2,19 +2,28 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { Trophy, Star, Eye, Mail, Clock, Gamepad2 } from 'lucide-react';
+import { Trophy, Star, Mail, Clock, Gamepad2 } from 'lucide-react';
 
 interface Achievement {
   id: string;
   title: string;
   description: string;
-  icon: any;
+  icon: React.ElementType;
   color: string;
   unlocked: boolean;
 }
 
 export default function AchievementSystem() {
-  const [achievements, setAchievements] = useState<Achievement[]>([
+  // Define icon mapping
+  const iconMap: Record<string, React.ElementType> = {
+    'explorer': Gamepad2,
+    'project-viewer': Star,
+    'time-traveler': Clock,
+    'contact': Mail,
+    'completionist': Trophy,
+  };
+
+  const initialAchievements: Achievement[] = [
     {
       id: 'explorer',
       title: 'EXPLORER',
@@ -55,8 +64,9 @@ export default function AchievementSystem() {
       color: 'pixel-orange',
       unlocked: false,
     },
-  ]);
+  ];
 
+  const [achievements, setAchievements] = useState<Achievement[]>(initialAchievements);
   const [newUnlock, setNewUnlock] = useState<Achievement | null>(null);
   const [unlockedCount, setUnlockedCount] = useState(0);
 
@@ -65,15 +75,25 @@ export default function AchievementSystem() {
     const saved = localStorage.getItem('portfolio-achievements');
     if (saved) {
       const savedAchievements = JSON.parse(saved);
-      setAchievements(savedAchievements);
-      const count = savedAchievements.filter((a: Achievement) => a.unlocked).length;
+      // Restore icons from the icon map
+      const restoredAchievements = initialAchievements.map(initial => {
+        const saved = savedAchievements.find((s: any) => s.id === initial.id);
+        return {
+          ...initial,
+          unlocked: saved?.unlocked || false,
+        };
+      });
+      setAchievements(restoredAchievements);
+      const count = restoredAchievements.filter(a => a.unlocked).length;
       setUnlockedCount(count);
     }
   }, []);
 
   // Save achievements to localStorage
   const saveAchievements = (newAchievements: Achievement[]) => {
-    localStorage.setItem('portfolio-achievements', JSON.stringify(newAchievements));
+    // Only save id and unlocked state, not the icon component
+    const achievementsToSave = newAchievements.map(({ id, unlocked }) => ({ id, unlocked }));
+    localStorage.setItem('portfolio-achievements', JSON.stringify(achievementsToSave));
     setAchievements(newAchievements);
     const count = newAchievements.filter(a => a.unlocked).length;
     setUnlockedCount(count);
@@ -116,11 +136,13 @@ export default function AchievementSystem() {
     }, 300000); // 5 minutes
 
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Expose unlock function globally so other components can use it
   useEffect(() => {
-    (window as any).unlockAchievement = unlockAchievement;
+    (window as unknown as { unlockAchievement: (id: string) => void }).unlockAchievement = unlockAchievement;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [achievements]);
 
   return (
@@ -153,7 +175,10 @@ export default function AchievementSystem() {
             <div className="bg-gradient-to-r from-pixel-yellow to-pixel-orange border-4 border-pixel-white p-6 shadow-pixel-lg">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 bg-pixel-white border-4 border-pixel-black shadow-pixel flex items-center justify-center">
-                  <newUnlock.icon className="w-10 h-10 text-pixel-black" strokeWidth={3} />
+                  {(() => {
+                    const IconComponent = newUnlock.icon as React.ElementType;
+                    return <IconComponent className="w-10 h-10 text-pixel-black" strokeWidth={3} />;
+                  })()}
                 </div>
                 <div>
                   <p className="font-game text-sm text-pixel-black mb-1">

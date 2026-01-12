@@ -6,7 +6,8 @@ class GameSounds {
 
   constructor() {
     if (typeof window !== 'undefined') {
-      this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      this.audioContext = new AudioContextClass();
     }
   }
 
@@ -114,7 +115,7 @@ class GameSounds {
 
     // Play a little melody
     const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
-    let time = this.audioContext.currentTime;
+    const time = this.audioContext.currentTime;
 
     notes.forEach((freq, i) => {
       oscillator.frequency.setValueAtTime(freq, time + i * 0.1);
@@ -161,7 +162,7 @@ class GameSounds {
 
     // Epic start sequence
     const notes = [392, 523.25, 659.25, 783.99, 1046.5]; // G4, C5, E5, G5, C6
-    let time = this.audioContext.currentTime;
+    const time = this.audioContext.currentTime;
 
     notes.forEach((freq, i) => {
       oscillator.frequency.setValueAtTime(freq, time + i * 0.08);

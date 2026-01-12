@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Service } from '@/lib/projects';
 import { LucideIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -9,84 +9,159 @@ interface ServicesMenuProps {
   services: Service[];
 }
 
+const getServiceGradient = (index: number) => {
+  const gradients = [
+    'from-blue-500 via-indigo-500 to-purple-500',
+    'from-green-500 via-emerald-500 to-teal-500',
+    'from-pink-500 via-rose-500 to-red-500',
+    'from-yellow-500 via-orange-500 to-amber-500',
+    'from-purple-500 via-fuchsia-500 to-pink-500',
+  ];
+  return gradients[index % gradients.length];
+};
+
 export default function ServicesMenu({ services }: ServicesMenuProps) {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4 md:p-8">
       {/* Title */}
-      <motion.div
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="bg-pixel-black border-4 border-pixel-white p-4 md:p-6 shadow-pixel mb-8"
-      >
-        <h2 className="font-game text-2xl md:text-4xl text-pixel-yellow text-center text-outline leading-relaxed">
-          SELECT YOUR SERVICE
-        </h2>
-      </motion.div>
+      <div className="relative mb-12">
+        <div className="bg-gradient-to-r from-pixel-yellow via-pixel-orange to-pixel-red border-4 border-pixel-white p-6 md:p-8 shadow-pixel-lg">
+          <div className="absolute inset-2 border-2 border-pixel-yellow"></div>
+          <h2 className="relative font-game text-3xl md:text-5xl text-pixel-black text-center leading-relaxed">
+            POWER-UPS AVAILABLE
+          </h2>
+          <p className="font-pixel text-lg md:text-xl text-pixel-black text-center mt-2">
+            Choose your upgrade and level up your project!
+          </p>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Services Grid - Character Select Style */}
-        <div className="lg:col-span-2 grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Services Grid */}
+        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
           {services.map((service, index) => {
             const IconComponent = service.icon as LucideIcon;
             const isSelected = selectedService?.id === service.id;
+            const gradient = getServiceGradient(index);
 
             return (
               <motion.div
                 key={service.id}
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: index * 0.1, type: 'spring' }}
-                whileHover={{ scale: 1.05 }}
+                initial={{ scale: 0, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1, type: 'spring', duration: 0.5 }}
+                whileHover={{ scale: 1.05, y: -5 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setSelectedService(service)}
-                className={`
-                  relative cursor-pointer no-select
-                  bg-pixel-black border-4
-                  ${isSelected ? 'border-pixel-yellow' : 'border-pixel-white'}
-                  shadow-pixel hover:shadow-pixel-lg
-                  transition-all duration-200
-                `}
+                className="relative cursor-pointer no-select"
               >
-                {/* Selected indicator */}
+                {/* Glow effect on hover or selected */}
                 {isSelected && (
                   <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute -top-3 -right-3 z-10"
-                  >
-                    <div className="w-8 h-8 bg-pixel-yellow border-2 border-pixel-black rotate-45 flex items-center justify-center">
-                      <span className="font-game text-xs text-pixel-black -rotate-45">✓</span>
-                    </div>
-                  </motion.div>
+                    className={`absolute -inset-1 bg-gradient-to-r ${gradient} rounded-lg blur-lg opacity-75`}
+                    animate={{
+                      opacity: [0.5, 0.8, 0.5],
+                      scale: [1, 1.05, 1]
+                    }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
                 )}
+
+                <div className={`
+                  relative bg-pixel-black border-4
+                  ${isSelected ? 'border-pixel-yellow' : 'border-pixel-white'}
+                  shadow-pixel-lg
+                  transition-all duration-200
+                `}>
+                {/* Selected badge */}
+                <AnimatePresence>
+                  {isSelected && (
+                    <motion.div
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      exit={{ scale: 0, rotate: 180 }}
+                      className="absolute -top-4 -right-4 z-10"
+                    >
+                      <motion.div
+                        animate={{
+                          rotate: [0, 10, -10, 0],
+                          scale: [1, 1.1, 1]
+                        }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="w-12 h-12 bg-gradient-to-br from-pixel-yellow to-pixel-orange border-3 border-pixel-white rounded-full flex items-center justify-center shadow-pixel"
+                      >
+                        <span className="text-pixel-black text-2xl">★</span>
+                      </motion.div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Level indicator */}
+                <div className="absolute top-2 left-2 bg-pixel-black border-2 border-pixel-white px-2 py-1 z-10">
+                  <span className="font-game text-xs text-pixel-yellow">LV.{index + 1}</span>
+                </div>
 
                 {/* Inner border */}
                 <div className={`absolute inset-2 border-2 ${isSelected ? 'border-pixel-yellow' : 'border-pixel-gray'} pointer-events-none`}></div>
 
                 {/* Content */}
-                <div className="relative bg-gradient-to-br from-pixel-purple to-pixel-blue p-4 flex flex-col items-center justify-center aspect-square">
+                <div className={`relative bg-gradient-to-br ${gradient} p-6`}>
                   {/* Icon */}
-                  <motion.div
-                    animate={isSelected ? { y: [0, -5, 0] } : {}}
-                    transition={{ duration: 1, repeat: Infinity }}
-                    className="mb-3"
-                  >
-                    <div className={`w-16 h-16 ${isSelected ? 'bg-pixel-yellow' : 'bg-pixel-white'} border-4 border-pixel-black shadow-pixel-sm flex items-center justify-center`}>
-                      <IconComponent className={`w-10 h-10 ${isSelected ? 'text-pixel-black' : 'text-pixel-purple'}`} strokeWidth={2.5} />
-                    </div>
-                  </motion.div>
+                  <div className="mb-4 flex justify-center">
+                    <motion.div
+                      animate={isSelected ? {
+                        y: [0, -10, 0],
+                        scale: [1, 1.1, 1]
+                      } : {}}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className={`
+                        relative w-20 h-20
+                        ${isSelected ? 'bg-pixel-yellow' : 'bg-pixel-white'}
+                        border-4 border-pixel-black shadow-pixel
+                        flex items-center justify-center
+                      `}>
+                      <div className="absolute -top-1 -left-1 w-2 h-2 bg-pixel-black"></div>
+                      <div className="absolute -top-1 -right-1 w-2 h-2 bg-pixel-black"></div>
+                      <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-pixel-black"></div>
+                      <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-pixel-black"></div>
 
-                  {/* Name */}
-                  <h3 className="font-game text-xs md:text-sm text-pixel-white text-outline text-center leading-relaxed">
+                      <IconComponent
+                        className={`w-12 h-12 ${isSelected ? 'text-pixel-black' : 'text-pixel-purple'}`}
+                        strokeWidth={2.5}
+                      />
+                    </motion.div>
+                  </div>
+
+                  {/* Service name */}
+                  <h3 className="font-game text-base md:text-lg lg:text-xl text-pixel-white text-outline text-center leading-relaxed mb-3">
                     {service.name}
                   </h3>
 
-                  {/* Pricing */}
-                  <p className="mt-2 font-pixel text-sm text-pixel-yellow text-center">
-                    {service.pricing}
+                  {/* Description preview */}
+                  <p className="font-pixel text-xs md:text-sm text-pixel-white/90 text-center mb-3 line-clamp-2">
+                    {service.description}
                   </p>
+
+                  {/* Pricing badge */}
+                  <div className="bg-pixel-black border-3 border-pixel-yellow p-2 md:p-3 shadow-pixel-sm">
+                    <p className="font-game text-sm md:text-base lg:text-lg text-pixel-yellow text-center">
+                      {service.pricing}
+                    </p>
+                  </div>
+
+                  {/* Select prompt */}
+                  <motion.div
+                    className="mt-3 text-center"
+                    animate={{ opacity: [0.6, 1, 0.6] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    <span className="font-pixel text-xs md:text-sm text-pixel-white">
+                      {isSelected ? 'SELECTED' : 'Click to select'}
+                    </span>
+                  </motion.div>
+                </div>
                 </div>
               </motion.div>
             );
@@ -95,83 +170,128 @@ export default function ServicesMenu({ services }: ServicesMenuProps) {
 
         {/* Service Details Panel */}
         <div className="lg:col-span-1">
-          <div className="sticky top-4 bg-pixel-black border-4 border-pixel-white shadow-pixel-lg">
-            <div className="absolute inset-2 border-2 border-pixel-gray"></div>
-
-            <div className="relative bg-gradient-to-b from-game-panel to-pixel-blue p-6 min-h-[400px]">
+          <div className="sticky top-4">
+            <AnimatePresence mode="wait">
               {selectedService ? (
                 <motion.div
                   key={selectedService.id}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="space-y-4"
+                  initial={{ opacity: 0, scale: 0.9, x: 50 }}
+                  animate={{ opacity: 1, scale: 1, x: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, x: 50 }}
+                  transition={{ type: 'spring', duration: 0.5 }}
+                  className="bg-pixel-black border-4 border-pixel-yellow shadow-pixel-lg"
                 >
-                  {/* Service name */}
-                  <div className="bg-pixel-yellow border-2 border-pixel-black p-3 shadow-pixel-sm">
-                    <h3 className="font-game text-lg text-pixel-black text-center leading-relaxed">
+                  <div className="absolute inset-2 border-2 border-pixel-orange pointer-events-none"></div>
+
+                  <div className="relative bg-gradient-to-b from-pixel-purple via-pixel-blue to-pixel-indigo p-6">
+                  {/* Header */}
+                  <div className="bg-gradient-to-r from-pixel-yellow to-pixel-orange border-3 border-pixel-white p-3 md:p-4 shadow-pixel mb-4">
+                    <h3 className="font-game text-lg md:text-xl text-pixel-black text-center leading-relaxed">
                       {selectedService.name}
                     </h3>
                   </div>
 
                   {/* Description */}
-                  <p className="font-pixel text-lg text-pixel-white">
-                    {selectedService.description}
-                  </p>
+                  <div className="bg-pixel-black/50 border-2 border-pixel-cyan p-3 md:p-4 mb-4">
+                    <p className="font-pixel text-base md:text-lg text-pixel-white">
+                      {selectedService.description}
+                    </p>
+                  </div>
 
                   {/* Pricing */}
-                  <div className="bg-pixel-green border-2 border-pixel-black p-3">
-                    <p className="font-game text-xl text-pixel-black text-center">
+                  <div className="bg-gradient-to-r from-pixel-green to-pixel-lime border-3 border-pixel-black p-3 md:p-4 mb-4">
+                    <p className="font-game text-xl md:text-2xl text-pixel-black text-center">
                       {selectedService.pricing}
                     </p>
                   </div>
 
-                  {/* Details */}
-                  <div className="space-y-2">
-                    <h4 className="font-game text-sm text-pixel-yellow">INCLUDES:</h4>
-                    <ul className="space-y-2">
+                  {/* Features list */}
+                  <div className="space-y-3">
+                    <div className="bg-pixel-yellow border-2 border-pixel-black p-2">
+                      <h4 className="font-game text-xs md:text-sm text-pixel-black text-center">
+                        POWER-UP INCLUDES:
+                      </h4>
+                    </div>
+
+                    <div className="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar pr-2">
                       {selectedService.details.map((detail, i) => (
-                        <motion.li
+                        <motion.div
                           key={i}
-                          initial={{ x: -20, opacity: 0 }}
+                          initial={{ x: -30, opacity: 0 }}
                           animate={{ x: 0, opacity: 1 }}
-                          transition={{ delay: i * 0.1 }}
-                          className="font-pixel text-base text-pixel-white flex items-start"
+                          transition={{ delay: i * 0.05, type: 'spring' }}
+                          className="bg-pixel-black/60 border-2 border-pixel-gray hover:border-pixel-lime p-2 md:p-3 transition-colors"
                         >
-                          <span className="text-pixel-green mr-2">▶</span>
-                          {detail}
-                        </motion.li>
+                          <div className="flex items-start gap-2">
+                            <motion.span
+                              className="text-pixel-lime text-base md:text-lg flex-shrink-0 font-bold"
+                              animate={{ scale: [1, 1.2, 1] }}
+                              transition={{ delay: i * 0.05, duration: 0.5, repeat: Infinity, repeatDelay: 3 }}
+                            >
+                              +
+                            </motion.span>
+                            <span className="font-pixel text-sm md:text-base text-pixel-white">
+                              {detail}
+                            </span>
+                          </div>
+                        </motion.div>
                       ))}
-                    </ul>
+                    </div>
                   </div>
 
                   {/* CTA */}
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.5 }}
-                    className="pt-4"
-                  >
-                    <div className="bg-gradient-to-r from-pixel-pink to-pixel-red border-4 border-pixel-white p-3 shadow-pixel text-center">
-                      <p className="font-game text-sm text-pixel-white text-outline">
-                        READY TO START?
+                  <div className="mt-6">
+                    <a
+                      href={`mailto:difflad@gmail.com?subject=Service%20Inquiry%20-%20${encodeURIComponent(selectedService.name)}&body=Hi%20Sedo-Ta%2C%0A%0AI'm%20interested%20in%20your%20${encodeURIComponent(selectedService.name)}%20service.%0A%0AService%3A%20${encodeURIComponent(selectedService.name)}%0APricing%3A%20${encodeURIComponent(selectedService.pricing)}%0A%0APlease%20let%20me%20know%20the%20next%20steps!%0A%0AThank%20you!`}
+                      className="block bg-gradient-to-r from-pixel-pink via-pixel-red to-pixel-orange border-4 border-pixel-white p-3 md:p-4 shadow-pixel-lg text-center hover:scale-105 transition-transform"
+                    >
+                      <p className="font-game text-sm md:text-base text-pixel-white text-outline leading-relaxed">
+                        READY TO LEVEL UP?
                       </p>
+                      <p className="font-pixel text-xs md:text-sm text-pixel-yellow mt-2">
+                        Click to contact me!
+                      </p>
+                    </a>
+                  </div>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="bg-pixel-black border-4 border-pixel-white shadow-pixel-lg"
+              >
+                <div className="absolute inset-2 border-2 border-pixel-gray pointer-events-none"></div>
+
+                <div className="relative bg-gradient-to-b from-game-panel to-pixel-blue p-8 min-h-[500px] flex flex-col items-center justify-center text-center">
+                  <motion.div
+                    animate={{
+                      y: [0, -15, 0],
+                      scale: [1, 1.1, 1]
+                    }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                    className="mb-6"
+                  >
+                    <div className="relative w-24 h-24 bg-gradient-to-br from-pixel-yellow to-pixel-orange border-4 border-pixel-white flex items-center justify-center">
+                      <span className="text-6xl">✨</span>
                     </div>
                   </motion.div>
-                </motion.div>
-              ) : (
-                <div className="h-full flex flex-col items-center justify-center text-center">
-                  <motion.div
-                    animate={{ y: [0, -10, 0] }}
+
+                  <motion.p
+                    className="font-game text-lg md:text-xl text-pixel-yellow mb-2 leading-relaxed"
+                    animate={{ opacity: [0.7, 1, 0.7] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
-                    <div className="w-20 h-20 bg-pixel-gray border-4 border-pixel-white mb-4"></div>
-                  </motion.div>
-                  <p className="font-pixel text-xl text-pixel-light">
-                    Select a service to view details
+                    SELECT A POWER-UP
+                  </motion.p>
+                  <p className="font-pixel text-base md:text-lg text-pixel-light">
+                    Choose a service to view<br />full details and features
                   </p>
                 </div>
-              )}
-            </div>
+              </motion.div>
+            )}
+            </AnimatePresence>
           </div>
         </div>
       </div>

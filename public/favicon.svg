@@ -1,0 +1,21 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="32" height="32" fill="#1a1c2c"/>
+
+  <!-- Outer border (pixel style) -->
+  <rect x="2" y="2" width="28" height="28" fill="none" stroke="#ffd541" stroke-width="2"/>
+
+  <!-- L letter (pixel style) -->
+  <rect x="7" y="8" width="3" height="16" fill="#5fcde4"/>
+  <rect x="7" y="21" width="8" height="3" fill="#5fcde4"/>
+
+  <!-- S letter (pixel style) -->
+  <rect x="17" y="8" width="8" height="3" fill="#ff77a8"/>
+  <rect x="17" y="8" width="3" height="8" fill="#ff77a8"/>
+  <rect x="17" y="13" width="8" height="3" fill="#ff77a8"/>
+  <rect x="22" y="13" width="3" height="8" fill="#ff77a8"/>
+  <rect x="17" y="21" width="8" height="3" fill="#ff77a8"/>
+
+  <!-- Small pixel decoration (bottom right corner) -->
+  <rect x="26" y="26" width="2" height="2" fill="#a7f070"/>
+</svg>

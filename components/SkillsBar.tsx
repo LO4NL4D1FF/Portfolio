@@ -6,18 +6,21 @@ import { useEffect, useState } from 'react';
 interface Skill {
   name: string;
   level: number;
-  color: string;
+  barColor: string;
+  borderColor: string;
 }
 
 const skills: Skill[] = [
-  { name: 'React / Next.js', level: 95, color: 'pixel-cyan' },
-  { name: 'TypeScript', level: 90, color: 'pixel-indigo' },
-  { name: 'React Native', level: 92, color: 'pixel-lime' },
-  { name: 'AI Integration (Gemini)', level: 88, color: 'pixel-pink' },
-  { name: 'C# / WinForms', level: 85, color: 'pixel-purple' },
-  { name: 'UI/UX Design', level: 87, color: 'pixel-orange' },
-  { name: 'Video Editing (Premiere Pro)', level: 82, color: 'pixel-red' },
-  { name: 'Firebase / Supabase', level: 80, color: 'pixel-yellow' },
+  { name: 'HTML / CSS', level: 95, barColor: 'bg-pixel-orange', borderColor: 'border-pixel-orange' },
+  { name: 'JavaScript', level: 93, barColor: 'bg-pixel-yellow', borderColor: 'border-pixel-yellow' },
+  { name: 'React / Next.js', level: 95, barColor: 'bg-pixel-cyan', borderColor: 'border-pixel-cyan' },
+  { name: 'TypeScript', level: 90, barColor: 'bg-pixel-indigo', borderColor: 'border-pixel-indigo' },
+  { name: 'React Native', level: 92, barColor: 'bg-pixel-lime', borderColor: 'border-pixel-lime' },
+  { name: 'AI Integration (GPT, Claude)', level: 88, barColor: 'bg-pixel-pink', borderColor: 'border-pixel-pink' },
+  { name: 'C# / WinForms', level: 85, barColor: 'bg-pixel-purple', borderColor: 'border-pixel-purple' },
+  { name: 'UI/UX Design', level: 87, barColor: 'bg-pixel-red', borderColor: 'border-pixel-red' },
+  { name: 'Video Editing (Premiere Pro)', level: 82, barColor: 'bg-pixel-teal', borderColor: 'border-pixel-teal' },
+  { name: 'Firebase / Supabase', level: 80, barColor: 'bg-pixel-green', borderColor: 'border-pixel-green' },
 ];
 
 export default function SkillsBar() {
@@ -66,13 +69,7 @@ export default function SkillsBar() {
                 initial={{ width: 0 }}
                 animate={mounted ? { width: `${skill.level}%` } : {}}
                 transition={{ delay: index * 0.1 + 0.3, duration: 1, ease: 'easeOut' }}
-                className={`absolute inset-1 bg-${skill.color} border-2 border-${skill.color}`}
-                style={{
-                  background: `linear-gradient(to right, var(--tw-gradient-stops))`,
-                  '--tw-gradient-from': `var(--pixel-${skill.color.split('-')[1]})`,
-                  '--tw-gradient-to': 'transparent',
-                  '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to)',
-                } as any}
+                className={`absolute inset-1 ${skill.barColor} ${skill.borderColor} border-2`}
               >
                 {/* Shine effect */}
                 <motion.div
@@ -117,7 +114,7 @@ export default function SkillsBar() {
             TOTAL XP
           </span>
           <span className="font-game text-xl md:text-2xl text-pixel-black">
-            {skills.reduce((acc, skill) => acc + skill.level, 0)} / 800
+            {skills.reduce((acc, skill) => acc + skill.level, 0)} / 1000
           </span>
         </div>
       </motion.div>

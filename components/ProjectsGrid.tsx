@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Project } from '@/lib/projects';
 import { LucideIcon } from 'lucide-react';
+import { useState } from 'react';
 
 interface ProjectsGridProps {
   projects: Project[];
@@ -10,6 +11,8 @@ interface ProjectsGridProps {
 }
 
 export default function ProjectsGrid({ projects, onProjectClick }: ProjectsGridProps) {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'app':
@@ -44,21 +47,37 @@ export default function ProjectsGrid({ projects, onProjectClick }: ProjectsGridP
           const IconComponent = project.icon as LucideIcon;
           const isLucideIcon = typeof project.icon !== 'string';
 
+          const isHovered = hoveredIndex === index;
+
           return (
             <motion.div
               key={project.id}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
+              initial={{ scale: 0, opacity: 0, rotateY: -90 }}
+              animate={{ scale: 1, opacity: 1, rotateY: 0 }}
               transition={{ delay: index * 0.1, type: 'spring', duration: 0.6 }}
-              whileHover={{ scale: 1.05, y: -5 }}
+              whileHover={{ scale: 1.05, y: -8 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => onProjectClick(project)}
-              className="cursor-pointer no-select"
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              className="cursor-pointer no-select relative"
             >
+              {/* Glow effect on hover */}
+              {isHovered && (
+                <motion.div
+                  className={`absolute -inset-1 bg-gradient-to-br ${getCategoryColor(project.category)} rounded-lg blur-lg opacity-75`}
+                  animate={{
+                    opacity: [0.5, 0.8, 0.5],
+                    scale: [1, 1.05, 1]
+                  }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                />
+              )}
+
               {/* Card */}
-              <div className="relative bg-pixel-black border-4 border-pixel-white shadow-pixel hover:shadow-pixel-lg transition-shadow duration-200">
+              <div className={`relative bg-pixel-black border-4 ${isHovered ? 'border-pixel-yellow' : 'border-pixel-white'} shadow-pixel hover:shadow-pixel-lg transition-all duration-200`}>
                 {/* Inner border */}
-                <div className="absolute inset-2 border-2 border-pixel-gray pointer-events-none"></div>
+                <div className={`absolute inset-2 border-2 ${isHovered ? 'border-pixel-yellow' : 'border-pixel-gray'} pointer-events-none transition-colors`}></div>
 
                 {/* Content */}
                 <div className={`relative bg-gradient-to-br ${getCategoryColor(project.category)} p-6 h-full flex flex-col`}>
@@ -72,12 +91,26 @@ export default function ProjectsGrid({ projects, onProjectClick }: ProjectsGridP
                   {/* Icon */}
                   <motion.div
                     className="mb-4 flex items-center justify-center"
-                    animate={{ y: [0, -5, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                    animate={isHovered ? {
+                      y: [0, -8, 0],
+                      rotate: [0, 5, -5, 0],
+                      scale: [1, 1.1, 1]
+                    } : {
+                      y: [0, -5, 0]
+                    }}
+                    transition={{ duration: isHovered ? 1 : 2, repeat: Infinity, ease: 'easeInOut' }}
                   >
                     {isLucideIcon ? (
                       <div className="w-20 h-20 bg-pixel-yellow border-4 border-pixel-orange shadow-pixel-sm flex items-center justify-center">
                         <IconComponent className="w-12 h-12 text-pixel-black" strokeWidth={2.5} />
+                      </div>
+                    ) : typeof project.icon === 'string' && project.icon.startsWith('/') ? (
+                      <div className={`w-20 h-20 bg-pixel-black border-4 ${project.logoBorderColor || 'border-pixel-white'} shadow-pixel-sm flex items-center justify-center p-3`}>
+                        <img
+                          src={project.icon}
+                          alt={`${project.name} logo`}
+                          className="w-full h-full object-contain"
+                        />
                       </div>
                     ) : (
                       <div className="text-6xl">{project.icon as string}</div>

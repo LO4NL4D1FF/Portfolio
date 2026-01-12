@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="180" height="180" fill="#1a1c2c" rx="40"/>
+
+  <!-- Outer border (pixel style) -->
+  <rect x="20" y="20" width="140" height="140" fill="none" stroke="#ffd541" stroke-width="8"/>
+
+  <!-- L letter (pixel style) -->
+  <rect x="40" y="45" width="15" height="90" fill="#5fcde4"/>
+  <rect x="40" y="120" width="45" height="15" fill="#5fcde4"/>
+
+  <!-- S letter (pixel style) -->
+  <rect x="95" y="45" width="45" height="15" fill="#ff77a8"/>
+  <rect x="95" y="45" width="15" height="45" fill="#ff77a8"/>
+  <rect x="95" y="75" width="45" height="15" fill="#ff77a8"/>
+  <rect x="125" y="75" width="15" height="45" fill="#ff77a8"/>
+  <rect x="95" y="120" width="45" height="15" fill="#ff77a8"/>
+
+  <!-- Small pixel decoration (bottom right corner) -->
+  <rect x="145" y="145" width="10" height="10" fill="#a7f070"/>
+</svg>

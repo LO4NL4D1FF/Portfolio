@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { Code, Zap, Target, Lightbulb, Download } from 'lucide-react';
+import { Download } from 'lucide-react';
 
 export default function AboutSection() {
   const [mounted, setMounted] = useState(false);
@@ -12,14 +12,14 @@ export default function AboutSection() {
   }, []);
 
   const characterStats = [
-    { label: 'NAME', value: 'Loan Ladiff Sedo-Ta', color: 'pixel-yellow' },
-    { label: 'ALIASES', value: 'Diff • Link • Mr. Badboi', color: 'pixel-cyan' },
-    { label: 'AGE', value: '21', color: 'pixel-lime' },
-    { label: 'NATIONALITY', value: 'Cameroonian', color: 'pixel-pink' },
-    { label: 'CURRENT BASE', value: 'Monrovia, Liberia', color: 'pixel-indigo' },
-    { label: 'ROLE', value: 'Software Engineer • Product Builder', color: 'pixel-orange' },
-    { label: 'YEARS CODING', value: '3+ Years', color: 'pixel-red' },
-    { label: 'VISION PATH', value: 'Founder / CEO Trajectory', color: 'pixel-purple' },
+    { label: 'NAME', value: 'Loan Ladiff Sedo-Ta', colorClass: 'text-pixel-yellow' },
+    { label: 'ALIASES', value: 'Diff • Link • Mr. Badboi', colorClass: 'text-pixel-cyan' },
+    { label: 'AGE', value: String(new Date().getFullYear() - 2004), colorClass: 'text-pixel-lime' },
+    { label: 'NATIONALITY', value: 'Cameroonian', colorClass: 'text-pixel-pink' },
+    { label: 'CURRENT BASE', value: 'Monrovia, Liberia', colorClass: 'text-pixel-indigo' },
+    { label: 'ROLE', value: 'Software Engineer • Product Builder', colorClass: 'text-pixel-orange' },
+    { label: 'YEARS CODING', value: '3+ Years', colorClass: 'text-pixel-red' },
+    { label: 'VISION PATH', value: 'Founder / CEO Trajectory', colorClass: 'text-pixel-purple' },
   ];
 
   const levels = [
@@ -27,43 +27,49 @@ export default function AboutSection() {
       level: 1,
       title: 'THE INITIATE',
       description: 'HTML, CSS discovered → First static pages → Understanding structure, color, balance',
-      color: 'pixel-gray',
+      bgColor: 'bg-pixel-gray',
+      textColor: 'text-pixel-gray',
     },
     {
       level: 2,
       title: 'LOGIC UNLOCKED',
       description: 'C++, C#, Python → Console games → Student Record Management System → Control flow mastered',
-      color: 'pixel-cyan',
+      bgColor: 'bg-pixel-cyan',
+      textColor: 'text-pixel-cyan',
     },
     {
       level: 3,
       title: 'INTERFACE CRAFTER',
       description: 'React enters → Personal portfolio → Component thinking → UI responsiveness obsession begins',
-      color: 'pixel-lime',
+      bgColor: 'bg-pixel-lime',
+      textColor: 'text-pixel-lime',
     },
     {
       level: 4,
       title: 'SYSTEM BUILDER',
       description: 'Smart Save → Web + Desktop budgeting tool → Real users, real constraints → Backend matters',
-      color: 'pixel-yellow',
+      bgColor: 'bg-pixel-yellow',
+      textColor: 'text-pixel-yellow',
     },
     {
       level: 5,
       title: 'THE ARCHITECT',
       description: 'Zenix/CORELM/Audify → AI-powered learning → Subscription logic, gamification → Founder mindset awakens',
-      color: 'pixel-pink',
+      bgColor: 'bg-pixel-pink',
+      textColor: 'text-pixel-pink',
     },
     {
       level: 6,
       title: 'THE STRATEGIST',
       description: 'Current Level → Rebuilding backends → Optimizing AI cost vs power → Preparing for scale',
-      color: 'pixel-purple',
+      bgColor: 'bg-pixel-purple',
+      textColor: 'text-pixel-purple',
       current: true,
     },
   ];
 
   const techStack = {
-    primary: ['HTML/CSS', 'JavaScript', 'React', 'React Native', 'TypeScript', 'Next.js', 'C# WinForms', 'Supabase', 'Firebase', 'Gemini AI'],
+    primary: ['HTML/CSS', 'JavaScript', 'React', 'React Native', 'TypeScript', 'Next.js', 'C# WinForms', 'Supabase', 'Firebase', 'AI Integration (GPT, Claude)'],
     secondary: ['C++', 'Python', 'Java', 'SQL', 'Linux', 'Node.js'],
     tools: ['VS Code', 'Claude Code CLI', 'Windsurf', 'Expo', 'GitHub', 'CapCut', 'Adobe Premiere Pro'],
   };
@@ -122,7 +128,7 @@ export default function AboutSection() {
                 <span className="font-game text-sm md:text-base text-pixel-light">
                   {stat.label}
                 </span>
-                <span className={`font-pixel text-lg md:text-xl text-${stat.color}`}>
+                <span className={`font-pixel text-lg md:text-xl ${stat.colorClass}`}>
                   {stat.value}
                 </span>
               </div>
@@ -152,13 +158,13 @@ export default function AboutSection() {
                 className={`border-4 ${level.current ? 'border-pixel-yellow bg-gradient-to-r from-pixel-yellow/20 to-pixel-orange/20' : 'border-pixel-white bg-pixel-black'} p-4 md:p-6 shadow-pixel`}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`w-16 h-16 bg-${level.color} border-4 border-pixel-white shadow-pixel flex items-center justify-center flex-shrink-0`}>
+                  <div className={`w-16 h-16 ${level.bgColor} border-4 border-pixel-white shadow-pixel flex items-center justify-center flex-shrink-0`}>
                     <span className="font-game text-2xl text-pixel-black">
                       {level.level}
                     </span>
                   </div>
                   <div className="flex-1">
-                    <h3 className={`font-game text-xl md:text-2xl text-${level.color} mb-2 leading-relaxed`}>
+                    <h3 className={`font-game text-xl md:text-2xl ${level.textColor} mb-2 leading-relaxed`}>
                       {level.title}
                       {level.current && <span className="ml-3 text-pixel-yellow animate-blink">▶</span>}
                     </h3>
