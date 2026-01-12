@@ -22,6 +22,10 @@ import { getGameSounds } from '@/lib/sounds';
 
 type Screen = 'start' | 'menu' | 'about' | 'projects' | 'services' | 'skills' | 'contact';
 
+interface CustomWindow extends Window {
+  unlockAchievement?: (id: string) => void;
+}
+
 export default function Home() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('start');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -59,7 +63,7 @@ export default function Home() {
 
   // Track section visits and unlock achievements
   useEffect(() => {
-    if (typeof window !== 'undefined' && (window as any).unlockAchievement) {
+    if (typeof window !== 'undefined' && (window as unknown as CustomWindow).unlockAchievement) {
       // Track all viewed sections
       const viewedSections = JSON.parse(localStorage.getItem('viewed-sections') || '[]');
 
@@ -71,12 +75,12 @@ export default function Home() {
 
         // Unlock explorer achievement if all 5 sections visited
         if (viewedSections.length >= 5) {
-          (window as any).unlockAchievement('explorer');
+          (window as unknown as CustomWindow).unlockAchievement?.('explorer');
         }
 
         // Unlock contact achievement when visiting contact
         if (currentScreen === 'contact') {
-          (window as any).unlockAchievement('contact');
+          (window as unknown as CustomWindow).unlockAchievement?.('contact');
         }
       }
     }
@@ -84,8 +88,8 @@ export default function Home() {
 
   // Unlock project viewer achievement when opening a project
   useEffect(() => {
-    if (selectedProject && typeof window !== 'undefined' && (window as any).unlockAchievement) {
-      (window as any).unlockAchievement('project-viewer');
+    if (selectedProject && typeof window !== 'undefined' && (window as unknown as CustomWindow).unlockAchievement) {
+      (window as unknown as CustomWindow).unlockAchievement?.('project-viewer');
     }
   }, [selectedProject]);
 

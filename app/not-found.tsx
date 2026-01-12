@@ -30,7 +30,7 @@ export default function NotFound() {
           App Not Found
         </p>
         <p className="text-sm text-android-text-secondary mb-8">
-          The page you're looking for doesn't exist in this OS.
+          The page you&apos;re looking for doesn&apos;t exist in this OS.
         </p>
 
         {/* Back to Home */}
