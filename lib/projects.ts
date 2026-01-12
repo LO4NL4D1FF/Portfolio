@@ -1,4 +1,4 @@
-import { LucideIcon, Brain, Waves, BookOpen, Building2, PiggyBank, Video, Globe, Smartphone, Bot, Palette, Clapperboard } from 'lucide-react';
+import { LucideIcon, Video, Globe, Smartphone, Bot, Palette, Clapperboard } from 'lucide-react';
 
 export interface Project {
   id: string;

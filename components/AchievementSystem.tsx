@@ -14,15 +14,6 @@ interface Achievement {
 }
 
 export default function AchievementSystem() {
-  // Define icon mapping
-  const iconMap: Record<string, React.ElementType> = {
-    'explorer': Gamepad2,
-    'project-viewer': Star,
-    'time-traveler': Clock,
-    'contact': Mail,
-    'completionist': Trophy,
-  };
-
   const initialAchievements: Achievement[] = [
     {
       id: 'explorer',
@@ -74,10 +65,10 @@ export default function AchievementSystem() {
   useEffect(() => {
     const saved = localStorage.getItem('portfolio-achievements');
     if (saved) {
-      const savedAchievements = JSON.parse(saved);
+      const savedAchievements = JSON.parse(saved) as Array<{ id: string; unlocked: boolean }>;
       // Restore icons from the icon map
       const restoredAchievements = initialAchievements.map(initial => {
-        const saved = savedAchievements.find((s: any) => s.id === initial.id);
+        const saved = savedAchievements.find((s) => s.id === initial.id);
         return {
           ...initial,
           unlocked: saved?.unlocked || false,
@@ -87,7 +78,7 @@ export default function AchievementSystem() {
       const count = restoredAchievements.filter(a => a.unlocked).length;
       setUnlockedCount(count);
     }
-  }, []);
+  }, [initialAchievements]);
 
   // Save achievements to localStorage
   const saveAchievements = (newAchievements: Achievement[]) => {
