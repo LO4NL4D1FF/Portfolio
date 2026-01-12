@@ -13,49 +13,50 @@ interface Achievement {
   unlocked: boolean;
 }
 
+const initialAchievements: Achievement[] = [
+  {
+    id: 'explorer',
+    title: 'EXPLORER',
+    description: 'Viewed all main sections',
+    icon: Gamepad2,
+    color: 'pixel-lime',
+    unlocked: false,
+  },
+  {
+    id: 'project-viewer',
+    title: 'PROJECT VIEWER',
+    description: 'Opened a project detail',
+    icon: Star,
+    color: 'pixel-yellow',
+    unlocked: false,
+  },
+  {
+    id: 'time-traveler',
+    title: 'TIME TRAVELER',
+    description: 'Spent 5+ minutes here',
+    icon: Clock,
+    color: 'pixel-pink',
+    unlocked: false,
+  },
+  {
+    id: 'contact',
+    title: 'COMMUNICATOR',
+    description: 'Visited contact section',
+    icon: Mail,
+    color: 'pixel-indigo',
+    unlocked: false,
+  },
+  {
+    id: 'completionist',
+    title: 'COMPLETIONIST',
+    description: 'Unlocked all achievements',
+    icon: Trophy,
+    color: 'pixel-orange',
+    unlocked: false,
+  },
+];
+
 export default function AchievementSystem() {
-  const initialAchievements: Achievement[] = [
-    {
-      id: 'explorer',
-      title: 'EXPLORER',
-      description: 'Viewed all main sections',
-      icon: Gamepad2,
-      color: 'pixel-lime',
-      unlocked: false,
-    },
-    {
-      id: 'project-viewer',
-      title: 'PROJECT VIEWER',
-      description: 'Opened a project detail',
-      icon: Star,
-      color: 'pixel-yellow',
-      unlocked: false,
-    },
-    {
-      id: 'time-traveler',
-      title: 'TIME TRAVELER',
-      description: 'Spent 5+ minutes here',
-      icon: Clock,
-      color: 'pixel-pink',
-      unlocked: false,
-    },
-    {
-      id: 'contact',
-      title: 'COMMUNICATOR',
-      description: 'Visited contact section',
-      icon: Mail,
-      color: 'pixel-indigo',
-      unlocked: false,
-    },
-    {
-      id: 'completionist',
-      title: 'COMPLETIONIST',
-      description: 'Unlocked all achievements',
-      icon: Trophy,
-      color: 'pixel-orange',
-      unlocked: false,
-    },
-  ];
 
   const [achievements, setAchievements] = useState<Achievement[]>(initialAchievements);
   const [newUnlock, setNewUnlock] = useState<Achievement | null>(null);
@@ -78,7 +79,8 @@ export default function AchievementSystem() {
       const count = restoredAchievements.filter(a => a.unlocked).length;
       setUnlockedCount(count);
     }
-  }, [initialAchievements]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Save achievements to localStorage
   const saveAchievements = (newAchievements: Achievement[]) => {
