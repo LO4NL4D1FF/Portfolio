@@ -16,7 +16,6 @@ export default function SoundToggle() {
   const toggleSound = () => {
     setSoundEnabled(!soundEnabled);
     if (!soundEnabled) {
-      // Play a test sound when enabling
       const sounds = getGameSounds();
       setTimeout(() => sounds.playClick(), 100);
     }
@@ -27,15 +26,17 @@ export default function SoundToggle() {
       onClick={toggleSound}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
-      className="fixed bottom-4 right-4 z-50 w-14 h-14 bg-pixel-yellow border-4 border-pixel-white shadow-pixel
-                 hover:bg-pixel-orange transition-colors btn-press flex items-center justify-center
-                 safe-area-bottom"
+      className="fixed bottom-4 right-4 z-50 w-12 h-12 bg-cyber-dark border-2 border-neon-cyan text-neon-cyan hover:bg-neon-cyan hover:text-cyber-void transition-all btn-press flex items-center justify-center safe-area-bottom"
+      style={{
+        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))',
+        boxShadow: '0 0 12px rgba(0,240,255,0.5)',
+      }}
       title={soundEnabled ? 'Mute sounds' : 'Enable sounds'}
     >
       {soundEnabled ? (
-        <Volume2 className="w-7 h-7 text-pixel-black" strokeWidth={3} />
+        <Volume2 className="w-5 h-5" strokeWidth={2} />
       ) : (
-        <VolumeX className="w-7 h-7 text-pixel-black" strokeWidth={3} />
+        <VolumeX className="w-5 h-5" strokeWidth={2} />
       )}
     </motion.button>
   );

@@ -16,63 +16,60 @@ interface Achievement {
 const initialAchievements: Achievement[] = [
   {
     id: 'explorer',
-    title: 'EXPLORER',
-    description: 'Viewed all main sections',
+    title: 'STREET SCANNER',
+    description: 'Breached all main subsystems',
     icon: Gamepad2,
-    color: 'pixel-lime',
+    color: 'neon-green',
     unlocked: false,
   },
   {
     id: 'project-viewer',
-    title: 'PROJECT VIEWER',
-    description: 'Opened a project detail',
+    title: 'FIRST GIG',
+    description: 'Cracked open a contract brief',
     icon: Star,
-    color: 'pixel-yellow',
+    color: 'neon-yellow',
     unlocked: false,
   },
   {
     id: 'time-traveler',
-    title: 'TIME TRAVELER',
-    description: 'Spent 5+ minutes here',
+    title: 'TIME JUMPER',
+    description: 'Ran the net for 5+ minutes',
     icon: Clock,
-    color: 'pixel-pink',
+    color: 'neon-pink',
     unlocked: false,
   },
   {
     id: 'contact',
-    title: 'COMMUNICATOR',
-    description: 'Visited contact section',
+    title: 'FIXER CONTACT',
+    description: 'Opened the uplink channel',
     icon: Mail,
-    color: 'pixel-indigo',
+    color: 'neon-cyan',
     unlocked: false,
   },
   {
     id: 'completionist',
-    title: 'COMPLETIONIST',
-    description: 'Unlocked all achievements',
+    title: 'LEGEND OF NIGHT CITY',
+    description: 'Unlocked every data shard',
     icon: Trophy,
-    color: 'pixel-orange',
+    color: 'neon-magenta',
     unlocked: false,
   },
 ];
 
 export default function AchievementSystem() {
-
   const [achievements, setAchievements] = useState<Achievement[]>(initialAchievements);
   const [newUnlock, setNewUnlock] = useState<Achievement | null>(null);
   const [unlockedCount, setUnlockedCount] = useState(0);
 
-  // Load achievements from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('portfolio-achievements');
     if (saved) {
       const savedAchievements = JSON.parse(saved) as Array<{ id: string; unlocked: boolean }>;
-      // Restore icons from the icon map
       const restoredAchievements = initialAchievements.map(initial => {
-        const saved = savedAchievements.find((s) => s.id === initial.id);
+        const s = savedAchievements.find((x) => x.id === initial.id);
         return {
           ...initial,
-          unlocked: saved?.unlocked || false,
+          unlocked: s?.unlocked || false,
         };
       });
       setAchievements(restoredAchievements);
@@ -82,17 +79,14 @@ export default function AchievementSystem() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Save achievements to localStorage
   const saveAchievements = (newAchievements: Achievement[]) => {
-    // Only save id and unlocked state, not the icon component
-    const achievementsToSave = newAchievements.map(({ id, unlocked }) => ({ id, unlocked }));
-    localStorage.setItem('portfolio-achievements', JSON.stringify(achievementsToSave));
+    const toSave = newAchievements.map(({ id, unlocked }) => ({ id, unlocked }));
+    localStorage.setItem('portfolio-achievements', JSON.stringify(toSave));
     setAchievements(newAchievements);
     const count = newAchievements.filter(a => a.unlocked).length;
     setUnlockedCount(count);
   };
 
-  // Unlock achievement function
   const unlockAchievement = (id: string) => {
     const newAchievements = achievements.map(achievement => {
       if (achievement.id === id && !achievement.unlocked) {
@@ -103,7 +97,6 @@ export default function AchievementSystem() {
       return achievement;
     });
 
-    // Check if completionist should be unlocked
     const unlockedCount = newAchievements.filter(a => a.unlocked && a.id !== 'completionist').length;
     if (unlockedCount === achievements.length - 1) {
       const completionist = newAchievements.find(a => a.id === 'completionist');
@@ -122,17 +115,14 @@ export default function AchievementSystem() {
     saveAchievements(newAchievements);
   };
 
-  // Track time spent (5 minutes for time-traveler)
   useEffect(() => {
     const timer = setTimeout(() => {
       unlockAchievement('time-traveler');
-    }, 300000); // 5 minutes
-
+    }, 300000);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Expose unlock function globally so other components can use it
   useEffect(() => {
     (window as unknown as { unlockAchievement: (id: string) => void }).unlockAchievement = unlockAchievement;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -140,64 +130,76 @@ export default function AchievementSystem() {
 
   return (
     <>
-      {/* Achievement Counter - Bottom Left */}
+      {/* HUD counter */}
       <motion.div
-        initial={{ opacity: 0, x: -100 }}
+        initial={{ opacity: 0, x: -40 }}
         animate={{ opacity: 1, x: 0 }}
         className="fixed bottom-20 left-4 z-40 safe-area-bottom"
       >
-        <div className="bg-pixel-black border-4 border-pixel-white p-3 shadow-pixel">
+        <div
+          className="relative bg-cyber-dark border border-neon-yellow px-3 py-2"
+          style={{
+            clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))',
+            boxShadow: '0 0 10px rgba(252,238,10,0.4)',
+          }}
+        >
           <div className="flex items-center gap-2">
-            <Trophy className="w-6 h-6 text-pixel-yellow" strokeWidth={3} />
-            <span className="font-game text-lg text-pixel-white">
+            <Trophy className="w-5 h-5 text-neon-yellow" strokeWidth={1.5} style={{ filter: 'drop-shadow(0 0 4px #fcee0a)' }} />
+            <span className="font-mono text-sm tracking-widest text-neon-yellow">
               {unlockedCount}/{achievements.length}
             </span>
           </div>
         </div>
       </motion.div>
 
-      {/* Achievement Unlock Notification */}
+      {/* Unlock notification */}
       <AnimatePresence>
         {newUnlock && (
           <motion.div
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
-            className="fixed top-20 left-1/2 -translate-x-1/2 z-50 safe-area-top"
+            className="fixed top-24 left-1/2 -translate-x-1/2 z-50 safe-area-top w-full max-w-sm px-4"
           >
-            <div className="bg-gradient-to-r from-pixel-yellow to-pixel-orange border-4 border-pixel-white p-6 shadow-pixel-lg">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-pixel-white border-4 border-pixel-black shadow-pixel flex items-center justify-center">
-                  {(() => {
-                    const IconComponent = newUnlock.icon as React.ElementType;
-                    return <IconComponent className="w-10 h-10 text-pixel-black" strokeWidth={3} />;
-                  })()}
-                </div>
-                <div>
-                  <p className="font-game text-sm text-pixel-black mb-1">
-                    ACHIEVEMENT UNLOCKED!
-                  </p>
-                  <h3 className="font-game text-xl text-pixel-black leading-relaxed">
-                    {newUnlock.title}
-                  </h3>
-                  <p className="font-pixel text-base text-pixel-black">
-                    {newUnlock.description}
-                  </p>
+            <div className="relative">
+              <div className="absolute -inset-1 bg-gradient-to-r from-neon-yellow via-neon-magenta to-neon-cyan opacity-70 blur-lg animate-pulse" />
+              <div
+                className="relative bg-cyber-dark border-2 border-neon-yellow p-4"
+                style={{
+                  clipPath: 'polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px))',
+                  boxShadow: '0 0 24px #fcee0a',
+                }}
+              >
+                <div className="flex items-center gap-4">
+                  <div
+                    className="w-14 h-14 bg-cyber-void border-2 border-neon-yellow flex items-center justify-center flex-shrink-0"
+                    style={{
+                      clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))',
+                      boxShadow: 'inset 0 0 8px rgba(252,238,10,0.3)',
+                    }}
+                  >
+                    {(() => {
+                      const IconComponent = newUnlock.icon as React.ElementType;
+                      return <IconComponent className="w-8 h-8 text-neon-yellow" strokeWidth={2} />;
+                    })()}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-mono text-[10px] tracking-widest text-neon-cyan">
+                      [ DATA SHARD UNLOCKED ]
+                    </p>
+                    <h3 className="font-cyber font-black text-base md:text-lg tracking-widest text-neon-yellow truncate" style={{ textShadow: '0 0 6px #fcee0a' }}>
+                      {newUnlock.title}
+                    </h3>
+                    <p className="font-hud text-xs md:text-sm text-cyber-bone">
+                      {newUnlock.description}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Achievement List Modal (hidden, can be toggled) */}
-      <div className="hidden">
-        {achievements.map(achievement => (
-          <div key={achievement.id}>
-            {achievement.title}
-          </div>
-        ))}
-      </div>
     </>
   );
 }

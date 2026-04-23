@@ -1,21 +1,27 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background -->
-  <rect width="32" height="32" fill="#1a1c2c"/>
+  <!-- Cyberpunk background -->
+  <rect width="32" height="32" fill="#05050a"/>
 
-  <!-- Outer border (pixel style) -->
-  <rect x="2" y="2" width="28" height="28" fill="none" stroke="#ffd541" stroke-width="2"/>
+  <!-- Neon yellow frame with glow -->
+  <rect x="2" y="2" width="28" height="28" fill="none" stroke="#fcee0a" stroke-width="1.5"/>
 
-  <!-- L letter (pixel style) -->
-  <rect x="7" y="8" width="3" height="16" fill="#5fcde4"/>
-  <rect x="7" y="21" width="8" height="3" fill="#5fcde4"/>
+  <!-- L letter - cyan neon -->
+  <rect x="6" y="8" width="2" height="15" fill="#00f0ff"/>
+  <rect x="6" y="21" width="8" height="2" fill="#00f0ff"/>
 
-  <!-- S letter (pixel style) -->
-  <rect x="17" y="8" width="8" height="3" fill="#ff77a8"/>
-  <rect x="17" y="8" width="3" height="8" fill="#ff77a8"/>
-  <rect x="17" y="13" width="8" height="3" fill="#ff77a8"/>
-  <rect x="22" y="13" width="3" height="8" fill="#ff77a8"/>
-  <rect x="17" y="21" width="8" height="3" fill="#ff77a8"/>
+  <!-- S letter - magenta neon -->
+  <rect x="16" y="8" width="8" height="2" fill="#ff003c"/>
+  <rect x="16" y="8" width="2" height="8" fill="#ff003c"/>
+  <rect x="16" y="14" width="8" height="2" fill="#ff003c"/>
+  <rect x="22" y="14" width="2" height="8" fill="#ff003c"/>
+  <rect x="16" y="21" width="8" height="2" fill="#ff003c"/>
 
-  <!-- Small pixel decoration (bottom right corner) -->
-  <rect x="26" y="26" width="2" height="2" fill="#a7f070"/>
+  <!-- Corner accents -->
+  <rect x="2" y="2" width="4" height="1" fill="#fcee0a"/>
+  <rect x="2" y="2" width="1" height="4" fill="#fcee0a"/>
+  <rect x="26" y="29" width="4" height="1" fill="#fcee0a"/>
+  <rect x="29" y="26" width="1" height="4" fill="#fcee0a"/>
+
+  <!-- Status dot -->
+  <rect x="27" y="4" width="2" height="2" fill="#39ff14"/>
 </svg>

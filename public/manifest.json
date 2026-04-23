@@ -1,11 +1,11 @@
 {
-  "name": "Windows 11 Portfolio OS - Mr. Sedo-Ta",
-  "short_name": "Portfolio Win11",
-  "description": "Interactive Windows 11-styled portfolio showcasing AI-powered apps, development services, and creative work",
+  "name": "Sedo-Ta // Night City Netrunner Portfolio",
+  "short_name": "Sedo-Ta 2077",
+  "description": "Cyberpunk 2077-inspired portfolio of Loan Ladiff Sedo-Ta — software engineer, netrunner, builder of AI-powered constructs.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F3F3F3",
-  "theme_color": "#0078D4",
+  "background_color": "#05050a",
+  "theme_color": "#fcee0a",
   "orientation": "portrait",
   "icons": [
     {

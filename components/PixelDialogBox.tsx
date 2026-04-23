@@ -24,7 +24,6 @@ export default function PixelDialogBox({
     if (isOpen) {
       const sounds = getGameSounds();
       sounds.playOpen();
-      // Prevent body scroll when modal is open
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -51,15 +50,15 @@ export default function PixelDialogBox({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="fixed inset-0 bg-black/70 z-40 backdrop-blur-sm"
+            className="fixed inset-0 bg-cyber-void/80 backdrop-blur-md z-40"
           />
 
-          {/* Dialog Box */}
+          {/* Dialog */}
           <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ type: 'spring', duration: 0.5 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.25 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
             style={{ pointerEvents: 'none' }}
           >
@@ -68,44 +67,67 @@ export default function PixelDialogBox({
               style={{ pointerEvents: 'auto' }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Outer border */}
-              <div className="relative bg-pixel-black border-8 border-pixel-white shadow-pixel-lg">
-                {/* Inner border */}
-                <div className="absolute inset-2 border-4 border-pixel-gray pointer-events-none"></div>
+              <div className="relative">
+                {/* Outer glow */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-neon-yellow via-neon-magenta to-neon-cyan opacity-50 blur-lg animate-pulse" />
 
-                {/* Content area */}
-                <div className="relative bg-gradient-to-b from-game-panel to-pixel-blue p-6 md:p-8">
-                  {/* Title bar */}
-                  <div className="flex items-center justify-between mb-6 pb-4 border-b-4 border-pixel-yellow">
-                    <h2 className="font-game text-xl md:text-3xl text-pixel-yellow text-outline leading-relaxed">
-                      {title}
-                    </h2>
-                    <button
-                      onClick={handleClose}
-                      className="w-12 h-12 bg-pixel-red border-4 border-pixel-white shadow-pixel-sm
-                               hover:bg-pixel-orange transition-colors btn-press flex items-center justify-center flex-shrink-0"
-                    >
-                      <X className="w-6 h-6 text-pixel-white" strokeWidth={3} />
-                    </button>
-                  </div>
+                {/* Dialog body */}
+                <div
+                  className="relative bg-cyber-dark border-2 border-neon-yellow cyber-clip-lg"
+                  style={{
+                    backgroundImage: 'linear-gradient(135deg, rgba(18,18,31,0.97), rgba(5,5,10,0.97))',
+                    boxShadow: '0 0 40px rgba(252, 238, 10, 0.4)',
+                  }}
+                >
+                  {/* Scanline overlay */}
+                  <div
+                    className="absolute inset-0 pointer-events-none opacity-15"
+                    style={{ background: 'repeating-linear-gradient(0deg, transparent 0 2px, rgba(0,240,255,0.3) 2px 3px)' }}
+                  />
 
-                  {/* Scrollable content */}
-                  <div className="max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
-                    <div className="font-pixel text-lg md:text-xl lg:text-2xl text-pixel-white leading-relaxed space-y-4">
-                      {children}
+                  <div className="relative p-6 md:p-8">
+                    {/* Title bar */}
+                    <div className="flex items-center justify-between mb-5 pb-3 border-b-2 border-neon-yellow/40">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-mono text-[10px] md:text-xs tracking-widest text-neon-cyan/80">
+                          /// CONTRACT BRIEF · OPEN FILE
+                        </p>
+                        <h2
+                          className="font-cyber font-black text-lg md:text-2xl tracking-widest text-neon-yellow truncate"
+                          style={{ textShadow: '0 0 8px #fcee0a' }}
+                        >
+                          {title}
+                        </h2>
+                      </div>
+                      <button
+                        onClick={handleClose}
+                        className="w-10 h-10 flex items-center justify-center border-2 border-neon-magenta text-neon-magenta hover:bg-neon-magenta hover:text-cyber-void transition-all btn-press flex-shrink-0"
+                        style={{
+                          clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))',
+                          boxShadow: '0 0 10px rgba(255,0,60,0.5)',
+                        }}
+                      >
+                        <X className="w-5 h-5" strokeWidth={2.5} />
+                      </button>
                     </div>
-                  </div>
 
-                  {/* Continue arrow */}
-                  {showArrow && (
-                    <motion.div
-                      className="mt-6 text-right"
-                      animate={{ x: [0, 10, 0] }}
-                      transition={{ duration: 1, repeat: Infinity }}
-                    >
-                      <span className="font-game text-2xl text-pixel-yellow">▶</span>
-                    </motion.div>
-                  )}
+                    {/* Content */}
+                    <div className="max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                      <div className="font-hud text-sm md:text-base text-cyber-bone leading-relaxed space-y-4">
+                        {children}
+                      </div>
+                    </div>
+
+                    {showArrow && (
+                      <motion.div
+                        className="mt-5 text-right"
+                        animate={{ x: [0, 6, 0] }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                      >
+                        <span className="font-cyber font-bold text-neon-yellow" style={{ textShadow: '0 0 6px #fcee0a' }}>▶▶▶</span>
+                      </motion.div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
