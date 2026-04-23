@@ -17,23 +17,23 @@ export default function ContactSection() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="glass rounded-3xl p-6 md:p-8"
+        className="lg rounded-4xl p-6 md:p-8"
       >
-        <div className="inline-flex items-center gap-2 mb-4">
-          <span className="relative flex w-2 h-2">
-            <span className="absolute inset-0 rounded-full bg-fg/30 animate-ping" />
-            <span className="relative w-2 h-2 rounded-full bg-fg" />
-          </span>
-          <span className="text-[11px] font-medium tracking-[0.2em] text-fg uppercase">
-            Available for work
-          </span>
+        <div className="relative z-10">
+          <div className="inline-flex items-center gap-2 mb-4">
+            <span className="relative flex w-2 h-2">
+              <span className="absolute inset-0 rounded-full bg-fg/30 animate-ping" />
+              <span className="relative w-2 h-2 rounded-full bg-fg" />
+            </span>
+            <span className="eyebrow !text-fg">Available for work</span>
+          </div>
+          <h1 className="headline font-bold text-3xl md:text-4xl text-fg mb-2">
+            Let&apos;s build something.
+          </h1>
+          <p className="text-sm md:text-base text-muted">
+            AI-powered apps, full-stack web &amp; mobile, cinematic edits. Usually responds within 24 hours.
+          </p>
         </div>
-        <h1 className="headline font-semibold text-3xl md:text-4xl text-fg mb-2">
-          Let&apos;s build something.
-        </h1>
-        <p className="text-sm md:text-base text-muted">
-          AI-powered apps, full-stack web &amp; mobile, cinematic edits. Usually responds within 24 hours.
-        </p>
       </motion.header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -47,23 +47,19 @@ export default function ContactSection() {
               rel="noopener noreferrer"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + i * 0.04, duration: 0.35 }}
-              className="group glass glass-hover rounded-2xl p-4 flex items-center gap-3"
+              transition={{ delay: 0.1 + i * 0.04, duration: 0.4 }}
+              className="lg lg-hover rounded-3xl p-4 flex items-center gap-3 group"
             >
-              <div className="w-10 h-10 rounded-xl glass-subtle flex items-center justify-center shrink-0">
-                <Icon className="w-4 h-4 text-fg" strokeWidth={1.75} />
+              <div className="lg-sm w-11 h-11 rounded-2xl flex items-center justify-center shrink-0">
+                <Icon className="w-4 h-4 text-fg relative z-10" strokeWidth={2} />
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-sub">
-                  {link.label}
-                </p>
-                <p className="text-sm text-fg font-medium truncate">
-                  {link.value}
-                </p>
+              <div className="flex-1 min-w-0 relative z-10">
+                <p className="eyebrow">{link.label}</p>
+                <p className="text-sm text-fg font-medium truncate">{link.value}</p>
               </div>
               <ArrowUpRight
-                className="w-4 h-4 text-muted shrink-0 transition-all group-hover:text-fg group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                strokeWidth={1.75}
+                className="w-4 h-4 text-muted shrink-0 transition-all group-hover:text-fg group-hover:translate-x-0.5 group-hover:-translate-y-0.5 relative z-10"
+                strokeWidth={2}
               />
             </motion.a>
           );

@@ -1,226 +1,113 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { RotateCcw } from 'lucide-react';
+
+import Background from '@/components/Background';
 import StartScreen from '@/components/StartScreen';
 import MainMenu from '@/components/MainMenu';
-import PixelArtContainer from '@/components/PixelArtContainer';
-import ParallaxBackground from '@/components/ParallaxBackground';
+import NavigationBar from '@/components/NavigationBar';
+import AboutSection from '@/components/AboutSection';
 import ProjectsGrid from '@/components/ProjectsGrid';
 import ServicesMenu from '@/components/ServicesMenu';
 import SkillsBar from '@/components/SkillsBar';
 import ContactSection from '@/components/ContactSection';
-import PixelDialogBox from '@/components/PixelDialogBox';
+import Dialog from '@/components/Dialog';
 import ProjectDetailView from '@/components/ProjectDetailView';
-import NavigationBar from '@/components/NavigationBar';
-import SoundToggle from '@/components/SoundToggle';
-import AboutSection from '@/components/AboutSection';
-import AchievementSystem from '@/components/AchievementSystem';
+
 import { Project, projects, services } from '@/lib/projects';
-import { RotateCcw } from 'lucide-react';
-import { getGameSounds } from '@/lib/sounds';
+import type { ScreenId } from '@/components/types';
 
-type Screen = 'start' | 'menu' | 'about' | 'projects' | 'services' | 'skills' | 'contact';
+type Screen = 'start' | 'menu' | ScreenId;
 
-interface CustomWindow extends Window {
-  unlockAchievement?: (id: string) => void;
-}
+const TITLES: Record<Screen, string> = {
+  start:    'Portfolio',
+  menu:     'Portfolio',
+  about:    'About',
+  projects: 'Projects',
+  services: 'Services',
+  skills:   'Skills',
+  contact:  'Contact',
+};
 
 export default function Home() {
-  const [currentScreen, setCurrentScreen] = useState<Screen>('start');
+  const [screen, setScreen] = useState<Screen>('start');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-  const handleStart = () => {
-    setCurrentScreen('menu');
-  };
+  const handleBack    = () => { setSelectedProject(null); setScreen('menu'); };
+  const handleHome    = () => { setSelectedProject(null); setScreen('menu'); };
+  const handleRestart = () => { setSelectedProject(null); setScreen('start'); };
 
-  const handleMenuSelect = (menu: Screen) => {
-    setCurrentScreen(menu);
-  };
-
-  const handleBack = () => {
-    setSelectedProject(null);
-    setCurrentScreen('menu');
-  };
-
-  const handleHome = () => {
-    setSelectedProject(null);
-    setCurrentScreen('menu');
-  };
-
-  const handleProjectClick = (project: Project) => {
-    setSelectedProject(project);
-  };
-
-  const handleRestart = () => {
-    const sounds = getGameSounds();
-    sounds.playClose();
-    setTimeout(() => {
-      setSelectedProject(null);
-      setCurrentScreen('start');
-    }, 100);
-  };
-
-  // Track section visits and unlock achievements
-  useEffect(() => {
-    if (typeof window !== 'undefined' && (window as unknown as CustomWindow).unlockAchievement) {
-      // Track all viewed sections
-      const viewedSections = JSON.parse(localStorage.getItem('viewed-sections') || '[]');
-
-      if (currentScreen === 'projects' || currentScreen === 'services' || currentScreen === 'skills' || currentScreen === 'contact' || currentScreen === 'about') {
-        if (!viewedSections.includes(currentScreen)) {
-          viewedSections.push(currentScreen);
-          localStorage.setItem('viewed-sections', JSON.stringify(viewedSections));
-        }
-
-        // Unlock explorer achievement if all 5 sections visited
-        if (viewedSections.length >= 5) {
-          (window as unknown as CustomWindow).unlockAchievement?.('explorer');
-        }
-
-        // Unlock contact achievement when visiting contact
-        if (currentScreen === 'contact') {
-          (window as unknown as CustomWindow).unlockAchievement?.('contact');
-        }
-      }
-    }
-  }, [currentScreen]);
-
-  // Unlock project viewer achievement when opening a project
-  useEffect(() => {
-    if (selectedProject && typeof window !== 'undefined' && (window as unknown as CustomWindow).unlockAchievement) {
-      (window as unknown as CustomWindow).unlockAchievement?.('project-viewer');
-    }
-  }, [selectedProject]);
-
-  const getScreenTitle = () => {
-    switch (currentScreen) {
-      case 'about':
-        return 'About';
-      case 'projects':
-        return 'Projects';
-      case 'services':
-        return 'Services';
-      case 'skills':
-        return 'Skills';
-      case 'contact':
-        return 'Contact';
-      default:
-        return 'Portfolio';
+  const renderSection = () => {
+    switch (screen) {
+      case 'about':    return <AboutSection />;
+      case 'projects': return <ProjectsGrid projects={projects} onProjectClick={setSelectedProject} />;
+      case 'services': return <ServicesMenu services={services} />;
+      case 'skills':   return <SkillsBar />;
+      case 'contact':  return <ContactSection />;
+      default:         return null;
     }
   };
 
   return (
-    <PixelArtContainer showCRT={true}>
-      <ParallaxBackground />
+    <main className="relative w-full min-h-screen">
+      <Background />
 
-      {/* Sound Toggle */}
-      <SoundToggle />
-
-      {/* Achievement System */}
-      <AchievementSystem />
-
-      {/* Restart Button - show when not on start screen */}
-      {currentScreen !== 'start' && (
+      {/* Restart pill */}
+      {screen !== 'start' && (
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={handleRestart}
-          className="fixed bottom-4 left-4 z-50 w-10 h-10 rounded-full glass glass-hover flex items-center justify-center text-fg safe-area-bottom btn-press"
-          title="Return to start"
           aria-label="Restart"
+          className="btn-press lg-pill fixed bottom-4 left-4 z-50 w-10 h-10 rounded-full flex items-center justify-center text-fg safe-area-bottom"
         >
-          <RotateCcw className="w-4 h-4" strokeWidth={1.75} />
+          <RotateCcw className="w-4 h-4 relative z-10" strokeWidth={2} />
         </motion.button>
       )}
 
       <AnimatePresence mode="wait">
-        {currentScreen === 'start' && (
-          <StartScreen key="start" onStart={handleStart} />
+        {screen === 'start' && <StartScreen key="start" onStart={() => setScreen('menu')} />}
+
+        {screen === 'menu' && (
+          <motion.div
+            key="menu"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="relative z-10"
+          >
+            <MainMenu onMenuSelect={(id) => setScreen(id)} />
+          </motion.div>
         )}
 
-        {currentScreen === 'menu' && (
-          <div key="menu" className="relative z-10">
-            <MainMenu onMenuSelect={handleMenuSelect} />
-          </div>
-        )}
-
-        {currentScreen === 'about' && (
-          <div key="about" className="relative z-10">
-            <NavigationBar
-              onBack={handleBack}
-              onHome={handleHome}
-              title={getScreenTitle()}
-            />
+        {screen !== 'start' && screen !== 'menu' && (
+          <motion.div
+            key={screen}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
+            className="relative z-10"
+          >
+            <NavigationBar onBack={handleBack} onHome={handleHome} title={TITLES[screen]} />
             <div className="pt-24">
-              <AboutSection />
+              {renderSection()}
             </div>
-          </div>
-        )}
-
-        {currentScreen === 'projects' && (
-          <div key="projects" className="relative z-10">
-            <NavigationBar
-              onBack={handleBack}
-              onHome={handleHome}
-              title={getScreenTitle()}
-            />
-            <div className="pt-24">
-              <ProjectsGrid projects={projects} onProjectClick={handleProjectClick} />
-            </div>
-          </div>
-        )}
-
-        {currentScreen === 'services' && (
-          <div key="services" className="relative z-10">
-            <NavigationBar
-              onBack={handleBack}
-              onHome={handleHome}
-              title={getScreenTitle()}
-            />
-            <div className="pt-24">
-              <ServicesMenu services={services} />
-            </div>
-          </div>
-        )}
-
-        {currentScreen === 'skills' && (
-          <div key="skills" className="relative z-10">
-            <NavigationBar
-              onBack={handleBack}
-              onHome={handleHome}
-              title={getScreenTitle()}
-            />
-            <div className="pt-24">
-              <SkillsBar />
-            </div>
-          </div>
-        )}
-
-        {currentScreen === 'contact' && (
-          <div key="contact" className="relative z-10">
-            <NavigationBar
-              onBack={handleBack}
-              onHome={handleHome}
-              title={getScreenTitle()}
-            />
-            <div className="pt-24">
-              <ContactSection />
-            </div>
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Project Detail Dialog */}
-      <PixelDialogBox
+      <Dialog
         isOpen={selectedProject !== null}
         onClose={() => setSelectedProject(null)}
         title={selectedProject?.name || ''}
-        showArrow={true}
       >
         {selectedProject && <ProjectDetailView project={selectedProject} />}
-      </PixelDialogBox>
-    </PixelArtContainer>
+      </Dialog>
+    </main>
   );
 }

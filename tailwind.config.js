@@ -1,99 +1,18 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
       colors: {
-        // --- Minimal light monochrome ---
-        'bg':       '#ffffff',
-        'bg-tint':  '#f5f5f7',
-        'bg-tint2': '#eaeaec',
-        'fg':       '#1d1d1f',
-        'fg-soft':  '#424245',
-        'muted':    '#6e6e73',
-        'sub':      '#86868b',
-        'line':     '#d2d2d7',
-        'line-soft':'#e5e5ea',
-
-        // Grayscale (kept for fine control)
-        'g-0':   '#ffffff',
-        'g-50':  '#fafafa',
-        'g-100': '#f5f5f7',
-        'g-200': '#eaeaec',
-        'g-300': '#d2d2d7',
-        'g-400': '#b8b8bd',
-        'g-500': '#86868b',
-        'g-600': '#6e6e73',
-        'g-700': '#424245',
-        'g-800': '#1d1d1f',
-        'g-900': '#000000',
-        'g-950': '#000000',
-
-        // --- Legacy aliases (so old classes still render sensibly) ---
-        'ink':   '#1d1d1f',
-        'amber': '#1d1d1f',
-        'slate': '#6e6e73',
-        'bone':  '#1d1d1f',
-
-        'ink-0':    '#ffffff',
-        'ink-1':    '#f5f5f7',
-        'ink-2':    '#eaeaec',
-        'ink-line': '#d2d2d7',
-        'dim':      '#6e6e73',
-
-        'neon-yellow':  '#1d1d1f',
-        'neon-cyan':    '#6e6e73',
-        'neon-magenta': '#6e6e73',
-        'neon-pink':    '#6e6e73',
-        'neon-green':   '#6e6e73',
-        'neon-blue':    '#6e6e73',
-        'neon-purple':  '#6e6e73',
-        'neon-orange':  '#1d1d1f',
-        'neon-red':     '#6e6e73',
-
-        'cyber-black':  '#1d1d1f',
-        'cyber-void':   '#ffffff',
-        'cyber-dark':   '#f5f5f7',
-        'cyber-panel':  '#eaeaec',
-        'cyber-steel':  '#d2d2d7',
-        'cyber-chrome': '#d2d2d7',
-        'cyber-ash':    '#6e6e73',
-        'cyber-bone':   '#1d1d1f',
-
-        'pixel-dark':   '#f5f5f7',
-        'pixel-purple': '#6e6e73',
-        'pixel-red':    '#6e6e73',
-        'pixel-orange': '#1d1d1f',
-        'pixel-yellow': '#1d1d1f',
-        'pixel-lime':   '#6e6e73',
-        'pixel-green':  '#6e6e73',
-        'pixel-cyan':   '#6e6e73',
-        'pixel-blue':   '#6e6e73',
-        'pixel-sky':    '#6e6e73',
-        'pixel-indigo': '#6e6e73',
-        'pixel-pink':   '#6e6e73',
-        'pixel-peach':  '#1d1d1f',
-        'pixel-brown':  '#d2d2d7',
-        'pixel-gray':   '#d2d2d7',
-        'pixel-light':  '#6e6e73',
-        'pixel-white':  '#1d1d1f',
-        'pixel-black':  '#000000',
-        'pixel-teal':   '#6e6e73',
-
-        'game-bg':        '#ffffff',
-        'game-panel':     '#f5f5f7',
-        'game-text':      '#1d1d1f',
-        'game-shadow':    '#000000',
-        'game-highlight': '#1d1d1f',
-
-        'android-bg':             '#ffffff',
-        'android-text':           '#1d1d1f',
-        'android-text-secondary': '#6e6e73',
-        'android-accent':         '#1d1d1f',
+        ink:    '#0a0a0c',
+        fg:     '#1d1d1f',
+        muted:  '#5e5e63',
+        sub:    '#86868b',
+        line:   'rgba(0, 0, 0, 0.08)',
+        canvas: '#fafafa',
       },
       fontFamily: {
         sans: [
@@ -105,35 +24,33 @@ module.exports = {
           'system-ui',
           'sans-serif',
         ],
-        mono: ['"SF Mono"', '"JetBrains Mono"', 'monospace'],
-        // Legacy-compat
-        hud:   ['Inter', 'sans-serif'],
-        cyber: ['Inter', 'sans-serif'],
-        pixel: ['Inter', 'sans-serif'],
-        game:  ['Inter', 'sans-serif'],
-      },
-      spacing: {
-        'safe-top':    'env(safe-area-inset-top)',
-        'safe-bottom': 'env(safe-area-inset-bottom)',
       },
       borderRadius: {
-        'pixel': '0px',
+        '4xl': '2rem',
+        '5xl': '2.5rem',
       },
       boxShadow: {
-        'card':     '0 1px 3px rgba(0, 0, 0, 0.04), 0 6px 20px rgba(0, 0, 0, 0.05)',
-        'card-lg':  '0 2px 8px rgba(0, 0, 0, 0.06), 0 12px 40px rgba(0, 0, 0, 0.08)',
-        'pixel':    'none',
-        'pixel-sm': 'none',
-        'pixel-lg': 'none',
-      },
-      animation: {
-        'blink': 'blink 1.4s steps(2) infinite',
+        soft: '0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06)',
+        lift: '0 2px 6px rgba(0,0,0,0.05), 0 18px 48px rgba(0,0,0,0.10)',
       },
       keyframes: {
-        'blink': {
-          '0%, 100%': { opacity: '1' },
-          '50%':      { opacity: '0' },
+        drift1: {
+          '0%, 100%': { transform: 'translate3d(0, 0, 0) scale(1)' },
+          '50%':      { transform: 'translate3d(8vw, -6vh, 0) scale(1.08)' },
         },
+        drift2: {
+          '0%, 100%': { transform: 'translate3d(0, 0, 0) scale(1)' },
+          '50%':      { transform: 'translate3d(-6vw, 8vh, 0) scale(1.1)' },
+        },
+        drift3: {
+          '0%, 100%': { transform: 'translate3d(0, 0, 0) scale(1)' },
+          '50%':      { transform: 'translate3d(5vw, 10vh, 0) scale(0.95)' },
+        },
+      },
+      animation: {
+        drift1: 'drift1 22s ease-in-out infinite',
+        drift2: 'drift2 26s ease-in-out infinite',
+        drift3: 'drift3 30s ease-in-out infinite',
       },
     },
   },

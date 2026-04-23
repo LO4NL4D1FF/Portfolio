@@ -1,20 +1,26 @@
-import type { Metadata, Viewport } from 'next'
-import { Analytics } from '@vercel/analytics/react'
-import './globals.css'
+import type { Metadata, Viewport } from 'next';
+import { Analytics } from '@vercel/analytics/react';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Sedo-Ta — Software Engineer',
-  description: 'Portfolio of Loan Ladiff Sedo-Ta, a software engineer and product builder working on AI-powered apps (Zenix, CORELM, Audify), full-stack web and mobile, and cinematic video.',
-  keywords: ['Loan Ladiff', 'Sedo-Ta', 'Software Engineer', 'React', 'React Native', 'AI Integration', 'GPT', 'Claude', 'Next.js', 'TypeScript', 'Adobe Premiere Pro', 'Video Editing', 'Mobile Apps', 'Web Development', 'Liberia', 'Cameroon'],
+  description:
+    'Portfolio of Loan Ladiff Sedo-Ta, a software engineer and product builder shipping AI-powered apps, full-stack web and mobile, and cinematic video.',
+  keywords: [
+    'Loan Ladiff', 'Sedo-Ta', 'Software Engineer', 'Product Builder',
+    'React', 'React Native', 'Next.js', 'TypeScript',
+    'AI Integration', 'GPT', 'Claude',
+    'Liberia', 'Cameroon',
+  ],
   authors: [{ name: 'Loan Ladiff Sedo-Ta' }],
   creator: 'Loan Ladiff Sedo-Ta',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'black-translucent',
+    statusBarStyle: 'default',
     title: 'Sedo-Ta',
   },
-}
+};
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -23,13 +29,9 @@ export const viewport: Viewport = {
   userScalable: false,
   themeColor: '#ffffff',
   viewportFit: 'cover',
-}
+};
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -42,5 +44,5 @@ export default function RootLayout({
         <Analytics />
       </body>
     </html>
-  )
+  );
 }

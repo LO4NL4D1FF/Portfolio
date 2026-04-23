@@ -1,124 +1,189 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --bg:        #ffffff;
-  --bg-tint:   #f5f5f7;
-  --fg:        #1d1d1f;
-  --fg-soft:   #424245;
-  --muted:     #6e6e73;
-  --sub:       #86868b;
-  --line:      rgba(0, 0, 0, 0.08);
-  --line-soft: rgba(0, 0, 0, 0.04);
+  --ink:     #0a0a0c;
+  --fg:      #1d1d1f;
+  --muted:   #5e5e63;
+  --sub:     #86868b;
+  --line:    rgba(0, 0, 0, 0.08);
+  --line-2:  rgba(0, 0, 0, 0.04);
+  --canvas:  #ffffff;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
+* { box-sizing: border-box; padding: 0; margin: 0; }
 
-html,
-body {
+html, body {
   max-width: 100vw;
   overflow-x: hidden;
-  background-color: var(--bg);
+  background-color: var(--canvas);
   color: var(--fg);
 }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', Inter, system-ui, sans-serif;
   font-weight: 400;
-  letter-spacing: -0.01em;
-  min-height: 100vh;
+  letter-spacing: -0.011em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  /* Soft tinted washes so the glass has something to frost */
-  background-color: #ffffff;
-  background-image:
-    radial-gradient(700px circle at 0% 0%,   rgba(10, 10, 30, 0.05), transparent 55%),
-    radial-gradient(700px circle at 100% 0%, rgba(80, 80, 120, 0.04), transparent 55%),
-    radial-gradient(900px circle at 50% 100%, rgba(0, 0, 40, 0.05), transparent 60%);
-  background-attachment: fixed;
+  min-height: 100vh;
 }
 
-/* ===================== GLASSMORPHISM ===================== */
+/* ===========================================================
+   LIQUID GLASS — translucent material with edge-light specular
+   =========================================================== */
 
-.glass {
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: saturate(1.6) blur(22px);
-  -webkit-backdrop-filter: saturate(1.6) blur(22px);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+/* Default surface */
+.lg {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.30) 100%);
+  backdrop-filter: blur(28px) saturate(1.8);
+  -webkit-backdrop-filter: blur(28px) saturate(1.8);
+  border: 1px solid rgba(255,255,255,0.55);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    0 1px 3px rgba(0, 0, 0, 0.04),
-    0 12px 40px rgba(0, 0, 0, 0.05);
+    inset 0 1px 0 rgba(255,255,255,0.85),     /* top edge highlight */
+    inset 0 -1px 0 rgba(0,0,0,0.04),          /* bottom dim */
+    0 1px 2px rgba(0,0,0,0.04),
+    0 14px 40px rgba(0,0,0,0.08);
+  isolation: isolate;
 }
 
-.glass-strong {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: saturate(1.8) blur(28px);
-  -webkit-backdrop-filter: saturate(1.8) blur(28px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
+/* Specular sheen on top of glass */
+.lg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 35%),
+    radial-gradient(120% 80% at 50% -20%, rgba(255,255,255,0.6), transparent 60%);
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  opacity: 0.7;
+}
+
+/* Smaller, denser glass — for chips and buttons */
+.lg-sm {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.40) 100%);
+  backdrop-filter: blur(18px) saturate(1.7);
+  -webkit-backdrop-filter: blur(18px) saturate(1.7);
+  border: 1px solid rgba(255,255,255,0.6);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    0 2px 8px rgba(0, 0, 0, 0.05),
-    0 20px 60px rgba(0, 0, 0, 0.07);
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    0 1px 1px rgba(0,0,0,0.03),
+    0 4px 14px rgba(0,0,0,0.05);
 }
 
-.glass-subtle {
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: saturate(1.5) blur(14px);
-  -webkit-backdrop-filter: saturate(1.5) blur(14px);
-  border: 1px solid rgba(0, 0, 0, 0.04);
+/* Stronger / opaque-leaning glass — for elevated overlays */
+.lg-strong {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.55) 100%);
+  backdrop-filter: blur(40px) saturate(1.9);
+  -webkit-backdrop-filter: blur(40px) saturate(1.9);
+  border: 1px solid rgba(255,255,255,0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.95),
+    inset 0 -1px 0 rgba(0,0,0,0.05),
+    0 2px 6px rgba(0,0,0,0.05),
+    0 28px 80px rgba(0,0,0,0.14);
 }
 
-.glass-chip {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: saturate(1.6) blur(10px);
-  -webkit-backdrop-filter: saturate(1.6) blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+.lg-strong::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 40%),
+    radial-gradient(140% 90% at 50% -25%, rgba(255,255,255,0.7), transparent 60%);
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  opacity: 0.7;
 }
 
-.glass-hover {
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+/* Hover rise */
+.lg-hover {
+  transition:
+    transform 0.25s cubic-bezier(.2,.8,.2,1),
+    box-shadow 0.25s cubic-bezier(.2,.8,.2,1),
+    background 0.25s ease;
 }
 
-.glass-hover:hover {
-  background: rgba(255, 255, 255, 0.8);
-  border-color: rgba(255, 255, 255, 0.9);
+.lg-hover:hover {
+  transform: translateY(-2px);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.70) 0%, rgba(255,255,255,0.40) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    inset 0 -1px 0 rgba(0,0,0,0.05),
+    0 2px 8px rgba(0,0,0,0.06),
+    0 24px 60px rgba(0,0,0,0.12);
 }
 
-/* ===================== SCROLLBAR ===================== */
-
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+/* Pill — for buttons */
+.lg-pill {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.40) 100%);
+  backdrop-filter: blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  border: 1px solid rgba(255,255,255,0.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.95),
+    0 1px 2px rgba(0,0,0,0.04),
+    0 6px 18px rgba(0,0,0,0.08);
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+/* Solid dark pill — primary CTA */
+.btn-dark {
+  background: var(--ink);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 1px 2px rgba(0,0,0,0.18),
+    0 8px 24px rgba(0,0,0,0.20);
+  transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
 }
 
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.12);
-  border-radius: 999px;
+.btn-dark:hover {
+  background: #000;
+  transform: translateY(-1px);
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.22);
+.btn-press:active { transform: translateY(1px); }
+
+/* ===================== Typography helpers ===================== */
+.headline {
+  letter-spacing: -0.04em;
+  line-height: 1.02;
 }
 
-.custom-scrollbar::-webkit-scrollbar        { width: 6px; }
-.custom-scrollbar::-webkit-scrollbar-track  { background: transparent; }
-.custom-scrollbar::-webkit-scrollbar-thumb  { background: rgba(0, 0, 0, 0.12); border-radius: 999px; }
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--muted);
+}
 
-/* ===================== UTILITIES ===================== */
+/* ===================== Scrollbar ===================== */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.14); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.22); }
 
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 999px; }
+
+/* ===================== Misc ===================== */
 .no-select {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -128,52 +193,9 @@ body {
 .safe-area-top    { padding-top: max(env(safe-area-inset-top), 12px); }
 .safe-area-bottom { padding-bottom: max(env(safe-area-inset-bottom), 12px); }
 
-.hairline {
-  height: 1px;
-  background: rgba(0, 0, 0, 0.08);
-}
-
-/* Hero-scale tightened tracking (matches the large Apple-style headlines) */
-.headline {
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-}
-
-/* ===================== LEGACY ALIASES (safe no-ops) ===================== */
-
-.btn-press:active { transform: translate(0, 1px); }
-
-.scanlines, .crt-scanlines, .crt-effect, .cyber-noise,
-.cyber-panel, .cyber-panel-yellow, .cyber-panel-cyan, .cyber-panel-magenta,
-.cyber-clip, .cyber-clip-sm, .cyber-clip-lg,
-.cyber-corners, .cyber-corners-cyan,
-.glitch, .neon-yellow, .neon-cyan, .neon-magenta, .neon-pink, .neon-green, .neon-white,
-.holo-text, .chromatic,
-.pixel-border, .pixel-corners, .pixel-grid, .cyber-grid, .cyber-grid-yellow,
-.text-outline, .rule-h, .rule-v, .scan-sweep {
-  /* intentional no-ops */
-}
-
-.crt-scanlines::before, .crt-scanlines::after,
-.cyber-corners::before, .cyber-corners::after,
-.cyber-corners-cyan::before, .cyber-corners-cyan::after,
-.glitch::before, .glitch::after,
-.scan-sweep::before, .cyber-noise::after {
-  content: none;
-}
-
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.border-3 { border-width: 1px; }

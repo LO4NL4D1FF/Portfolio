@@ -23,7 +23,7 @@ export default function SkillsBar() {
   useEffect(() => setMounted(true), []);
 
   const avg = Math.round(skills.reduce((a, s) => a + s.level, 0) / skills.length);
-  const topLevel = Math.max(...skills.map(s => s.level));
+  const top = Math.max(...skills.map(s => s.level));
 
   return (
     <div className="max-w-4xl mx-auto px-5 md:px-8 py-6 pb-20 space-y-4">
@@ -31,36 +31,34 @@ export default function SkillsBar() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="glass rounded-3xl p-6 md:p-8"
+        className="lg rounded-4xl p-6 md:p-8"
       >
-        <p className="text-xs font-medium tracking-[0.2em] uppercase text-muted mb-2">Capacity</p>
-        <h1 className="headline font-semibold text-3xl md:text-4xl text-fg">
-          Skills.
-        </h1>
-        <p className="mt-2 text-sm md:text-base text-muted">
-          Technical proficiency by domain.
-        </p>
+        <div className="relative z-10">
+          <p className="eyebrow mb-2">Capacity</p>
+          <h1 className="headline font-bold text-3xl md:text-4xl text-fg">Skills.</h1>
+          <p className="mt-2 text-sm md:text-base text-muted">
+            Technical proficiency by domain.
+          </p>
+        </div>
       </motion.header>
 
-      {/* Summary strip */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="glass rounded-2xl p-4 md:p-5">
-          <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-muted">Average</p>
-          <p className="text-2xl md:text-3xl font-semibold text-fg mt-1">{avg}<span className="text-base text-muted">%</span></p>
-        </div>
-        <div className="glass rounded-2xl p-4 md:p-5">
-          <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-muted">Top</p>
-          <p className="text-2xl md:text-3xl font-semibold text-fg mt-1">{topLevel}<span className="text-base text-muted">%</span></p>
-        </div>
-        <div className="glass rounded-2xl p-4 md:p-5">
-          <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-muted">Tracked</p>
-          <p className="text-2xl md:text-3xl font-semibold text-fg mt-1">{skills.length}</p>
-        </div>
+        {[
+          { label: 'Average', value: `${avg}%` },
+          { label: 'Top',     value: `${top}%` },
+          { label: 'Tracked', value: skills.length },
+        ].map((m) => (
+          <div key={m.label} className="lg rounded-3xl p-4 md:p-5">
+            <div className="relative z-10">
+              <p className="eyebrow">{m.label}</p>
+              <p className="text-2xl md:text-3xl font-bold text-fg mt-1">{m.value}</p>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Skills — 2 columns, compact */}
-      <div className="glass rounded-3xl p-5 md:p-7">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+      <section className="lg rounded-4xl p-5 md:p-7">
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
           {skills.map((skill, i) => (
             <motion.div
               key={skill.name}
@@ -71,7 +69,7 @@ export default function SkillsBar() {
             >
               <div className="flex items-baseline justify-between gap-3">
                 <span className="text-sm text-fg truncate">{skill.name}</span>
-                <span className="text-xs text-muted shrink-0 tabular-nums">{skill.level}%</span>
+                <span className="text-xs text-muted shrink-0 tabular-nums font-medium">{skill.level}%</span>
               </div>
               <div className="relative h-1 rounded-full bg-black/5 overflow-hidden">
                 <motion.div
@@ -84,7 +82,7 @@ export default function SkillsBar() {
             </motion.div>
           ))}
         </div>
-      </div>
+      </section>
     </div>
   );
 }

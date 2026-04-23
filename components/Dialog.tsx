@@ -3,33 +3,20 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { ReactNode, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { getGameSounds } from '@/lib/sounds';
 
-interface PixelDialogBoxProps {
+interface Props {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   children: ReactNode;
-  showArrow?: boolean;
 }
 
-export default function PixelDialogBox({
-  isOpen, onClose, title, children,
-}: PixelDialogBoxProps) {
+export default function Dialog({ isOpen, onClose, title, children }: Props) {
   useEffect(() => {
-    if (isOpen) {
-      getGameSounds().playOpen();
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    if (isOpen) document.body.style.overflow = 'hidden';
+    else        document.body.style.overflow = '';
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
-
-  const handleClose = () => {
-    getGameSounds().playClose();
-    setTimeout(() => onClose(), 80);
-  };
 
   return (
     <AnimatePresence>
@@ -39,7 +26,7 @@ export default function PixelDialogBox({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={handleClose}
+            onClick={onClose}
             className="fixed inset-0 bg-black/20 backdrop-blur-md z-40"
           />
 
@@ -52,27 +39,23 @@ export default function PixelDialogBox({
             style={{ pointerEvents: 'none' }}
           >
             <div
-              className="w-full max-w-2xl my-auto glass-strong rounded-3xl overflow-hidden"
+              className="lg-strong rounded-4xl w-full max-w-2xl my-auto overflow-hidden"
               style={{ pointerEvents: 'auto' }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between px-6 py-4 border-b border-black/5">
-                <h2 className="font-semibold text-base md:text-lg text-fg tracking-tight truncate">
-                  {title}
-                </h2>
+              <div className="flex items-center justify-between px-6 py-4 border-b border-line relative z-10">
+                <h2 className="font-bold text-base md:text-lg text-fg truncate">{title}</h2>
                 <button
-                  onClick={handleClose}
-                  className="w-9 h-9 rounded-full glass-subtle flex items-center justify-center text-muted hover:text-fg transition-colors btn-press"
+                  onClick={onClose}
                   aria-label="Close"
+                  className="btn-press lg-sm w-9 h-9 rounded-full flex items-center justify-center text-muted hover:text-fg transition-colors"
                 >
-                  <X className="w-4 h-4" strokeWidth={2} />
+                  <X className="w-4 h-4 relative z-10" strokeWidth={2.25} />
                 </button>
               </div>
 
-              <div className="px-6 py-5 max-h-[70vh] overflow-y-auto custom-scrollbar">
-                <div className="text-sm text-fg-soft leading-relaxed">
-                  {children}
-                </div>
+              <div className="px-6 py-5 max-h-[70vh] overflow-y-auto custom-scrollbar relative z-10">
+                <div className="text-sm text-fg leading-relaxed">{children}</div>
               </div>
             </div>
           </motion.div>
