@@ -7,124 +7,89 @@ interface ProjectDetailViewProps {
   project: Project;
 }
 
+function Row({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <section className="py-4 border-b border-ink-line last:border-b-0">
+      <p className="font-mono text-[10px] tracking-[0.3em] text-slate mb-2">
+        {label}
+      </p>
+      {children}
+    </section>
+  );
+}
+
 export default function ProjectDetailView({ project }: ProjectDetailViewProps) {
   const IconComponent = project.icon as LucideIcon;
   const isLucideIcon = typeof project.icon !== 'string';
   const isImageIcon = typeof project.icon === 'string' && project.icon.startsWith('/');
 
   return (
-    <div className="space-y-5">
+    <div>
       {/* Header */}
-      <div className="flex items-center gap-4 pb-4 border-b border-neon-yellow/30">
+      <div className="flex items-center gap-4 pb-5 mb-2 border-b border-ink-line">
         {isLucideIcon && (
-          <div
-            className="w-16 h-16 border-2 border-neon-yellow bg-cyber-void flex items-center justify-center flex-shrink-0"
-            style={{
-              clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))',
-              boxShadow: '0 0 14px rgba(252,238,10,0.6)',
-            }}
-          >
-            <IconComponent className="w-9 h-9 text-neon-yellow" strokeWidth={1.5} />
+          <div className="w-12 h-12 border border-ink-line flex items-center justify-center shrink-0">
+            <IconComponent className="w-5 h-5 text-amber" strokeWidth={1.5} />
           </div>
         )}
         {isImageIcon && (
-          <div
-            className="w-16 h-16 border-2 border-neon-cyan bg-cyber-void flex items-center justify-center flex-shrink-0 p-2"
-            style={{
-              clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))',
-              boxShadow: '0 0 14px rgba(0,240,255,0.6)',
-            }}
-          >
-            <img src={project.icon as string} alt={`${project.name} logo`} className="w-full h-full object-contain" />
+          <div className="w-12 h-12 border border-ink-line flex items-center justify-center p-1.5 shrink-0">
+            <img src={project.icon as string} alt={`${project.name} logo`} className="w-full h-full object-contain opacity-90" />
           </div>
         )}
-        <div>
-          <h3 className="font-cyber font-black text-xl md:text-2xl tracking-widest text-neon-yellow" style={{ textShadow: '0 0 8px #fcee0a' }}>
+        <div className="min-w-0">
+          <h3 className="font-sans font-medium text-xl md:text-2xl text-bone tracking-wide">
             {project.name}
           </h3>
-          <p className="font-mono text-xs tracking-widest text-neon-cyan mt-1">
-            [ {project.category.toUpperCase()} · CLASSIFIED ]
+          <p className="font-mono text-[11px] tracking-[0.25em] text-dim uppercase mt-0.5">
+            {project.category}
           </p>
         </div>
       </div>
 
-      {/* Mission */}
-      <div className="cyber-panel cyber-panel-cyan cyber-clip-sm p-4 relative">
-        <h4 className="font-mono text-[10px] md:text-xs tracking-widest text-neon-cyan mb-2">/// MISSION</h4>
-        <p className="font-hud text-sm md:text-base text-cyber-bone">
+      <Row label="MISSION">
+        <p className="font-sans text-sm md:text-base text-bone/90 leading-relaxed">
           {project.mission}
         </p>
-      </div>
+      </Row>
 
-      {/* Problem */}
-      <div className="cyber-panel cyber-panel-magenta cyber-clip-sm p-4 relative">
-        <h4 className="font-mono text-[10px] md:text-xs tracking-widest text-neon-magenta mb-2">/// PROBLEM</h4>
-        <p className="font-hud text-sm md:text-base text-cyber-bone">
+      <Row label="PROBLEM">
+        <p className="font-sans text-sm md:text-base text-bone/90 leading-relaxed">
           {project.problem}
         </p>
-      </div>
+      </Row>
 
-      {/* Overview */}
-      <div className="cyber-panel cyber-clip-sm p-4 border border-neon-green/60" style={{ boxShadow: 'inset 0 0 12px rgba(57,255,20,0.08)' }}>
-        <h4 className="font-mono text-[10px] md:text-xs tracking-widest text-neon-green mb-2">/// OVERVIEW</h4>
-        <p className="font-hud text-sm md:text-base text-cyber-bone">
+      <Row label="OVERVIEW">
+        <p className="font-sans text-sm md:text-base text-bone/90 leading-relaxed">
           {project.overview}
         </p>
-      </div>
+      </Row>
 
-      {/* Tech Stack */}
-      <div>
-        <h4 className="font-mono text-[10px] md:text-xs tracking-widest text-neon-yellow mb-3">/// TECH STACK</h4>
-        <div className="flex flex-wrap gap-2">
+      <Row label="STACK">
+        <ul className="flex flex-wrap gap-x-4 gap-y-1.5">
           {project.stack.map((tech, i) => (
-            <span
-              key={i}
-              className="font-mono text-xs md:text-sm tracking-widest px-3 py-1 bg-cyber-void border border-neon-cyan text-neon-cyan"
-              style={{
-                clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))',
-                boxShadow: 'inset 0 0 6px rgba(0,240,255,0.15)',
-              }}
-            >
+            <li key={i} className="font-mono text-xs tracking-[0.15em] text-bone/85">
               {tech}
-            </span>
+            </li>
           ))}
-        </div>
-      </div>
+        </ul>
+      </Row>
 
-      {/* Insights */}
-      <div>
-        <h4 className="font-mono text-[10px] md:text-xs tracking-widest text-neon-yellow mb-3">/// KEY INSIGHTS</h4>
-        <div className="space-y-2">
+      <Row label="INSIGHTS">
+        <ul className="space-y-2">
           {project.insights.map((insight, i) => (
-            <div
-              key={i}
-              className="flex items-start gap-3 bg-cyber-void/60 border-l-2 border-neon-yellow px-3 py-2"
-            >
-              <span className="font-mono text-neon-yellow flex-shrink-0">▶</span>
-              <p className="font-hud text-sm md:text-base text-cyber-bone">
-                {insight}
-              </p>
-            </div>
+            <li key={i} className="flex gap-3 font-sans text-sm md:text-base text-bone/90 leading-relaxed">
+              <span className="text-slate shrink-0">—</span>
+              <span>{insight}</span>
+            </li>
           ))}
-        </div>
-      </div>
+        </ul>
+      </Row>
 
-      {/* GitHub */}
       {project.github && (
-        <div
-          className={`cyber-clip-sm p-4 border-2 ${project.github.available ? 'border-neon-green' : 'border-neon-magenta'}`}
-          style={{
-            background: project.github.available ? 'rgba(57,255,20,0.05)' : 'rgba(255,0,60,0.05)',
-            boxShadow: `inset 0 0 12px ${project.github.available ? 'rgba(57,255,20,0.08)' : 'rgba(255,0,60,0.08)'}`,
-          }}
-        >
-          <h4 className={`font-mono text-xs tracking-widest mb-2 ${project.github.available ? 'text-neon-green' : 'text-neon-magenta'}`}>
-            {project.github.available ? '✓ REPO ACCESSIBLE' : '✗ REPO LOCKED'}
-          </h4>
-          <p className="font-hud text-sm text-cyber-bone">
-            {project.github.accessNote}
-          </p>
-        </div>
+        <Row label={project.github.available ? 'REPO · OPEN' : 'REPO · PRIVATE'}>
+          <p className="font-sans text-sm text-bone/80">{project.github.accessNote}</p>
+        </Row>
       )}
     </div>
   );

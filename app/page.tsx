@@ -96,15 +96,15 @@ export default function Home() {
   const getScreenTitle = () => {
     switch (currentScreen) {
       case 'about':
-        return 'OPERATIVE FILE';
+        return 'ABOUT';
       case 'projects':
-        return 'GIGS.LOG';
+        return 'PROJECTS';
       case 'services':
-        return 'FIXER.NET';
+        return 'SERVICES';
       case 'skills':
-        return 'CYBERWARE';
+        return 'SKILLS';
       case 'contact':
-        return 'UPLINK';
+        return 'CONTACT';
       default:
         return 'PORTFOLIO';
     }
@@ -123,20 +123,15 @@ export default function Home() {
       {/* Restart Button - show when not on start screen */}
       {currentScreen !== 'start' && (
         <motion.button
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           onClick={handleRestart}
-          className="fixed bottom-4 left-4 z-50 w-12 h-12 bg-cyber-dark border-2 border-neon-magenta text-neon-magenta hover:bg-neon-magenta hover:text-cyber-void transition-all btn-press flex items-center justify-center safe-area-bottom"
-          style={{
-            clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))',
-            boxShadow: '0 0 12px rgba(255,0,60,0.5)',
-          }}
-          title="Disconnect — Return to boot screen"
+          className="fixed bottom-4 left-4 z-50 w-9 h-9 bg-ink-1 border border-ink-line text-bone/70 hover:text-amber hover:border-amber transition-colors flex items-center justify-center safe-area-bottom btn-press"
+          title="Return to start"
+          aria-label="Restart"
         >
-          <RotateCcw className="w-5 h-5" strokeWidth={2} />
+          <RotateCcw className="w-4 h-4" strokeWidth={1.5} />
         </motion.button>
       )}
 

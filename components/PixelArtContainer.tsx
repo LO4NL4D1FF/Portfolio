@@ -9,13 +9,10 @@ interface PixelArtContainerProps {
 
 export default function PixelArtContainer({ children, showCRT = true }: PixelArtContainerProps) {
   return (
-    <div className="relative w-full min-h-screen bg-cyber-void overflow-x-hidden cyber-noise">
-      {/* Gentle scanlines + vignette. No flicker. No sweep. */}
+    <div className="relative w-full min-h-screen bg-ink-0 overflow-x-hidden">
       {showCRT && (
-        <div className="fixed inset-0 crt-scanlines pointer-events-none z-40" />
+        <div className="fixed inset-0 scanlines pointer-events-none z-40" />
       )}
-
-      {/* Content */}
       {children}
     </div>
   );

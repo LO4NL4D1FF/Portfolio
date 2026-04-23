@@ -1,11 +1,11 @@
 {
-  "name": "Sedo-Ta // Night City Netrunner Portfolio",
-  "short_name": "Sedo-Ta 2077",
-  "description": "Cyberpunk 2077-inspired portfolio of Loan Ladiff Sedo-Ta — software engineer, netrunner, builder of AI-powered constructs.",
+  "name": "Sedo-Ta · Portfolio",
+  "short_name": "Sedo-Ta",
+  "description": "Minimal cyberpunk portfolio of Loan Ladiff Sedo-Ta — software engineer building AI-powered products and cinematic video work.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#05050a",
-  "theme_color": "#fcee0a",
+  "background_color": "#0b0c0f",
+  "theme_color": "#d9a65f",
   "orientation": "portrait",
   "icons": [
     {
