@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Gamepad2, Briefcase, TrendingUp, Mail, User, Sparkles, Zap, Star } from 'lucide-react';
+import { Cpu, Briefcase, Activity, Radio, Fingerprint } from 'lucide-react';
 import { getGameSounds } from '@/lib/sounds';
 import { useState } from 'react';
 
@@ -9,321 +9,239 @@ interface MainMenuProps {
   onMenuSelect: (menu: 'about' | 'projects' | 'services' | 'skills' | 'contact') => void;
 }
 
-const getMenuGradient = (index: number) => {
-  const gradients = [
-    'from-purple-500 via-pink-500 to-rose-500',
-    'from-cyan-500 via-blue-500 to-indigo-500',
-    'from-emerald-500 via-green-500 to-teal-500',
-    'from-orange-500 via-amber-500 to-yellow-500',
-    'from-fuchsia-500 via-purple-500 to-violet-500',
-  ];
-  return gradients[index % gradients.length];
+type MenuItem = {
+  id: 'about' | 'projects' | 'services' | 'skills' | 'contact';
+  label: string;
+  icon: typeof Cpu;
+  subtitle: string;
+  code: string;
+  glow: string;
+  border: string;
+  text: string;
 };
 
+const menuItems: MenuItem[] = [
+  {
+    id: 'about',
+    label: 'OPERATIVE',
+    icon: Fingerprint,
+    subtitle: 'Dossier // Bio-Scan',
+    code: '0x01 · V_FILE',
+    glow: 'shadow-neon-yellow',
+    border: 'border-neon-yellow',
+    text: 'text-neon-yellow',
+  },
+  {
+    id: 'projects',
+    label: 'GIGS.LOG',
+    icon: Briefcase,
+    subtitle: 'Completed Jobs',
+    code: '0x02 · CONTRACTS',
+    glow: 'shadow-neon-cyan',
+    border: 'border-neon-cyan',
+    text: 'text-neon-cyan',
+  },
+  {
+    id: 'services',
+    label: 'FIXER.NET',
+    icon: Radio,
+    subtitle: 'Available Services',
+    code: '0x03 · MARKET',
+    glow: 'shadow-neon-pink',
+    border: 'border-neon-pink',
+    text: 'text-neon-pink',
+  },
+  {
+    id: 'skills',
+    label: 'CYBERWARE',
+    icon: Activity,
+    subtitle: 'Installed Skills',
+    code: '0x04 · RIPPERDOC',
+    glow: 'shadow-neon-magenta',
+    border: 'border-neon-magenta',
+    text: 'text-neon-magenta',
+  },
+  {
+    id: 'contact',
+    label: 'UPLINK',
+    icon: Cpu,
+    subtitle: 'Open Comms Channel',
+    code: '0x05 · NETWATCH',
+    glow: 'shadow-neon-green',
+    border: 'border-neon-green',
+    text: 'text-neon-green',
+  },
+];
 
 export default function MainMenu({ onMenuSelect }: MainMenuProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  const menuItems = [
-    { id: 'about' as const, label: 'ABOUT ME', icon: User, subtitle: 'My Story' },
-    { id: 'projects' as const, label: 'PROJECTS', icon: Gamepad2, subtitle: 'View Portfolio' },
-    { id: 'services' as const, label: 'SERVICES', icon: Briefcase, subtitle: 'What I Offer' },
-    { id: 'skills' as const, label: 'SKILLS', icon: TrendingUp, subtitle: 'Tech Stack' },
-    { id: 'contact' as const, label: 'CONTACT', icon: Mail, subtitle: 'Get In Touch' },
-  ];
-
-  const handleMenuSelect = (menu: 'about' | 'projects' | 'services' | 'skills' | 'contact') => {
+  const handleMenuSelect = (menu: MenuItem['id']) => {
     const sounds = getGameSounds();
     sounds.playSelect();
     setTimeout(() => onMenuSelect(menu), 100);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Floating decorative elements */}
-      <motion.div
-        className="absolute top-20 right-20 text-pixel-yellow opacity-20"
-        animate={{
-          y: [0, -30, 0],
-          rotate: [0, 15, 0],
-          scale: [1, 1.2, 1]
-        }}
-        transition={{ duration: 4, repeat: Infinity }}
-      >
-        <Star className="w-16 h-16" />
-      </motion.div>
-
-      <motion.div
-        className="absolute bottom-20 left-20 text-pixel-cyan opacity-20"
-        animate={{
-          y: [0, 30, 0],
-          rotate: [0, -15, 0],
-          scale: [1, 1.2, 1]
-        }}
-        transition={{ duration: 5, repeat: Infinity, delay: 1 }}
-      >
-        <Sparkles className="w-16 h-16" />
-      </motion.div>
-
-      <motion.div
-        className="absolute top-1/2 left-10 text-pixel-pink opacity-20"
-        animate={{
-          x: [0, 20, 0],
-          rotate: [0, 10, 0]
-        }}
-        transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
-      >
-        <Zap className="w-12 h-12" />
-      </motion.div>
-
-      <div className="w-full max-w-5xl relative z-10">
-        {/* Enhanced Logo/Title */}
+    <div className="min-h-screen flex items-center justify-center p-4 md:p-8 relative overflow-hidden">
+      {/* HUD header */}
+      <div className="w-full max-w-6xl relative z-10">
         <motion.div
-          initial={{ y: -50, opacity: 0, scale: 0.8 }}
-          animate={{ y: 0, opacity: 1, scale: 1 }}
-          transition={{ type: 'spring', duration: 1 }}
-          className="mb-16 text-center"
+          initial={{ y: -30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          className="mb-8 md:mb-12 text-center"
         >
-          <div className="relative inline-block">
-            {/* Animated glow effect */}
-            <motion.div
-              className="absolute -inset-2 bg-gradient-to-r from-pixel-yellow via-pixel-orange to-pixel-red blur-lg opacity-75"
-              animate={{
-                opacity: [0.5, 0.8, 0.5],
-                scale: [1, 1.1, 1]
-              }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-
-            <div className="relative bg-gradient-to-r from-pixel-cyan via-pixel-indigo to-pixel-purple border-4 border-pixel-white p-8 shadow-pixel-lg">
-              <div className="absolute inset-2 border-2 border-pixel-yellow pointer-events-none"></div>
-
-              <motion.h1
-                className="relative font-game text-4xl md:text-6xl text-pixel-yellow text-outline leading-relaxed"
-                animate={{
-                  textShadow: [
-                    '3px 3px 0px rgba(0,0,0,0.8)',
-                    '4px 4px 0px rgba(0,0,0,0.8)',
-                    '3px 3px 0px rgba(0,0,0,0.8)',
-                  ]
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                PLAYER SELECT
-              </motion.h1>
-            </div>
+          <div className="inline-block cyber-panel cyber-panel-yellow cyber-corners px-6 md:px-10 py-4 md:py-5 mb-5">
+            <p className="font-mono tracking-[0.4em] text-xs md:text-sm text-neon-cyan mb-1" style={{ textShadow: '0 0 6px #00f0ff' }}>
+              // N I G H T   C I T Y   T E R M I N A L
+            </p>
+            <h1
+              className="glitch font-cyber font-black text-3xl md:text-5xl tracking-widest"
+              data-text="MAIN DECK"
+            >
+              MAIN DECK
+            </h1>
           </div>
 
-          <motion.p
-            className="font-pixel text-xl md:text-2xl lg:text-3xl text-pixel-white mt-6"
-            animate={{
-              opacity: [0.8, 1, 0.8]
-            }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            Choose your adventure!
-          </motion.p>
-
-          {/* Animated arrows */}
-          <motion.div
-            className="flex justify-center gap-4 mt-4"
-            animate={{
-              y: [0, -5, 0]
-            }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
-            {[0, 1, 2].map((i) => (
-              <motion.div
-                key={i}
-                className="text-pixel-yellow text-2xl"
-                animate={{
-                  opacity: [0.3, 1, 0.3]
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  delay: i * 0.2
-                }}
-              >
-                ▼
-              </motion.div>
-            ))}
-          </motion.div>
+          <div className="flex items-center justify-center gap-3 font-hud tracking-widest text-xs text-cyber-ash">
+            <span className="inline-block w-2 h-2 bg-neon-green animate-pulse" style={{ boxShadow: '0 0 6px #39ff14' }} />
+            <span>CONNECTION STABLE — SELECT A PROGRAM TO EXECUTE</span>
+            <span className="inline-block w-2 h-2 bg-neon-green animate-pulse" style={{ boxShadow: '0 0 6px #39ff14' }} />
+          </div>
         </motion.div>
 
-        {/* Enhanced Menu Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Menu Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
           {menuItems.map((item, index) => {
-            const gradient = getMenuGradient(index);
             const isHovered = hoveredIndex === index;
+            const IconComponent = item.icon;
 
             return (
-              <motion.div
+              <motion.button
                 key={item.id}
-                initial={{ scale: 0, rotateY: -90, opacity: 0 }}
-                animate={{ scale: 1, rotateY: 0, opacity: 1 }}
-                transition={{
-                  delay: index * 0.1,
-                  type: 'spring',
-                  stiffness: 200,
-                  damping: 15,
-                }}
-                className="relative"
+                type="button"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.08 }}
+                onClick={() => handleMenuSelect(item.id)}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                whileHover={{ y: -4 }}
+                whileTap={{ scale: 0.98 }}
+                className="relative text-left group no-select"
               >
-                {/* Enhanced glow effect */}
-                {isHovered && (
-                  <motion.div
-                    className={`absolute -inset-1 bg-gradient-to-r ${gradient} blur-lg opacity-75 rounded-lg`}
-                    animate={{
-                      opacity: [0.5, 0.9, 0.5],
-                      scale: [1, 1.05, 1]
-                    }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  />
-                )}
-
-                {/* Menu Button */}
+                {/* Outer glow */}
                 <div
-                  onClick={() => handleMenuSelect(item.id)}
-                  onMouseEnter={() => setHoveredIndex(index)}
-                  onMouseLeave={() => setHoveredIndex(null)}
-                  className="relative cursor-pointer group"
+                  className={`absolute -inset-0.5 opacity-40 group-hover:opacity-90 transition-opacity duration-300 blur-md ${
+                    isHovered ? 'animate-pulse' : ''
+                  }`}
+                  style={{
+                    background: `linear-gradient(135deg, ${
+                      item.text.includes('yellow') ? '#fcee0a' :
+                      item.text.includes('cyan') ? '#00f0ff' :
+                      item.text.includes('pink') ? '#ff00aa' :
+                      item.text.includes('magenta') ? '#ff003c' : '#39ff14'
+                    }, transparent)`,
+                  }}
+                />
+
+                {/* Card body */}
+                <div
+                  className={`relative cyber-clip bg-cyber-dark border-2 ${item.border} p-5 md:p-6 min-h-[260px] flex flex-col transition-all duration-300`}
+                  style={{
+                    backgroundImage: 'linear-gradient(135deg, rgba(18,18,31,0.95), rgba(5,5,10,0.9))',
+                  }}
                 >
-                  <div className={`
-                    bg-pixel-black border-4
-                    ${isHovered ? 'border-pixel-yellow' : 'border-pixel-white'}
-                    shadow-pixel-lg
-                    transition-all duration-300
-                  `}>
-                    {/* Level badge */}
-                    <div className="absolute -top-3 -left-3 bg-gradient-to-br from-pixel-yellow to-pixel-orange border-3 border-pixel-white px-3 py-1 shadow-pixel z-10">
-                      <span className="font-game text-xs text-pixel-black">LV.{index + 1}</span>
-                    </div>
+                  {/* Scanline overlay */}
+                  <div
+                    className="absolute inset-0 pointer-events-none opacity-20"
+                    style={{
+                      background: 'repeating-linear-gradient(0deg, transparent 0 2px, rgba(0,240,255,0.2) 2px 3px)',
+                    }}
+                  />
 
-                    {/* Star indicator on hover */}
-                    {isHovered && (
-                      <motion.div
-                        initial={{ scale: 0, rotate: -180 }}
-                        animate={{ scale: 1, rotate: 0 }}
-                        className="absolute -top-3 -right-3 z-10"
-                      >
-                        <motion.div
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                          className="w-10 h-10 bg-gradient-to-br from-pixel-pink to-pixel-red border-2 border-pixel-white rounded-full flex items-center justify-center shadow-pixel"
-                        >
-                          <Star className="w-5 h-5 text-pixel-white fill-pixel-white" />
-                        </motion.div>
-                      </motion.div>
-                    )}
+                  {/* Corner accents */}
+                  <div className={`absolute top-2 left-2 w-3 h-3 border-l-2 border-t-2 ${item.border}`} />
+                  <div className={`absolute top-2 right-2 w-3 h-3 border-r-2 border-t-2 ${item.border}`} />
+                  <div className={`absolute bottom-2 left-2 w-3 h-3 border-l-2 border-b-2 ${item.border}`} />
+                  <div className={`absolute bottom-2 right-2 w-3 h-3 border-r-2 border-b-2 ${item.border}`} />
 
-                    {/* Inner border */}
-                    <div className={`absolute inset-2 border-2 ${isHovered ? 'border-pixel-yellow' : 'border-pixel-gray'} transition-colors pointer-events-none`}></div>
+                  {/* Top header bar */}
+                  <div className="relative flex items-center justify-between mb-5 pb-2 border-b border-neon-yellow/30">
+                    <span className="font-mono text-[10px] md:text-xs tracking-widest text-cyber-ash">
+                      {item.code}
+                    </span>
+                    <span className={`font-mono text-[10px] md:text-xs tracking-widest ${item.text}`}>
+                      {String(index + 1).padStart(2, '0')}/05
+                    </span>
+                  </div>
 
+                  {/* Icon */}
+                  <div className="relative flex items-start gap-4 mb-4">
                     <motion.div
-                      className={`relative p-6 flex flex-col items-center justify-center bg-gradient-to-br ${gradient} min-h-[280px]`}
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
+                      animate={isHovered ? { rotate: [0, -5, 5, 0], scale: [1, 1.1, 1] } : {}}
+                      transition={{ duration: 0.6, repeat: isHovered ? Infinity : 0 }}
+                      className={`relative w-16 h-16 md:w-20 md:h-20 flex items-center justify-center border ${item.border} bg-cyber-void`}
+                      style={{
+                        clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))',
+                        boxShadow: isHovered
+                          ? `0 0 20px currentColor, inset 0 0 20px rgba(255,255,255,0.05)`
+                          : 'inset 0 0 10px rgba(0,0,0,0.5)',
+                      }}
                     >
-                      {/* Icon with enhanced animation */}
-                      <motion.div
-                        animate={{
-                          y: isHovered ? [0, -15, 0] : [0, -8, 0],
-                          rotate: isHovered ? [0, 5, -5, 0] : [0, 0, 0, 0]
-                        }}
-                        transition={{
-                          duration: isHovered ? 1 : 2,
-                          repeat: Infinity,
-                          ease: 'easeInOut',
-                        }}
-                        className="mb-6"
+                      <IconComponent className={`w-9 h-9 md:w-11 md:h-11 ${item.text}`} strokeWidth={1.5} />
+                    </motion.div>
+
+                    {/* Label */}
+                    <div className="flex-1 min-w-0">
+                      <h3
+                        className={`font-cyber font-black text-xl md:text-2xl tracking-widest ${item.text}`}
+                        style={{ textShadow: '0 0 6px currentColor' }}
                       >
-                        <div className={`
-                          relative w-24 h-24
-                          ${isHovered ? 'bg-pixel-white' : 'bg-pixel-yellow'}
-                          border-4 border-pixel-black shadow-pixel
-                          flex items-center justify-center
-                          transition-all duration-300
-                          ${isHovered ? 'rotate-12 scale-110' : ''}
-                        `}>
-                          {/* Pixel corners */}
-                          <div className="absolute -top-1 -left-1 w-2 h-2 bg-pixel-black"></div>
-                          <div className="absolute -top-1 -right-1 w-2 h-2 bg-pixel-black"></div>
-                          <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-pixel-black"></div>
-                          <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-pixel-black"></div>
-
-                          {(() => {
-                            const IconComponent = item.icon;
-                            return <IconComponent className="w-14 h-14 text-pixel-black" strokeWidth={2.5} />;
-                          })()}
-                        </div>
-                      </motion.div>
-
-                      {/* Label */}
-                      <h3 className="font-game text-lg md:text-xl lg:text-2xl text-pixel-white text-outline text-center mb-2 leading-relaxed">
                         {item.label}
                       </h3>
-
-                      {/* Subtitle */}
-                      <p className="font-pixel text-sm md:text-base text-pixel-white/80 text-center mb-4">
+                      <p className="font-hud tracking-wider text-sm md:text-base text-cyber-ash mt-0.5">
                         {item.subtitle}
                       </p>
+                    </div>
+                  </div>
 
-                      {/* Select indicator */}
-                      <motion.div
-                        className="font-pixel text-xs md:text-sm text-pixel-yellow text-center"
-                        animate={{
-                          opacity: isHovered ? [0.7, 1, 0.7] : 0.6
-                        }}
-                        transition={{ duration: 1.5, repeat: Infinity }}
-                      >
-                        {isHovered ? '★ Click to enter ★' : 'Hover to preview ▶'}
-                      </motion.div>
-                    </motion.div>
+                  {/* Bottom execute line */}
+                  <div className="relative mt-auto pt-3 border-t border-cyber-steel flex items-center justify-between">
+                    <motion.span
+                      className={`font-mono text-xs md:text-sm tracking-widest ${item.text}`}
+                      animate={isHovered ? { opacity: [0.5, 1, 0.5] } : { opacity: 0.6 }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                    >
+                      {isHovered ? '>> EXECUTING...' : '>> EXECUTE'}
+                    </motion.span>
+                    <span className={`font-mono text-xs ${item.text}`}>▶▶</span>
                   </div>
                 </div>
-              </motion.div>
+              </motion.button>
             );
           })}
         </div>
 
-        {/* Enhanced Bottom info */}
+        {/* Bottom HUD */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2 }}
-          className="mt-16 text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="mt-10 md:mt-12 flex flex-wrap items-center justify-between gap-3 font-mono text-[10px] md:text-xs tracking-widest text-cyber-ash/80"
         >
-          <div className="inline-block bg-gradient-to-r from-pixel-purple to-pixel-indigo border-4 border-pixel-white px-6 md:px-8 py-3 md:py-4 shadow-pixel-lg">
-            <div className="absolute inset-2 border-2 border-pixel-cyan pointer-events-none"></div>
-            <motion.p
-              className="relative font-pixel text-sm md:text-base lg:text-lg text-pixel-white"
-              animate={{
-                opacity: [0.8, 1, 0.8]
-              }}
-              transition={{ duration: 3, repeat: Infinity }}
-            >
-              Progress saved • Pixel-perfect UI • Blazing fast
-            </motion.p>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-neon-yellow animate-pulse" style={{ boxShadow: '0 0 6px #fcee0a' }} />
+            <span>SYSTEM: ONLINE</span>
           </div>
-
-          {/* Additional decorative elements */}
-          <div className="flex justify-center gap-6 mt-6">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <motion.div
-                key={i}
-                className="w-2 h-2 bg-pixel-yellow"
-                animate={{
-                  scale: [1, 1.5, 1],
-                  opacity: [0.5, 1, 0.5]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  delay: i * 0.2
-                }}
-              />
-            ))}
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-neon-cyan animate-pulse" style={{ boxShadow: '0 0 6px #00f0ff' }} />
+            <span>PING: 02MS · NETWATCH BYPASSED</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-neon-magenta animate-pulse" style={{ boxShadow: '0 0 6px #ff003c' }} />
+            <span>RELIC INTEGRITY: 97%</span>
           </div>
         </motion.div>
       </div>

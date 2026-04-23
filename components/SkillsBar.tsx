@@ -6,21 +6,21 @@ import { useEffect, useState } from 'react';
 interface Skill {
   name: string;
   level: number;
-  barColor: string;
-  borderColor: string;
+  accent: string;
+  color: string;
 }
 
 const skills: Skill[] = [
-  { name: 'HTML / CSS', level: 95, barColor: 'bg-pixel-orange', borderColor: 'border-pixel-orange' },
-  { name: 'JavaScript', level: 93, barColor: 'bg-pixel-yellow', borderColor: 'border-pixel-yellow' },
-  { name: 'React / Next.js', level: 95, barColor: 'bg-pixel-cyan', borderColor: 'border-pixel-cyan' },
-  { name: 'TypeScript', level: 90, barColor: 'bg-pixel-indigo', borderColor: 'border-pixel-indigo' },
-  { name: 'React Native', level: 92, barColor: 'bg-pixel-lime', borderColor: 'border-pixel-lime' },
-  { name: 'AI Integration (GPT, Claude)', level: 88, barColor: 'bg-pixel-pink', borderColor: 'border-pixel-pink' },
-  { name: 'C# / WinForms', level: 85, barColor: 'bg-pixel-purple', borderColor: 'border-pixel-purple' },
-  { name: 'UI/UX Design', level: 87, barColor: 'bg-pixel-red', borderColor: 'border-pixel-red' },
-  { name: 'Video Editing (Premiere Pro)', level: 82, barColor: 'bg-pixel-teal', borderColor: 'border-pixel-teal' },
-  { name: 'Firebase / Supabase', level: 80, barColor: 'bg-pixel-green', borderColor: 'border-pixel-green' },
+  { name: 'HTML / CSS', level: 95, accent: 'bg-neon-yellow', color: '#fcee0a' },
+  { name: 'JavaScript', level: 93, accent: 'bg-neon-yellow', color: '#fcee0a' },
+  { name: 'React / Next.js', level: 95, accent: 'bg-neon-cyan', color: '#00f0ff' },
+  { name: 'TypeScript', level: 90, accent: 'bg-neon-cyan', color: '#00f0ff' },
+  { name: 'React Native', level: 92, accent: 'bg-neon-green', color: '#39ff14' },
+  { name: 'AI Integration (GPT, Claude)', level: 88, accent: 'bg-neon-pink', color: '#ff00aa' },
+  { name: 'C# / WinForms', level: 85, accent: 'bg-neon-purple', color: '#8b00ff' },
+  { name: 'UI/UX Design', level: 87, accent: 'bg-neon-magenta', color: '#ff003c' },
+  { name: 'Video Editing (Premiere Pro)', level: 82, accent: 'bg-neon-orange', color: '#ff6b00' },
+  { name: 'Firebase / Supabase', level: 80, accent: 'bg-neon-green', color: '#39ff14' },
 ];
 
 export default function SkillsBar() {
@@ -30,73 +30,79 @@ export default function SkillsBar() {
     setMounted(true);
   }, []);
 
+  const total = skills.reduce((acc, s) => acc + s.level, 0);
+
   return (
     <div className="w-full max-w-4xl mx-auto p-6 space-y-6">
-      {/* Title */}
-      <div className="bg-pixel-black border-4 border-pixel-white p-4 shadow-pixel mb-8">
-        <h2 className="font-game text-2xl md:text-3xl text-pixel-yellow text-center text-outline leading-relaxed">
-          SKILL STATS
+      {/* Header */}
+      <motion.div
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="cyber-panel cyber-panel-magenta cyber-corners p-5 text-center"
+      >
+        <p className="font-mono tracking-[0.4em] text-xs text-neon-cyan mb-1" style={{ textShadow: '0 0 6px #00f0ff' }}>
+          /// RIPPERDOC.DIAGNOSTICS ///
+        </p>
+        <h2 className="glitch font-cyber font-black text-2xl md:text-4xl tracking-widest" data-text="CYBERWARE STATUS">
+          CYBERWARE STATUS
         </h2>
-      </div>
+        <p className="font-hud tracking-widest text-sm text-cyber-ash mt-2">
+          Installed implants · Sync rate live scan
+        </p>
+      </motion.div>
 
       {/* Skills list */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         {skills.map((skill, index) => (
           <motion.div
             key={skill.name}
-            initial={{ x: -100, opacity: 0 }}
+            initial={{ x: -30, opacity: 0 }}
             animate={mounted ? { x: 0, opacity: 1 } : {}}
-            transition={{ delay: index * 0.1, duration: 0.5 }}
-            className="space-y-2"
+            transition={{ delay: index * 0.08 }}
+            className="cyber-panel cyber-clip-sm p-3 md:p-4"
           >
-            {/* Skill name and level */}
-            <div className="flex justify-between items-center">
-              <span className="font-pixel text-xl md:text-2xl text-pixel-white">
-                {skill.name}
-              </span>
-              <span className="font-game text-sm md:text-lg text-pixel-yellow">
-                LV.{skill.level}
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs tracking-widest text-cyber-ash">
+                  {String(index + 1).padStart(2, '0')}.
+                </span>
+                <span
+                  className="font-hud font-bold tracking-wider text-base md:text-lg"
+                  style={{ color: skill.color, textShadow: `0 0 4px ${skill.color}` }}
+                >
+                  {skill.name}
+                </span>
+              </div>
+              <span
+                className="font-mono font-bold text-sm md:text-base"
+                style={{ color: skill.color, textShadow: `0 0 4px ${skill.color}` }}
+              >
+                {skill.level}%
               </span>
             </div>
 
-            {/* XP Bar */}
-            <div className="relative h-8 bg-pixel-black border-4 border-pixel-white shadow-pixel-sm">
-              {/* Inner border */}
-              <div className="absolute inset-1 border-2 border-pixel-gray"></div>
+            {/* Bar */}
+            <div className="relative h-4 bg-cyber-void border border-cyber-chrome overflow-hidden">
+              {/* Segmented track */}
+              <div
+                className="absolute inset-0 opacity-30 pointer-events-none"
+                style={{ background: 'repeating-linear-gradient(90deg, transparent 0 8px, rgba(255,255,255,0.08) 8px 9px)' }}
+              />
 
-              {/* Fill bar */}
               <motion.div
                 initial={{ width: 0 }}
                 animate={mounted ? { width: `${skill.level}%` } : {}}
-                transition={{ delay: index * 0.1 + 0.3, duration: 1, ease: 'easeOut' }}
-                className={`absolute inset-1 ${skill.barColor} ${skill.borderColor} border-2`}
+                transition={{ delay: index * 0.08 + 0.3, duration: 1, ease: 'easeOut' }}
+                className={`relative h-full ${skill.accent}`}
+                style={{ boxShadow: `0 0 10px ${skill.color}, inset 0 0 4px rgba(255,255,255,0.5)` }}
               >
-                {/* Shine effect */}
+                {/* Shine */}
                 <motion.div
-                  className="h-full w-full bg-gradient-to-r from-transparent via-pixel-white/30 to-transparent"
-                  animate={{
-                    x: ['-100%', '200%'],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    delay: index * 0.1 + 1.5,
-                    repeatDelay: 3,
-                  }}
+                  className="absolute inset-y-0 w-12 bg-gradient-to-r from-transparent via-white/60 to-transparent"
+                  animate={{ x: ['-200%', '400%'] }}
+                  transition={{ duration: 2.5, repeat: Infinity, delay: index * 0.08 + 1.2, repeatDelay: 2 }}
                 />
               </motion.div>
-
-              {/* Percentage text */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={mounted ? { opacity: 1 } : {}}
-                  transition={{ delay: index * 0.1 + 1 }}
-                  className="font-game text-xs md:text-sm text-pixel-white text-outline z-10"
-                >
-                  {skill.level}%
-                </motion.span>
-              </div>
             </div>
           </motion.div>
         ))}
@@ -107,15 +113,24 @@ export default function SkillsBar() {
         initial={{ y: 20, opacity: 0 }}
         animate={mounted ? { y: 0, opacity: 1 } : {}}
         transition={{ delay: 0.8 }}
-        className="mt-8 bg-gradient-to-r from-pixel-yellow to-pixel-orange border-4 border-pixel-white p-4 shadow-pixel"
+        className="cyber-panel cyber-panel-yellow cyber-corners p-5"
       >
-        <div className="flex justify-between items-center">
-          <span className="font-game text-lg md:text-xl text-pixel-black">
-            TOTAL XP
+        <div className="flex flex-col md:flex-row justify-between items-center gap-2">
+          <span className="font-mono tracking-widest text-sm text-cyber-ash">
+            [ AGGREGATE SYNC ]
           </span>
-          <span className="font-game text-xl md:text-2xl text-pixel-black">
-            {skills.reduce((acc, skill) => acc + skill.level, 0)} / 1000
+          <span className="font-cyber font-black text-xl md:text-2xl tracking-widest text-neon-yellow" style={{ textShadow: '0 0 8px #fcee0a' }}>
+            {total} / 1000 NEURAL PTS
           </span>
+        </div>
+        <div className="mt-3 h-2 bg-cyber-void border border-cyber-chrome overflow-hidden">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={mounted ? { width: `${total / 10}%` } : {}}
+            transition={{ delay: 1, duration: 1.2 }}
+            className="h-full bg-gradient-to-r from-neon-yellow via-neon-magenta to-neon-cyan"
+            style={{ boxShadow: '0 0 10px #fcee0a' }}
+          />
         </div>
       </motion.div>
     </div>

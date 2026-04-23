@@ -5,10 +5,10 @@ import { Mail, Github, Facebook, MessageCircle } from 'lucide-react';
 
 export default function ContactSection() {
   const socialLinks = [
-    { icon: Mail, label: 'EMAIL', value: 'difflad@gmail.com', href: 'mailto:difflad@gmail.com', bgGradient: 'from-pixel-red to-pixel-blue' },
-    { icon: Github, label: 'GITHUB', value: 'LO4NL4D1FF', href: 'https://github.com/LO4NL4D1FF', bgGradient: 'from-pixel-purple to-pixel-blue' },
-    { icon: Facebook, label: 'FACEBOOK', value: 'Loan Ladiff', href: 'https://www.facebook.com/Anonn.005/', bgGradient: 'from-pixel-indigo to-pixel-blue' },
-    { icon: MessageCircle, label: 'WHATSAPP', value: '+231 555 666 157', href: 'https://wa.me/231555666157', bgGradient: 'from-pixel-green to-pixel-blue' },
+    { icon: Mail, label: 'EMAIL.UPLINK', value: 'difflad@gmail.com', href: 'mailto:difflad@gmail.com', color: '#fcee0a', border: 'border-neon-yellow', text: 'text-neon-yellow' },
+    { icon: Github, label: 'GIT.REPO', value: 'LO4NL4D1FF', href: 'https://github.com/LO4NL4D1FF', color: '#00f0ff', border: 'border-neon-cyan', text: 'text-neon-cyan' },
+    { icon: Facebook, label: 'SOCIAL.NET', value: 'Loan Ladiff', href: 'https://www.facebook.com/Anonn.005/', color: '#8b00ff', border: 'border-neon-purple', text: 'text-neon-purple' },
+    { icon: MessageCircle, label: 'DIRECT.COMMS', value: '+231 555 666 157', href: 'https://wa.me/231555666157', color: '#39ff14', border: 'border-neon-green', text: 'text-neon-green' },
   ];
 
   return (
@@ -16,12 +16,15 @@ export default function ContactSection() {
       <div className="w-full max-w-4xl">
         {/* Title */}
         <motion.div
-          initial={{ y: -50, opacity: 0 }}
+          initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="bg-pixel-black border-4 border-pixel-white p-6 shadow-pixel-lg mb-12"
+          className="cyber-panel cyber-panel-magenta cyber-corners p-6 mb-8 text-center"
         >
-          <h2 className="font-game text-3xl md:text-5xl text-pixel-yellow text-center text-outline leading-relaxed">
-            GET IN TOUCH
+          <p className="font-mono tracking-[0.4em] text-xs text-neon-cyan mb-2" style={{ textShadow: '0 0 6px #00f0ff' }}>
+            /// OPEN COMMS CHANNEL ///
+          </p>
+          <h2 className="glitch font-cyber font-black text-3xl md:text-5xl tracking-widest" data-text="INITIATE UPLINK">
+            INITIATE UPLINK
           </h2>
         </motion.div>
 
@@ -30,86 +33,108 @@ export default function ContactSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="bg-gradient-to-br from-game-panel to-pixel-blue border-4 border-pixel-white p-4 md:p-8 shadow-pixel mb-8"
+          className="cyber-panel cyber-panel-cyan p-5 md:p-6 mb-8"
         >
-          <div className="border-2 border-pixel-gray p-4 md:p-6">
-            <p className="font-pixel text-lg md:text-xl lg:text-2xl text-pixel-white text-center leading-relaxed mb-4">
-              Ready to collaborate on your next project? Whether it&apos;s building an AI-powered app, crafting a web/mobile experience, or producing cinematic content — let&apos;s create something remarkable together!
+          <div className="border-l-2 border-neon-cyan pl-4 space-y-3">
+            <p className="font-hud text-base md:text-lg text-cyber-bone leading-relaxed">
+              Ready to run a gig together? Whether it&apos;s an AI-powered construct, a full-stack rig, or cinematic brain-dance — jack in and let&apos;s make Night City take notice.
             </p>
-            <p className="font-pixel text-base md:text-lg lg:text-xl text-pixel-cyan text-center leading-relaxed">
-              Choose your preferred communication channel below.
+            <p className="font-hud text-sm md:text-base text-neon-cyan leading-relaxed">
+              &gt; Pick your preferred frequency below and send word.
             </p>
           </div>
         </motion.div>
 
-        {/* Social Links */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-          {socialLinks.map((link, index) => (
-            <motion.a
-              key={link.label}
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ x: index % 2 === 0 ? -100 : 100, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.5 + index * 0.1, type: 'spring' }}
-              whileHover={{ scale: 1.05, y: -5 }}
-              whileTap={{ scale: 0.95 }}
-              className="group"
-            >
-              <div className="bg-pixel-black border-4 border-pixel-white shadow-pixel hover:shadow-pixel-lg transition-all duration-200">
-                <div className="absolute inset-2 border-2 border-pixel-gray group-hover:border-pixel-yellow transition-colors"></div>
+        {/* Comms channels */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
+          {socialLinks.map((link, index) => {
+            const Icon = link.icon;
+            return (
+              <motion.a
+                key={link.label}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.4 + index * 0.1 }}
+                whileHover={{ y: -4 }}
+                whileTap={{ scale: 0.98 }}
+                className="group relative"
+              >
+                <div
+                  className="absolute -inset-0.5 opacity-50 group-hover:opacity-100 blur-md transition-opacity"
+                  style={{ background: `linear-gradient(135deg, ${link.color}, transparent 70%)` }}
+                />
 
-                <div className={`relative bg-gradient-to-r ${link.bgGradient} p-4 md:p-6 flex items-center gap-3 md:gap-4`}>
-                  <div className="w-12 h-12 md:w-16 md:h-16 bg-pixel-yellow border-3 md:border-4 border-pixel-orange shadow-pixel flex items-center justify-center flex-shrink-0">
-                    {(() => {
-                      const IconComponent = link.icon;
-                      return <IconComponent className="w-7 h-7 md:w-10 md:h-10 text-pixel-black" strokeWidth={2.5} />;
-                    })()}
+                <div
+                  className={`relative cyber-clip bg-cyber-dark border-2 ${link.border} p-4 md:p-5 flex items-center gap-4`}
+                  style={{
+                    backgroundImage: 'linear-gradient(135deg, rgba(18,18,31,0.95), rgba(5,5,10,0.95))',
+                    boxShadow: `inset 0 0 16px rgba(0,0,0,0.5)`,
+                  }}
+                >
+                  {/* Scanline */}
+                  <div
+                    className="absolute inset-0 pointer-events-none opacity-10"
+                    style={{ background: 'repeating-linear-gradient(0deg, transparent 0 2px, rgba(0,240,255,0.3) 2px 3px)' }}
+                  />
+
+                  <div
+                    className={`relative w-14 h-14 md:w-16 md:h-16 flex items-center justify-center border-2 ${link.border} bg-cyber-void flex-shrink-0`}
+                    style={{
+                      clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))',
+                      boxShadow: `0 0 12px ${link.color}, inset 0 0 8px ${link.color}33`,
+                    }}
+                  >
+                    <Icon className={`w-7 h-7 md:w-8 md:h-8 ${link.text}`} strokeWidth={1.5} />
                   </div>
 
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-game text-sm md:text-base lg:text-lg text-pixel-yellow mb-1">
-                      {link.label}
-                    </h3>
-                    <p className="font-pixel text-base md:text-lg lg:text-xl text-pixel-white truncate">
+                  <div className="relative flex-1 min-w-0">
+                    <p className="font-mono text-[10px] md:text-xs tracking-widest text-cyber-ash">
+                      [{link.label}]
+                    </p>
+                    <p className={`font-cyber font-bold text-base md:text-lg tracking-wider truncate ${link.text}`} style={{ textShadow: '0 0 6px currentColor' }}>
                       {link.value}
                     </p>
                   </div>
 
                   <motion.span
-                    className="font-game text-xl md:text-2xl text-pixel-yellow flex-shrink-0"
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 1, repeat: Infinity }}
+                    className={`relative font-mono text-lg ${link.text} flex-shrink-0`}
+                    animate={{ x: [0, 4, 0] }}
+                    transition={{ duration: 1.2, repeat: Infinity }}
                   >
-                    ▶
+                    ▶▶
                   </motion.span>
                 </div>
-              </div>
-            </motion.a>
-          ))}
+              </motion.a>
+            );
+          })}
         </div>
 
         {/* CTA */}
         <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 1, type: 'spring' }}
-          className="text-center"
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.9 }}
+          className="relative"
         >
-          <div className="inline-block bg-gradient-to-r from-pixel-pink to-pixel-red border-4 border-pixel-white p-6 md:p-8 shadow-pixel-lg">
-            <h3 className="font-game text-xl md:text-2xl lg:text-3xl text-pixel-white text-outline mb-4 leading-relaxed">
-              QUEST AWAITS!
+          <div className="absolute -inset-1 bg-gradient-to-r from-neon-yellow via-neon-magenta to-neon-cyan opacity-60 blur-lg animate-pulse" />
+          <div
+            className="relative cyber-clip-lg bg-cyber-dark border-2 border-neon-yellow p-6 md:p-8 text-center"
+            style={{
+              backgroundImage: 'linear-gradient(135deg, rgba(18,18,31,0.95), rgba(5,5,10,0.95))',
+            }}
+          >
+            <h3 className="font-cyber font-black text-xl md:text-3xl tracking-widest text-neon-yellow mb-3" style={{ textShadow: '0 0 8px #fcee0a' }}>
+              ◆ READY TO RUN A GIG? ◆
             </h3>
-            <p className="font-pixel text-base md:text-lg lg:text-xl text-pixel-white mb-6">
-              Response time: Usually within 24 hours
+            <p className="font-hud tracking-widest text-sm md:text-base text-cyber-ash mb-2">
+              Response window · &lt; 24 hours standard
             </p>
-            <motion.div
-              animate={{ y: [0, -5, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
-              <span className="text-5xl md:text-6xl">💌</span>
-            </motion.div>
+            <p className="font-mono text-xs tracking-widest text-neon-magenta">
+              [ ENCRYPTED CHANNEL · END-TO-END SECURE ]
+            </p>
           </div>
         </motion.div>
       </div>

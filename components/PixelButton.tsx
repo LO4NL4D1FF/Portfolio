@@ -22,16 +22,23 @@ export default function PixelButton({
   disabled = false,
 }: PixelButtonProps) {
   const variants = {
-    primary: 'from-pixel-indigo to-pixel-sky border-pixel-cyan',
-    secondary: 'from-pixel-gray to-pixel-light border-pixel-white',
-    success: 'from-pixel-green to-pixel-lime border-pixel-lime',
-    danger: 'from-pixel-red to-pixel-orange border-pixel-pink',
+    primary: 'border-neon-yellow text-neon-yellow hover:bg-neon-yellow',
+    secondary: 'border-neon-cyan text-neon-cyan hover:bg-neon-cyan',
+    success: 'border-neon-green text-neon-green hover:bg-neon-green',
+    danger: 'border-neon-magenta text-neon-magenta hover:bg-neon-magenta',
   };
 
+  const glow = {
+    primary: '0 0 12px rgba(252,238,10,0.5)',
+    secondary: '0 0 12px rgba(0,240,255,0.5)',
+    success: '0 0 12px rgba(57,255,20,0.5)',
+    danger: '0 0 12px rgba(255,0,60,0.5)',
+  } as const;
+
   const sizes = {
-    sm: 'px-4 py-2 text-lg font-pixel',
-    md: 'px-6 py-3 text-xl font-pixel',
-    lg: 'px-8 py-4 text-2xl font-game',
+    sm: 'px-4 py-2 text-sm',
+    md: 'px-6 py-3 text-base',
+    lg: 'px-8 py-4 text-lg',
   };
 
   const handleClick = () => {
@@ -48,21 +55,24 @@ export default function PixelButton({
       disabled={disabled}
       className={`
         relative
-        bg-gradient-to-b ${variants[variant]}
+        bg-cyber-dark
+        border-2
+        font-cyber font-bold tracking-widest
+        hover:text-cyber-void
+        transition-all duration-200
+        btn-press no-select
+        ${variants[variant]}
         ${sizes[size]}
-        border-4
-        shadow-pixel
-        hover:shadow-pixel-sm
-        transition-all duration-100
-        btn-press
-        no-select
-        text-pixel-white
-        text-outline
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
         ${className}
       `}
-      whileHover={!disabled ? { scale: 1.05, y: -2 } : {}}
-      whileTap={!disabled ? { scale: 0.95 } : {}}
+      style={{
+        clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))',
+        boxShadow: glow[variant],
+        textShadow: '0 0 4px currentColor',
+      }}
+      whileHover={!disabled ? { scale: 1.03, y: -2 } : {}}
+      whileTap={!disabled ? { scale: 0.97 } : {}}
     >
       {children}
     </motion.button>

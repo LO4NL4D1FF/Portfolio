@@ -96,15 +96,15 @@ export default function Home() {
   const getScreenTitle = () => {
     switch (currentScreen) {
       case 'about':
-        return 'ABOUT ME';
+        return 'OPERATIVE FILE';
       case 'projects':
-        return 'PROJECTS';
+        return 'GIGS.LOG';
       case 'services':
-        return 'SERVICES';
+        return 'FIXER.NET';
       case 'skills':
-        return 'SKILLS';
+        return 'CYBERWARE';
       case 'contact':
-        return 'CONTACT';
+        return 'UPLINK';
       default:
         return 'PORTFOLIO';
     }
@@ -129,12 +129,14 @@ export default function Home() {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={handleRestart}
-          className="fixed bottom-4 left-4 z-50 w-14 h-14 bg-pixel-red border-4 border-pixel-white shadow-pixel
-                     hover:bg-pixel-orange transition-colors btn-press flex items-center justify-center
-                     safe-area-bottom"
-          title="Restart / Go to Start Screen"
+          className="fixed bottom-4 left-4 z-50 w-12 h-12 bg-cyber-dark border-2 border-neon-magenta text-neon-magenta hover:bg-neon-magenta hover:text-cyber-void transition-all btn-press flex items-center justify-center safe-area-bottom"
+          style={{
+            clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))',
+            boxShadow: '0 0 12px rgba(255,0,60,0.5)',
+          }}
+          title="Disconnect — Return to boot screen"
         >
-          <RotateCcw className="w-7 h-7 text-pixel-white" strokeWidth={3} />
+          <RotateCcw className="w-5 h-5" strokeWidth={2} />
         </motion.button>
       )}
 

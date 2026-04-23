@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export default function ParallaxBackground() {
   const { scrollY } = useScroll();
@@ -13,118 +13,180 @@ export default function ParallaxBackground() {
 
   const y1 = useTransform(scrollY, [0, 1000], [0, -200]);
   const y2 = useTransform(scrollY, [0, 1000], [0, -100]);
-  const y3 = useTransform(scrollY, [0, 1000], [0, -50]);
+  const y3 = useTransform(scrollY, [0, 1000], [0, -40]);
+
+  // Pre-computed random values so server/client don't mismatch
+  const stars = useMemo(
+    () =>
+      [...Array(60)].map((_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        top: Math.random() * 70,
+        color: ['#fcee0a', '#00f0ff', '#ff00aa', '#e0e7ff'][Math.floor(Math.random() * 4)],
+        duration: Math.random() * 3 + 2,
+        delay: Math.random() * 2,
+      })),
+    []
+  );
+
+  const buildings = useMemo(
+    () =>
+      [...Array(12)].map((_, i) => ({
+        id: i,
+        left: i * 9 + Math.random() * 3,
+        width: Math.random() * 4 + 4,
+        height: Math.random() * 35 + 30,
+      })),
+    []
+  );
+
+  const dataColumns = useMemo(
+    () =>
+      [...Array(10)].map((_, i) => ({
+        id: i,
+        left: (i * 10) + Math.random() * 5,
+        duration: Math.random() * 10 + 12,
+        delay: Math.random() * 5,
+      })),
+    []
+  );
 
   if (!mounted) return null;
 
   return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none">
-      {/* Layer 1 - Far background (slowest) */}
-      <motion.div style={{ y: y1 }} className="absolute inset-0">
-        {/* Mountains */}
-        <div className="absolute bottom-0 left-0 right-0 h-48">
-          <svg viewBox="0 0 1200 200" className="w-full h-full" preserveAspectRatio="none">
-            <polygon points="0,200 0,100 300,60 600,120 900,40 1200,100 1200,200" fill="#29366f" opacity="0.3" />
-          </svg>
-        </div>
+    <div className="fixed inset-0 overflow-hidden pointer-events-none -z-0">
+      {/* Base ambient haze */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `
+            radial-gradient(ellipse at 20% 30%, rgba(139, 0, 255, 0.18) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 60%, rgba(255, 0, 60, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 100%, rgba(0, 240, 255, 0.12) 0%, transparent 60%)
+          `,
+        }}
+      />
 
-        {/* Stars - far */}
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={`star-far-${i}`}
-            className="absolute w-1 h-1 bg-pixel-white opacity-30"
+      {/* Far layer: stars + far skyline */}
+      <motion.div style={{ y: y1 }} className="absolute inset-0">
+        {stars.map((s) => (
+          <motion.div
+            key={`star-${s.id}`}
+            className="absolute w-[2px] h-[2px]"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 60}%`,
+              left: `${s.left}%`,
+              top: `${s.top}%`,
+              backgroundColor: s.color,
+              boxShadow: `0 0 4px ${s.color}`,
             }}
+            animate={{ opacity: [0.2, 1, 0.2] }}
+            transition={{ duration: s.duration, repeat: Infinity, delay: s.delay }}
           />
         ))}
+
+        {/* Far skyline silhouette */}
+        <svg viewBox="0 0 1200 300" className="absolute bottom-0 left-0 right-0 w-full h-64 opacity-60" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="farSkyline" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stopColor="#8b00ff" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#0a0a14" stopOpacity="0.9" />
+            </linearGradient>
+          </defs>
+          <polygon
+            points="0,300 0,200 60,180 90,150 140,150 180,120 220,120 260,90 320,90 360,140 420,140 460,100 520,100 560,160 620,160 660,130 720,130 760,90 820,90 860,140 920,140 960,160 1020,160 1060,120 1120,120 1160,170 1200,170 1200,300"
+            fill="url(#farSkyline)"
+          />
+        </svg>
       </motion.div>
 
-      {/* Layer 2 - Mid background (medium speed) */}
+      {/* Mid layer: skyline buildings with lit windows */}
       <motion.div style={{ y: y2 }} className="absolute inset-0">
-        {/* Hills */}
-        <div className="absolute bottom-0 left-0 right-0 h-32">
-          <svg viewBox="0 0 1200 150" className="w-full h-full" preserveAspectRatio="none">
-            <polygon points="0,150 0,80 200,40 400,90 600,30 800,70 1000,50 1200,80 1200,150" fill="#3b5dc9" opacity="0.4" />
-          </svg>
-        </div>
-
-        {/* Clouds */}
-        {[...Array(5)].map((_, i) => (
-          <motion.div
-            key={`cloud-${i}`}
-            className="absolute"
+        {buildings.map((b) => (
+          <div
+            key={`bld-${b.id}`}
+            className="absolute bottom-0"
             style={{
-              left: `${i * 25}%`,
-              top: `${20 + i * 10}%`,
-            }}
-            animate={{
-              x: [0, 50, 0],
-            }}
-            transition={{
-              duration: 20 + i * 5,
-              repeat: Infinity,
-              ease: 'linear',
+              left: `${b.left}%`,
+              width: `${b.width}%`,
+              height: `${b.height}%`,
+              background: 'linear-gradient(180deg, #1a0033 0%, #000 100%)',
+              borderTop: '1px solid rgba(252, 238, 10, 0.3)',
+              boxShadow: '0 0 20px rgba(139, 0, 255, 0.3)',
             }}
           >
-            <div className="w-16 h-8 bg-pixel-white/10 rounded-full"></div>
-          </motion.div>
+            {/* Windows */}
+            <div
+              className="absolute inset-x-1 top-2 bottom-2 opacity-70"
+              style={{
+                backgroundImage: `
+                  repeating-linear-gradient(0deg, transparent 0 6px, rgba(252, 238, 10, 0.5) 6px 8px),
+                  repeating-linear-gradient(90deg, transparent 0 4px, transparent 4px 6px)
+                `,
+              }}
+            />
+            {/* Neon sign tip */}
+            <div
+              className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-3"
+              style={{
+                background: ['#fcee0a', '#ff003c', '#00f0ff', '#ff00aa'][b.id % 4],
+                boxShadow: `0 0 8px ${['#fcee0a', '#ff003c', '#00f0ff', '#ff00aa'][b.id % 4]}`,
+              }}
+            />
+          </div>
         ))}
 
-        {/* Stars - mid */}
-        {[...Array(30)].map((_, i) => (
-          <motion.div
-            key={`star-mid-${i}`}
-            className="absolute w-1 h-1 bg-pixel-white"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 70}%`,
-            }}
-            animate={{
-              opacity: [0.2, 0.8, 0.2],
-            }}
-            transition={{
-              duration: Math.random() * 3 + 2,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-            }}
-          />
-        ))}
+        {/* Horizontal neon line */}
+        <div
+          className="absolute left-0 right-0"
+          style={{
+            bottom: '22%',
+            height: '1px',
+            background: 'linear-gradient(90deg, transparent, #ff003c, #fcee0a, #00f0ff, transparent)',
+            boxShadow: '0 0 8px #ff003c',
+          }}
+        />
       </motion.div>
 
-      {/* Layer 3 - Foreground (fastest) */}
+      {/* Foreground: perspective grid floor + data streams */}
       <motion.div style={{ y: y3 }} className="absolute inset-0">
-        {/* Ground/Platform elements */}
-        <div className="absolute bottom-0 left-0 right-0 h-20">
-          <div className="absolute bottom-0 w-full h-4 bg-pixel-green border-t-4 border-pixel-lime opacity-20"></div>
-        </div>
+        {/* Grid floor */}
+        <div
+          className="absolute inset-x-0 bottom-0 h-[35vh] opacity-50"
+          style={{
+            background: `
+              linear-gradient(to top, rgba(255, 0, 60, 0.3) 0%, transparent 70%),
+              repeating-linear-gradient(90deg, rgba(0, 240, 255, 0.35) 0 1px, transparent 1px 60px),
+              repeating-linear-gradient(0deg, rgba(0, 240, 255, 0.35) 0 1px, transparent 1px 60px)
+            `,
+            transform: 'perspective(500px) rotateX(55deg)',
+            transformOrigin: 'bottom',
+          }}
+        />
 
-        {/* Floating pixels/particles */}
-        {[...Array(15)].map((_, i) => (
+        {/* Falling data columns */}
+        {dataColumns.map((c) => (
           <motion.div
-            key={`particle-${i}`}
-            className="absolute w-2 h-2 bg-pixel-yellow opacity-50"
+            key={`col-${c.id}`}
+            className="absolute top-0 w-[1px] h-40"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${c.left}%`,
+              background: 'linear-gradient(180deg, transparent, #39ff14, transparent)',
+              boxShadow: '0 0 6px #39ff14',
             }}
-            animate={{
-              y: [-20, 20, -20],
-              opacity: [0.3, 0.7, 0.3],
-            }}
-            transition={{
-              duration: Math.random() * 4 + 3,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: Math.random() * 2,
-            }}
+            animate={{ y: ['-20vh', '120vh'] }}
+            transition={{ duration: c.duration, repeat: Infinity, delay: c.delay, ease: 'linear' }}
           />
         ))}
       </motion.div>
 
-      {/* Pixel grid overlay */}
-      <div className="absolute inset-0 pixel-grid opacity-10"></div>
+      {/* Cyber grid overlay (faint) */}
+      <div className="absolute inset-0 cyber-grid opacity-20 pointer-events-none" />
+
+      {/* Vignette */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.6) 100%)' }}
+      />
     </div>
   );
 }

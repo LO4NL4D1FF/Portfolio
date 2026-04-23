@@ -8,11 +8,32 @@ interface StartScreenProps {
   onStart: () => void;
 }
 
+const BOOT_LINES = [
+  '> NETWATCH KERNEL v2.077.13 BOOTING...',
+  '> LOADING NEURAL INTERFACE DRIVERS [OK]',
+  '> SYNCING RELIC BIOCHIP [OK]',
+  '> BYPASSING ICE PROTOCOLS [OK]',
+  '> UPLINK ESTABLISHED → NIGHT CITY NET',
+  '> IDENTITY: V // HANDLE: SEDO-TA',
+  '> WELCOME TO THE BIG LEAGUES, CHOOM',
+];
+
 export default function StartScreen({ onStart }: StartScreenProps) {
   const [mounted, setMounted] = useState(false);
+  const [visibleLines, setVisibleLines] = useState(0);
 
   useEffect(() => {
     setMounted(true);
+    const interval = setInterval(() => {
+      setVisibleLines((n) => {
+        if (n >= BOOT_LINES.length) {
+          clearInterval(interval);
+          return n;
+        }
+        return n + 1;
+      });
+    }, 280);
+    return () => clearInterval(interval);
   }, []);
 
   const handleStart = () => {
@@ -26,21 +47,39 @@ export default function StartScreen({ onStart }: StartScreenProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-game-bg overflow-hidden"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-cyber-void"
     >
-      {/* Starfield background */}
-      <div className="absolute inset-0">
-        {mounted && [...Array(50)].map((_, i) => (
+      {/* Night City skyline glow */}
+      <div className="absolute inset-0 bg-gradient-to-b from-cyber-void via-cyber-dark to-neon-magenta/30 pointer-events-none" />
+
+      {/* Animated cyber grid floor */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none opacity-50"
+        style={{
+          background: `
+            linear-gradient(to top, #ff003c 0%, transparent 70%),
+            repeating-linear-gradient(90deg, rgba(0, 240, 255, 0.4) 0 1px, transparent 1px 80px),
+            repeating-linear-gradient(0deg, rgba(0, 240, 255, 0.4) 0 1px, transparent 1px 80px)
+          `,
+          transform: 'perspective(500px) rotateX(60deg)',
+          transformOrigin: 'bottom',
+        }}
+      />
+
+      {/* Particles / stars */}
+      <div className="absolute inset-0 pointer-events-none">
+        {mounted && [...Array(80)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-pixel-white"
+            className="absolute w-[2px] h-[2px]"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
+              backgroundColor: ['#fcee0a', '#00f0ff', '#ff00aa', '#e0e7ff'][Math.floor(Math.random() * 4)],
+              boxShadow: '0 0 4px currentColor',
             }}
             animate={{
-              opacity: [0.3, 1, 0.3],
-              scale: [1, 1.5, 1],
+              opacity: [0.2, 1, 0.2],
             }}
             transition={{
               duration: Math.random() * 3 + 2,
@@ -51,83 +90,115 @@ export default function StartScreen({ onStart }: StartScreenProps) {
         ))}
       </div>
 
+      {/* Scan sweep */}
+      <div className="scan-sweep absolute inset-0 pointer-events-none" />
+
       {/* Main content */}
-      <div className="relative z-10 text-center px-6">
+      <div className="relative z-10 text-center px-6 max-w-3xl w-full">
+        {/* Terminal boot log */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="cyber-panel cyber-panel-cyan cyber-corners cyber-corners-cyan p-4 mb-10 text-left font-mono text-sm md:text-base"
+        >
+          <div className="flex items-center gap-2 mb-2 pb-2 border-b border-neon-cyan/30">
+            <span className="w-2 h-2 bg-neon-magenta animate-pulse" />
+            <span className="w-2 h-2 bg-neon-yellow animate-pulse" />
+            <span className="w-2 h-2 bg-neon-green animate-pulse" />
+            <span className="ml-2 text-neon-cyan/60 tracking-widest">NETRUNNER_TERMINAL // 0x7F3A</span>
+          </div>
+          {BOOT_LINES.slice(0, visibleLines).map((line, i) => (
+            <div key={i} className="text-neon-green" style={{ textShadow: '0 0 4px #39ff14' }}>
+              {line}
+            </div>
+          ))}
+          {visibleLines < BOOT_LINES.length && (
+            <span className="inline-block w-2 h-4 bg-neon-green animate-pulse ml-1" />
+          )}
+        </motion.div>
+
         {/* Title */}
         <motion.div
-          initial={{ y: -50, opacity: 0 }}
+          initial={{ y: -30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="mb-16"
+          className="mb-14"
         >
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="font-game text-xl md:text-2xl text-pixel-lime text-outline mb-6 leading-relaxed"
+            className="font-cyber tracking-[0.5em] text-sm md:text-base text-neon-cyan mb-4"
+            style={{ textShadow: '0 0 8px #00f0ff' }}
           >
-            WELCOME TO
+            WELCOME TO NIGHT CITY
           </motion.p>
-          <h1 className="font-game text-3xl md:text-5xl text-pixel-yellow text-outline mb-4 leading-relaxed">
+          <h1
+            className="glitch font-cyber font-black text-5xl md:text-8xl tracking-widest mb-3"
+            data-text="SEDO-TA"
+          >
             SEDO-TA
           </h1>
-          <h2 className="font-game text-lg md:text-2xl text-pixel-cyan text-outline leading-relaxed">
-            PORTFOLIO.EXE
+          <h2 className="font-mono text-lg md:text-2xl tracking-[0.3em] text-neon-magenta" style={{ textShadow: '0 0 8px #ff003c' }}>
+            // PORTFOLIO.EXE
           </h2>
+          <div className="mt-4 flex items-center justify-center gap-3 font-hud tracking-widest text-xs text-cyber-ash">
+            <span className="h-px w-12 bg-neon-yellow" />
+            <span>SAMURAI — WAKE THE F*** UP</span>
+            <span className="h-px w-12 bg-neon-yellow" />
+          </div>
         </motion.div>
 
-        {/* Press Start Button */}
+        {/* Jack-in Button */}
         <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.9 }}
           onClick={handleStart}
-          className="relative font-game text-xl md:text-3xl text-pixel-white text-outline
-                     bg-gradient-to-b from-pixel-pink to-pixel-red
-                     px-12 py-6
-                     shadow-pixel hover:shadow-pixel-sm
-                     transition-all duration-100
-                     btn-press no-select
-                     border-4 border-pixel-white"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          animate={{
-            boxShadow: [
-              '4px 4px 0px rgba(13, 13, 13, 0.8)',
-              '6px 6px 0px rgba(13, 13, 13, 0.8)',
-              '4px 4px 0px rgba(13, 13, 13, 0.8)',
-            ],
-          }}
-          transition={{
-            boxShadow: {
-              duration: 1.5,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            },
-          }}
+          className="relative group no-select"
+          whileHover={{ scale: 1.04 }}
+          whileTap={{ scale: 0.96 }}
         >
-          <motion.span
-            animate={{ opacity: [1, 0.3, 1] }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              ease: 'easeInOut',
+          <div className="absolute -inset-1 bg-gradient-to-r from-neon-yellow via-neon-magenta to-neon-cyan opacity-70 blur-lg group-hover:opacity-100 transition-opacity animate-pulse" />
+          <div
+            className="relative px-10 md:px-16 py-5 md:py-6 bg-cyber-void border-2 border-neon-yellow font-cyber font-black tracking-[0.3em] text-xl md:text-2xl text-neon-yellow btn-press"
+            style={{
+              clipPath: 'polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))',
+              textShadow: '0 0 8px #fcee0a, 0 0 16px #fcee0a',
             }}
           >
-            PRESS START
-          </motion.span>
+            <motion.span
+              animate={{ opacity: [1, 0.5, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              &gt;&gt; JACK IN
+            </motion.span>
+          </div>
         </motion.button>
 
         {/* Subtitle */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-          className="mt-12 font-pixel text-2xl text-pixel-light"
+          transition={{ delay: 1.4 }}
+          className="mt-10 font-hud tracking-widest text-sm md:text-base text-cyber-ash"
         >
-          Click or tap to begin your adventure
+          [TAP TO ESTABLISH NEURAL LINK]
         </motion.p>
-      </div>
 
-      {/* Bottom decoration */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-pixel-blue/30 to-transparent"></div>
+        {/* Footer HUD */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.6 }}
+          className="mt-10 flex items-center justify-between font-mono text-[10px] md:text-xs text-cyber-ash/70 tracking-widest"
+        >
+          <span>REGION: PACIFICA</span>
+          <span className="text-neon-yellow">● SECURE</span>
+          <span>BUILD 2077.13.RELIC</span>
+        </motion.div>
+      </div>
     </motion.div>
   );
 }
