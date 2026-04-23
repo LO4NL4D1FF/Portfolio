@@ -18,11 +18,11 @@ export default function ParallaxBackground() {
   // Pre-computed random values so server/client don't mismatch
   const stars = useMemo(
     () =>
-      [...Array(60)].map((_, i) => ({
+      [...Array(50)].map((_, i) => ({
         id: i,
         left: Math.random() * 100,
         top: Math.random() * 70,
-        color: ['#fcee0a', '#00f0ff', '#ff00aa', '#e0e7ff'][Math.floor(Math.random() * 4)],
+        color: ['#fcee0a', '#00f0ff', '#e0e7ff'][Math.floor(Math.random() * 3)],
         duration: Math.random() * 3 + 2,
         delay: Math.random() * 2,
       })),
@@ -60,9 +60,9 @@ export default function ParallaxBackground() {
         className="absolute inset-0"
         style={{
           background: `
-            radial-gradient(ellipse at 20% 30%, rgba(139, 0, 255, 0.18) 0%, transparent 50%),
-            radial-gradient(ellipse at 80% 60%, rgba(255, 0, 60, 0.15) 0%, transparent 50%),
-            radial-gradient(ellipse at 50% 100%, rgba(0, 240, 255, 0.12) 0%, transparent 60%)
+            radial-gradient(ellipse at 20% 30%, rgba(252, 238, 10, 0.08) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 60%, rgba(0, 240, 255, 0.10) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 100%, rgba(255, 0, 60, 0.08) 0%, transparent 60%)
           `,
         }}
       />
@@ -88,8 +88,8 @@ export default function ParallaxBackground() {
         <svg viewBox="0 0 1200 300" className="absolute bottom-0 left-0 right-0 w-full h-64 opacity-60" preserveAspectRatio="none">
           <defs>
             <linearGradient id="farSkyline" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stopColor="#8b00ff" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#0a0a14" stopOpacity="0.9" />
+              <stop offset="0%" stopColor="#1a1a2e" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#05050a" stopOpacity="0.95" />
             </linearGradient>
           </defs>
           <polygon
@@ -101,39 +101,41 @@ export default function ParallaxBackground() {
 
       {/* Mid layer: skyline buildings with lit windows */}
       <motion.div style={{ y: y2 }} className="absolute inset-0">
-        {buildings.map((b) => (
-          <div
-            key={`bld-${b.id}`}
-            className="absolute bottom-0"
-            style={{
-              left: `${b.left}%`,
-              width: `${b.width}%`,
-              height: `${b.height}%`,
-              background: 'linear-gradient(180deg, #1a0033 0%, #000 100%)',
-              borderTop: '1px solid rgba(252, 238, 10, 0.3)',
-              boxShadow: '0 0 20px rgba(139, 0, 255, 0.3)',
-            }}
-          >
-            {/* Windows */}
+        {buildings.map((b) => {
+          const tipColor = ['#fcee0a', '#00f0ff', '#ff003c'][b.id % 3];
+          return (
             <div
-              className="absolute inset-x-1 top-2 bottom-2 opacity-70"
+              key={`bld-${b.id}`}
+              className="absolute bottom-0"
               style={{
-                backgroundImage: `
-                  repeating-linear-gradient(0deg, transparent 0 6px, rgba(252, 238, 10, 0.5) 6px 8px),
-                  repeating-linear-gradient(90deg, transparent 0 4px, transparent 4px 6px)
-                `,
+                left: `${b.left}%`,
+                width: `${b.width}%`,
+                height: `${b.height}%`,
+                background: 'linear-gradient(180deg, #12121f 0%, #000 100%)',
+                borderTop: '1px solid rgba(252, 238, 10, 0.25)',
               }}
-            />
-            {/* Neon sign tip */}
-            <div
-              className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-3"
-              style={{
-                background: ['#fcee0a', '#ff003c', '#00f0ff', '#ff00aa'][b.id % 4],
-                boxShadow: `0 0 8px ${['#fcee0a', '#ff003c', '#00f0ff', '#ff00aa'][b.id % 4]}`,
-              }}
-            />
-          </div>
-        ))}
+            >
+              {/* Windows */}
+              <div
+                className="absolute inset-x-1 top-2 bottom-2 opacity-60"
+                style={{
+                  backgroundImage: `
+                    repeating-linear-gradient(0deg, transparent 0 6px, rgba(252, 238, 10, 0.4) 6px 8px),
+                    repeating-linear-gradient(90deg, transparent 0 4px, transparent 4px 6px)
+                  `,
+                }}
+              />
+              {/* Neon sign tip */}
+              <div
+                className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-3"
+                style={{
+                  background: tipColor,
+                  boxShadow: `0 0 8px ${tipColor}`,
+                }}
+              />
+            </div>
+          );
+        })}
 
         {/* Horizontal neon line */}
         <div
@@ -141,8 +143,8 @@ export default function ParallaxBackground() {
           style={{
             bottom: '22%',
             height: '1px',
-            background: 'linear-gradient(90deg, transparent, #ff003c, #fcee0a, #00f0ff, transparent)',
-            boxShadow: '0 0 8px #ff003c',
+            background: 'linear-gradient(90deg, transparent, rgba(252, 238, 10, 0.7), transparent)',
+            boxShadow: '0 0 6px rgba(252, 238, 10, 0.4)',
           }}
         />
       </motion.div>
@@ -151,12 +153,12 @@ export default function ParallaxBackground() {
       <motion.div style={{ y: y3 }} className="absolute inset-0">
         {/* Grid floor */}
         <div
-          className="absolute inset-x-0 bottom-0 h-[35vh] opacity-50"
+          className="absolute inset-x-0 bottom-0 h-[35vh] opacity-35"
           style={{
             background: `
-              linear-gradient(to top, rgba(255, 0, 60, 0.3) 0%, transparent 70%),
-              repeating-linear-gradient(90deg, rgba(0, 240, 255, 0.35) 0 1px, transparent 1px 60px),
-              repeating-linear-gradient(0deg, rgba(0, 240, 255, 0.35) 0 1px, transparent 1px 60px)
+              linear-gradient(to top, rgba(252, 238, 10, 0.15) 0%, transparent 70%),
+              repeating-linear-gradient(90deg, rgba(0, 240, 255, 0.25) 0 1px, transparent 1px 60px),
+              repeating-linear-gradient(0deg, rgba(0, 240, 255, 0.25) 0 1px, transparent 1px 60px)
             `,
             transform: 'perspective(500px) rotateX(55deg)',
             transformOrigin: 'bottom',
@@ -170,8 +172,8 @@ export default function ParallaxBackground() {
             className="absolute top-0 w-[1px] h-40"
             style={{
               left: `${c.left}%`,
-              background: 'linear-gradient(180deg, transparent, #39ff14, transparent)',
-              boxShadow: '0 0 6px #39ff14',
+              background: 'linear-gradient(180deg, transparent, rgba(0, 240, 255, 0.7), transparent)',
+              boxShadow: '0 0 4px rgba(0, 240, 255, 0.5)',
             }}
             animate={{ y: ['-20vh', '120vh'] }}
             transition={{ duration: c.duration, repeat: Infinity, delay: c.delay, ease: 'linear' }}

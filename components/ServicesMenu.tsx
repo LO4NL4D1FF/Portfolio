@@ -12,9 +12,7 @@ interface ServicesMenuProps {
 const THEMES = [
   { border: 'border-neon-yellow', text: 'text-neon-yellow', accent: '#fcee0a', label: 'TIER.α' },
   { border: 'border-neon-cyan', text: 'text-neon-cyan', accent: '#00f0ff', label: 'TIER.β' },
-  { border: 'border-neon-pink', text: 'text-neon-pink', accent: '#ff00aa', label: 'TIER.γ' },
-  { border: 'border-neon-green', text: 'text-neon-green', accent: '#39ff14', label: 'TIER.δ' },
-  { border: 'border-neon-magenta', text: 'text-neon-magenta', accent: '#ff003c', label: 'TIER.ε' },
+  { border: 'border-neon-magenta', text: 'text-neon-magenta', accent: '#ff003c', label: 'TIER.γ' },
 ];
 
 export default function ServicesMenu({ services }: ServicesMenuProps) {
@@ -166,8 +164,8 @@ export default function ServicesMenu({ services }: ServicesMenuProps) {
                     {selectedService.description}
                   </p>
 
-                  <div className="relative bg-cyber-void/80 border-l-4 border-neon-green px-3 py-3 mb-4">
-                    <p className="font-cyber font-black text-lg md:text-xl text-neon-green" style={{ textShadow: '0 0 6px #39ff14' }}>
+                  <div className="relative bg-cyber-void/80 border-l-4 border-neon-yellow px-3 py-3 mb-4">
+                    <p className="font-cyber font-black text-lg md:text-xl text-neon-yellow" style={{ textShadow: '0 0 6px rgba(252,238,10,0.7)' }}>
                       EDDIE RATE · {selectedService.pricing}
                     </p>
                   </div>
@@ -195,7 +193,7 @@ export default function ServicesMenu({ services }: ServicesMenuProps) {
                     href={`mailto:difflad@gmail.com?subject=Service%20Inquiry%20-%20${encodeURIComponent(selectedService.name)}&body=Hi%20Sedo-Ta%2C%0A%0AI'm%20interested%20in%20your%20${encodeURIComponent(selectedService.name)}%20service.%0A%0AService%3A%20${encodeURIComponent(selectedService.name)}%0APricing%3A%20${encodeURIComponent(selectedService.pricing)}%0A%0APlease%20let%20me%20know%20the%20next%20steps!%0A%0AThank%20you!`}
                     className="relative block"
                   >
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-neon-yellow via-neon-magenta to-neon-cyan opacity-60 blur" />
+                    <div className="absolute -inset-0.5 bg-neon-yellow opacity-30 blur" />
                     <div
                       className="relative bg-cyber-void border-2 border-neon-yellow px-4 py-3 text-center btn-press"
                       style={{ clipPath: 'polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px))' }}

@@ -47,9 +47,9 @@ const menuItems: MenuItem[] = [
     icon: Radio,
     subtitle: 'Available Services',
     code: '0x03 · MARKET',
-    glow: 'shadow-neon-pink',
-    border: 'border-neon-pink',
-    text: 'text-neon-pink',
+    glow: 'shadow-neon-magenta',
+    border: 'border-neon-magenta',
+    text: 'text-neon-magenta',
   },
   {
     id: 'skills',
@@ -57,9 +57,9 @@ const menuItems: MenuItem[] = [
     icon: Activity,
     subtitle: 'Installed Skills',
     code: '0x04 · RIPPERDOC',
-    glow: 'shadow-neon-magenta',
-    border: 'border-neon-magenta',
-    text: 'text-neon-magenta',
+    glow: 'shadow-neon-yellow',
+    border: 'border-neon-yellow',
+    text: 'text-neon-yellow',
   },
   {
     id: 'contact',
@@ -67,9 +67,9 @@ const menuItems: MenuItem[] = [
     icon: Cpu,
     subtitle: 'Open Comms Channel',
     code: '0x05 · NETWATCH',
-    glow: 'shadow-neon-green',
-    border: 'border-neon-green',
-    text: 'text-neon-green',
+    glow: 'shadow-neon-cyan',
+    border: 'border-neon-cyan',
+    text: 'text-neon-cyan',
   },
 ];
 
@@ -105,9 +105,9 @@ export default function MainMenu({ onMenuSelect }: MainMenuProps) {
           </div>
 
           <div className="flex items-center justify-center gap-3 font-hud tracking-widest text-xs text-cyber-ash">
-            <span className="inline-block w-2 h-2 bg-neon-green animate-pulse" style={{ boxShadow: '0 0 6px #39ff14' }} />
+            <span className="inline-block w-2 h-2 bg-neon-yellow animate-pulse" style={{ boxShadow: '0 0 6px #fcee0a' }} />
             <span>CONNECTION STABLE — SELECT A PROGRAM TO EXECUTE</span>
-            <span className="inline-block w-2 h-2 bg-neon-green animate-pulse" style={{ boxShadow: '0 0 6px #39ff14' }} />
+            <span className="inline-block w-2 h-2 bg-neon-yellow animate-pulse" style={{ boxShadow: '0 0 6px #fcee0a' }} />
           </div>
         </motion.div>
 
@@ -133,15 +133,11 @@ export default function MainMenu({ onMenuSelect }: MainMenuProps) {
               >
                 {/* Outer glow */}
                 <div
-                  className={`absolute -inset-0.5 opacity-40 group-hover:opacity-90 transition-opacity duration-300 blur-md ${
-                    isHovered ? 'animate-pulse' : ''
-                  }`}
+                  className="absolute -inset-0.5 opacity-30 group-hover:opacity-70 transition-opacity duration-300 blur-md"
                   style={{
                     background: `linear-gradient(135deg, ${
                       item.text.includes('yellow') ? '#fcee0a' :
-                      item.text.includes('cyan') ? '#00f0ff' :
-                      item.text.includes('pink') ? '#ff00aa' :
-                      item.text.includes('magenta') ? '#ff003c' : '#39ff14'
+                      item.text.includes('cyan') ? '#00f0ff' : '#ff003c'
                     }, transparent)`,
                   }}
                 />

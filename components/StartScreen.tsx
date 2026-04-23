@@ -50,16 +50,16 @@ export default function StartScreen({ onStart }: StartScreenProps) {
       className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-cyber-void"
     >
       {/* Night City skyline glow */}
-      <div className="absolute inset-0 bg-gradient-to-b from-cyber-void via-cyber-dark to-neon-magenta/30 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-cyber-void via-cyber-dark to-cyber-dark pointer-events-none" />
 
       {/* Animated cyber grid floor */}
       <div
-        className="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none opacity-50"
+        className="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none opacity-35"
         style={{
           background: `
-            linear-gradient(to top, #ff003c 0%, transparent 70%),
-            repeating-linear-gradient(90deg, rgba(0, 240, 255, 0.4) 0 1px, transparent 1px 80px),
-            repeating-linear-gradient(0deg, rgba(0, 240, 255, 0.4) 0 1px, transparent 1px 80px)
+            linear-gradient(to top, rgba(252, 238, 10, 0.18) 0%, transparent 70%),
+            repeating-linear-gradient(90deg, rgba(0, 240, 255, 0.3) 0 1px, transparent 1px 80px),
+            repeating-linear-gradient(0deg, rgba(0, 240, 255, 0.3) 0 1px, transparent 1px 80px)
           `,
           transform: 'perspective(500px) rotateX(60deg)',
           transformOrigin: 'bottom',
@@ -68,14 +68,14 @@ export default function StartScreen({ onStart }: StartScreenProps) {
 
       {/* Particles / stars */}
       <div className="absolute inset-0 pointer-events-none">
-        {mounted && [...Array(80)].map((_, i) => (
+        {mounted && [...Array(60)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-[2px] h-[2px]"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
-              backgroundColor: ['#fcee0a', '#00f0ff', '#ff00aa', '#e0e7ff'][Math.floor(Math.random() * 4)],
+              backgroundColor: ['#fcee0a', '#00f0ff', '#e0e7ff'][Math.floor(Math.random() * 3)],
               boxShadow: '0 0 4px currentColor',
             }}
             animate={{
@@ -90,9 +90,6 @@ export default function StartScreen({ onStart }: StartScreenProps) {
         ))}
       </div>
 
-      {/* Scan sweep */}
-      <div className="scan-sweep absolute inset-0 pointer-events-none" />
-
       {/* Main content */}
       <div className="relative z-10 text-center px-6 max-w-3xl w-full">
         {/* Terminal boot log */}
@@ -105,16 +102,16 @@ export default function StartScreen({ onStart }: StartScreenProps) {
           <div className="flex items-center gap-2 mb-2 pb-2 border-b border-neon-cyan/30">
             <span className="w-2 h-2 bg-neon-magenta animate-pulse" />
             <span className="w-2 h-2 bg-neon-yellow animate-pulse" />
-            <span className="w-2 h-2 bg-neon-green animate-pulse" />
+            <span className="w-2 h-2 bg-neon-cyan animate-pulse" />
             <span className="ml-2 text-neon-cyan/60 tracking-widest">NETRUNNER_TERMINAL // 0x7F3A</span>
           </div>
           {BOOT_LINES.slice(0, visibleLines).map((line, i) => (
-            <div key={i} className="text-neon-green" style={{ textShadow: '0 0 4px #39ff14' }}>
+            <div key={i} className="text-neon-cyan" style={{ textShadow: '0 0 4px rgba(0,240,255,0.6)' }}>
               {line}
             </div>
           ))}
           {visibleLines < BOOT_LINES.length && (
-            <span className="inline-block w-2 h-4 bg-neon-green animate-pulse ml-1" />
+            <span className="inline-block w-2 h-4 bg-neon-cyan animate-pulse ml-1" />
           )}
         </motion.div>
 
@@ -152,7 +149,7 @@ export default function StartScreen({ onStart }: StartScreenProps) {
 
         {/* Jack-in Button */}
         <motion.button
-          initial={{ opacity: 0, scale: 0.8 }}
+          initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.9 }}
           onClick={handleStart}
@@ -160,20 +157,15 @@ export default function StartScreen({ onStart }: StartScreenProps) {
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.96 }}
         >
-          <div className="absolute -inset-1 bg-gradient-to-r from-neon-yellow via-neon-magenta to-neon-cyan opacity-70 blur-lg group-hover:opacity-100 transition-opacity animate-pulse" />
+          <div className="absolute -inset-0.5 bg-neon-yellow opacity-40 blur-lg group-hover:opacity-70 transition-opacity" />
           <div
             className="relative px-10 md:px-16 py-5 md:py-6 bg-cyber-void border-2 border-neon-yellow font-cyber font-black tracking-[0.3em] text-xl md:text-2xl text-neon-yellow btn-press"
             style={{
               clipPath: 'polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))',
-              textShadow: '0 0 8px #fcee0a, 0 0 16px #fcee0a',
+              textShadow: '0 0 8px rgba(252, 238, 10, 0.7)',
             }}
           >
-            <motion.span
-              animate={{ opacity: [1, 0.5, 1] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
-              &gt;&gt; JACK IN
-            </motion.span>
+            &gt;&gt; JACK IN
           </div>
         </motion.button>
 

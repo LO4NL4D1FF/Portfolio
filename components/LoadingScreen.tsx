@@ -39,8 +39,8 @@ export default function LoadingScreen() {
           </div>
           <div className="h-2 bg-cyber-void border border-cyber-chrome overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-r from-neon-yellow via-neon-magenta to-neon-cyan"
-              style={{ boxShadow: '0 0 10px #fcee0a' }}
+              className="h-full bg-neon-yellow"
+              style={{ boxShadow: '0 0 10px rgba(252,238,10,0.6)' }}
               animate={{ x: ['-100%', '100%'] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
             />

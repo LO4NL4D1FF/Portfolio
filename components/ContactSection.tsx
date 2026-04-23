@@ -7,8 +7,8 @@ export default function ContactSection() {
   const socialLinks = [
     { icon: Mail, label: 'EMAIL.UPLINK', value: 'difflad@gmail.com', href: 'mailto:difflad@gmail.com', color: '#fcee0a', border: 'border-neon-yellow', text: 'text-neon-yellow' },
     { icon: Github, label: 'GIT.REPO', value: 'LO4NL4D1FF', href: 'https://github.com/LO4NL4D1FF', color: '#00f0ff', border: 'border-neon-cyan', text: 'text-neon-cyan' },
-    { icon: Facebook, label: 'SOCIAL.NET', value: 'Loan Ladiff', href: 'https://www.facebook.com/Anonn.005/', color: '#8b00ff', border: 'border-neon-purple', text: 'text-neon-purple' },
-    { icon: MessageCircle, label: 'DIRECT.COMMS', value: '+231 555 666 157', href: 'https://wa.me/231555666157', color: '#39ff14', border: 'border-neon-green', text: 'text-neon-green' },
+    { icon: Facebook, label: 'SOCIAL.NET', value: 'Loan Ladiff', href: 'https://www.facebook.com/Anonn.005/', color: '#ff003c', border: 'border-neon-magenta', text: 'text-neon-magenta' },
+    { icon: MessageCircle, label: 'DIRECT.COMMS', value: '+231 555 666 157', href: 'https://wa.me/231555666157', color: '#fcee0a', border: 'border-neon-yellow', text: 'text-neon-yellow' },
   ];
 
   return (
@@ -119,7 +119,7 @@ export default function ContactSection() {
           transition={{ delay: 0.9 }}
           className="relative"
         >
-          <div className="absolute -inset-1 bg-gradient-to-r from-neon-yellow via-neon-magenta to-neon-cyan opacity-60 blur-lg animate-pulse" />
+          <div className="absolute -inset-0.5 bg-neon-yellow opacity-30 blur-lg" />
           <div
             className="relative cyber-clip-lg bg-cyber-dark border-2 border-neon-yellow p-6 md:p-8 text-center"
             style={{

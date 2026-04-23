@@ -19,7 +19,7 @@ const initialAchievements: Achievement[] = [
     title: 'STREET SCANNER',
     description: 'Breached all main subsystems',
     icon: Gamepad2,
-    color: 'neon-green',
+    color: 'neon-cyan',
     unlocked: false,
   },
   {
@@ -35,7 +35,7 @@ const initialAchievements: Achievement[] = [
     title: 'TIME JUMPER',
     description: 'Ran the net for 5+ minutes',
     icon: Clock,
-    color: 'neon-pink',
+    color: 'neon-magenta',
     unlocked: false,
   },
   {
@@ -51,7 +51,7 @@ const initialAchievements: Achievement[] = [
     title: 'LEGEND OF NIGHT CITY',
     description: 'Unlocked every data shard',
     icon: Trophy,
-    color: 'neon-magenta',
+    color: 'neon-yellow',
     unlocked: false,
   },
 ];
@@ -162,7 +162,7 @@ export default function AchievementSystem() {
             className="fixed top-24 left-1/2 -translate-x-1/2 z-50 safe-area-top w-full max-w-sm px-4"
           >
             <div className="relative">
-              <div className="absolute -inset-1 bg-gradient-to-r from-neon-yellow via-neon-magenta to-neon-cyan opacity-70 blur-lg animate-pulse" />
+              <div className="absolute -inset-0.5 bg-neon-yellow opacity-40 blur-lg" />
               <div
                 className="relative bg-cyber-dark border-2 border-neon-yellow p-4"
                 style={{

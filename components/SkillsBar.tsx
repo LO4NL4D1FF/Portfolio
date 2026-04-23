@@ -15,12 +15,12 @@ const skills: Skill[] = [
   { name: 'JavaScript', level: 93, accent: 'bg-neon-yellow', color: '#fcee0a' },
   { name: 'React / Next.js', level: 95, accent: 'bg-neon-cyan', color: '#00f0ff' },
   { name: 'TypeScript', level: 90, accent: 'bg-neon-cyan', color: '#00f0ff' },
-  { name: 'React Native', level: 92, accent: 'bg-neon-green', color: '#39ff14' },
-  { name: 'AI Integration (GPT, Claude)', level: 88, accent: 'bg-neon-pink', color: '#ff00aa' },
-  { name: 'C# / WinForms', level: 85, accent: 'bg-neon-purple', color: '#8b00ff' },
+  { name: 'React Native', level: 92, accent: 'bg-neon-cyan', color: '#00f0ff' },
+  { name: 'AI Integration (GPT, Claude)', level: 88, accent: 'bg-neon-magenta', color: '#ff003c' },
+  { name: 'C# / WinForms', level: 85, accent: 'bg-neon-yellow', color: '#fcee0a' },
   { name: 'UI/UX Design', level: 87, accent: 'bg-neon-magenta', color: '#ff003c' },
-  { name: 'Video Editing (Premiere Pro)', level: 82, accent: 'bg-neon-orange', color: '#ff6b00' },
-  { name: 'Firebase / Supabase', level: 80, accent: 'bg-neon-green', color: '#39ff14' },
+  { name: 'Video Editing (Premiere Pro)', level: 82, accent: 'bg-neon-magenta', color: '#ff003c' },
+  { name: 'Firebase / Supabase', level: 80, accent: 'bg-neon-cyan', color: '#00f0ff' },
 ];
 
 export default function SkillsBar() {
@@ -128,8 +128,8 @@ export default function SkillsBar() {
             initial={{ width: 0 }}
             animate={mounted ? { width: `${total / 10}%` } : {}}
             transition={{ delay: 1, duration: 1.2 }}
-            className="h-full bg-gradient-to-r from-neon-yellow via-neon-magenta to-neon-cyan"
-            style={{ boxShadow: '0 0 10px #fcee0a' }}
+            className="h-full bg-neon-yellow"
+            style={{ boxShadow: '0 0 10px rgba(252,238,10,0.6)' }}
           />
         </div>
       </motion.div>

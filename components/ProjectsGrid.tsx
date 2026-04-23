@@ -16,31 +16,31 @@ const categoryTheme = (category: string) => {
       return {
         border: 'border-neon-cyan',
         text: 'text-neon-cyan',
-        glow: 'rgba(0,240,255,0.55)',
+        glow: 'rgba(0,240,255,0.45)',
         accent: '#00f0ff',
         tag: 'CONSTRUCT',
       };
     case 'service':
       return {
-        border: 'border-neon-green',
-        text: 'text-neon-green',
-        glow: 'rgba(57,255,20,0.55)',
-        accent: '#39ff14',
+        border: 'border-neon-yellow',
+        text: 'text-neon-yellow',
+        glow: 'rgba(252,238,10,0.45)',
+        accent: '#fcee0a',
         tag: 'FIXER.JOB',
       };
     case 'creative':
       return {
-        border: 'border-neon-pink',
-        text: 'text-neon-pink',
-        glow: 'rgba(255,0,170,0.55)',
-        accent: '#ff00aa',
+        border: 'border-neon-magenta',
+        text: 'text-neon-magenta',
+        glow: 'rgba(255,0,60,0.45)',
+        accent: '#ff003c',
         tag: 'BRAIN-DANCE',
       };
     default:
       return {
         border: 'border-neon-yellow',
         text: 'text-neon-yellow',
-        glow: 'rgba(252,238,10,0.55)',
+        glow: 'rgba(252,238,10,0.45)',
         accent: '#fcee0a',
         tag: 'GIG',
       };

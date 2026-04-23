@@ -14,12 +14,12 @@ export default function AboutSection() {
   const characterStats = [
     { label: 'HANDLE', value: 'Loan Ladiff Sedo-Ta', accent: 'text-neon-yellow' },
     { label: 'ALIASES', value: 'Diff · Link · Mr. Badboi', accent: 'text-neon-cyan' },
-    { label: 'STREET CRED', value: String(new Date().getFullYear() - 2004), accent: 'text-neon-green' },
-    { label: 'ORIGIN', value: 'Cameroonian', accent: 'text-neon-pink' },
-    { label: 'HIDEOUT', value: 'Monrovia, Liberia', accent: 'text-neon-cyan' },
+    { label: 'STREET CRED', value: String(new Date().getFullYear() - 2004), accent: 'text-neon-yellow' },
+    { label: 'ORIGIN', value: 'Cameroonian', accent: 'text-neon-cyan' },
+    { label: 'HIDEOUT', value: 'Monrovia, Liberia', accent: 'text-neon-yellow' },
     { label: 'CLASS', value: 'Software Engineer // Netrunner', accent: 'text-neon-magenta' },
-    { label: 'YEARS JACKED-IN', value: '3+ Cycles', accent: 'text-neon-yellow' },
-    { label: 'TRAJECTORY', value: 'Founder / CEO Protocol', accent: 'text-neon-purple' },
+    { label: 'YEARS JACKED-IN', value: '3+ Cycles', accent: 'text-neon-cyan' },
+    { label: 'TRAJECTORY', value: 'Founder / CEO Protocol', accent: 'text-neon-magenta' },
   ];
 
   const levels = [
@@ -39,7 +39,7 @@ export default function AboutSection() {
       level: 3,
       title: 'INTERFACE CRAFTER',
       description: 'React enters → Personal portfolio → Component thinking → UI responsiveness obsession begins',
-      accent: 'border-neon-green text-neon-green',
+      accent: 'border-neon-cyan text-neon-cyan',
     },
     {
       level: 4,
@@ -51,7 +51,7 @@ export default function AboutSection() {
       level: 5,
       title: 'THE ARCHITECT',
       description: 'Zenix/CORELM/Audify → AI-powered learning → Subscription logic, gamification → Founder mindset awakens',
-      accent: 'border-neon-pink text-neon-pink',
+      accent: 'border-neon-yellow text-neon-yellow',
     },
     {
       level: 6,
@@ -146,7 +146,7 @@ export default function AboutSection() {
             </h2>
           </motion.div>
 
-          <div className="relative space-y-4 pl-6 before:content-[''] before:absolute before:left-2 before:top-0 before:bottom-0 before:w-[2px] before:bg-gradient-to-b before:from-neon-yellow before:via-neon-cyan before:to-neon-magenta">
+          <div className="relative space-y-4 pl-6 before:content-[''] before:absolute before:left-2 before:top-0 before:bottom-0 before:w-[2px] before:bg-neon-yellow/60">
             {levels.map((level, index) => (
               <motion.div
                 key={level.level}
@@ -205,8 +205,8 @@ export default function AboutSection() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
               { label: 'CORE', accent: 'neon-yellow', items: techStack.primary },
-              { label: 'SECONDARY', accent: 'neon-magenta', items: techStack.secondary },
-              { label: 'UTILITIES', accent: 'neon-cyan', items: techStack.tools },
+              { label: 'SECONDARY', accent: 'neon-cyan', items: techStack.secondary },
+              { label: 'UTILITIES', accent: 'neon-magenta', items: techStack.tools },
             ].map((group) => (
               <div
                 key={group.label}
@@ -262,27 +262,27 @@ export default function AboutSection() {
                   initial={{ y: 30, opacity: 0 }}
                   animate={mounted ? { y: 0, opacity: 1 } : {}}
                   transition={{ delay: 1.3 + index * 0.1 }}
-                  className="cyber-panel cyber-clip border border-neon-green p-5"
-                  style={{ boxShadow: 'inset 0 0 20px rgba(57, 255, 20, 0.05), 0 0 14px rgba(57, 255, 20, 0.15)' }}
+                  className="cyber-panel cyber-clip border border-neon-cyan p-5"
+                  style={{ boxShadow: 'inset 0 0 20px rgba(0, 240, 255, 0.05), 0 0 14px rgba(0, 240, 255, 0.15)' }}
                 >
                   <div className="flex justify-center mb-4">
-                    <div className="w-16 h-16 border-2 border-neon-green flex items-center justify-center bg-cyber-void"
+                    <div className="w-16 h-16 border-2 border-neon-cyan flex items-center justify-center bg-cyber-void"
                       style={{
                         clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))',
-                        boxShadow: '0 0 12px rgba(57, 255, 20, 0.6)',
+                        boxShadow: '0 0 12px rgba(0, 240, 255, 0.6)',
                       }}
                     >
-                      <Icon className="w-8 h-8 text-neon-green" strokeWidth={1.5} />
+                      <Icon className="w-8 h-8 text-neon-cyan" strokeWidth={1.5} />
                     </div>
                   </div>
-                  <h3 className="font-cyber font-bold text-base md:text-lg tracking-widest text-neon-green text-center mb-1" style={{ textShadow: '0 0 6px #39ff14' }}>
+                  <h3 className="font-cyber font-bold text-base md:text-lg tracking-widest text-neon-cyan text-center mb-1" style={{ textShadow: '0 0 6px rgba(0,240,255,0.7)' }}>
                     {edu.title}
                   </h3>
                   <p className="font-hud text-sm text-cyber-bone text-center mb-3">
                     {edu.institution}
                   </p>
-                  <div className="bg-cyber-void/80 border-t border-neon-green/40 text-center py-1.5">
-                    <span className="font-mono text-xs tracking-widest text-neon-green">
+                  <div className="bg-cyber-void/80 border-t border-neon-cyan/40 text-center py-1.5">
+                    <span className="font-mono text-xs tracking-widest text-neon-cyan">
                       {edu.status}
                     </span>
                   </div>
@@ -303,7 +303,7 @@ export default function AboutSection() {
             href="mailto:difflad@gmail.com?subject=CV%20Request%20-%20Sedo-Ta%20Portfolio&body=Hi%20Sedo-Ta%2C%0A%0AI'd%20like%20to%20request%20your%20CV%2FResume.%0A%0AThank%20you!"
             className="inline-block relative group"
           >
-            <div className="absolute -inset-1 bg-gradient-to-r from-neon-yellow via-neon-magenta to-neon-cyan opacity-60 group-hover:opacity-100 blur-lg transition-opacity" />
+            <div className="absolute -inset-0.5 bg-neon-yellow opacity-30 group-hover:opacity-60 blur-lg transition-opacity" />
             <div
               className="relative bg-cyber-void border-2 border-neon-yellow px-8 md:px-10 py-5 md:py-6 btn-press"
               style={{

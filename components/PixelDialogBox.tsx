@@ -69,7 +69,7 @@ export default function PixelDialogBox({
             >
               <div className="relative">
                 {/* Outer glow */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-neon-yellow via-neon-magenta to-neon-cyan opacity-50 blur-lg animate-pulse" />
+                <div className="absolute -inset-0.5 bg-neon-yellow opacity-25 blur-lg" />
 
                 {/* Dialog body */}
                 <div
