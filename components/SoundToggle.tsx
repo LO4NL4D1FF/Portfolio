@@ -8,22 +8,18 @@ export default function SoundToggle() {
   const [enabled, setEnabled] = useState(true);
 
   useEffect(() => {
-    const sounds = getGameSounds();
-    sounds.setEnabled(enabled);
+    getGameSounds().setEnabled(enabled);
   }, [enabled]);
 
   const toggle = () => {
     setEnabled(!enabled);
-    if (!enabled) {
-      const sounds = getGameSounds();
-      setTimeout(() => sounds.playClick(), 80);
-    }
+    if (!enabled) setTimeout(() => getGameSounds().playClick(), 80);
   };
 
   return (
     <button
       onClick={toggle}
-      className="fixed bottom-4 right-4 z-50 w-10 h-10 rounded-full glass glass-hover flex items-center justify-center text-white safe-area-bottom btn-press"
+      className="fixed bottom-4 right-4 z-50 w-10 h-10 rounded-full glass glass-hover flex items-center justify-center text-fg safe-area-bottom btn-press"
       title={enabled ? 'Mute' : 'Unmute'}
       aria-label={enabled ? 'Mute sounds' : 'Enable sounds'}
     >

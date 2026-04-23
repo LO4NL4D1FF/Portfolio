@@ -127,7 +127,7 @@ export default function Home() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={handleRestart}
-          className="fixed bottom-4 left-4 z-50 w-10 h-10 rounded-full glass glass-hover flex items-center justify-center text-white safe-area-bottom btn-press"
+          className="fixed bottom-4 left-4 z-50 w-10 h-10 rounded-full glass glass-hover flex items-center justify-center text-fg safe-area-bottom btn-press"
           title="Return to start"
           aria-label="Restart"
         >

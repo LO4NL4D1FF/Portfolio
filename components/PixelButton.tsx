@@ -13,12 +13,7 @@ interface PixelButtonProps {
 }
 
 export default function PixelButton({
-  children,
-  onClick,
-  variant = 'primary',
-  size = 'md',
-  className = '',
-  disabled = false,
+  children, onClick, variant = 'primary', size = 'md', className = '', disabled = false,
 }: PixelButtonProps) {
   const sizes = {
     sm: 'px-4 py-1.5 text-xs',
@@ -27,15 +22,14 @@ export default function PixelButton({
   };
 
   const variants = {
-    primary:   'glass glass-hover text-white',
-    secondary: 'glass-subtle text-g-900 hover:text-white',
-    ghost:     'text-g-800 hover:text-white',
+    primary:   'bg-fg text-white hover:bg-black',
+    secondary: 'glass glass-hover text-fg',
+    ghost:     'text-muted hover:text-fg',
   };
 
   const handleClick = () => {
     if (!disabled && onClick) {
-      const sounds = getGameSounds();
-      sounds.playClick();
+      getGameSounds().playClick();
       onClick();
     }
   };

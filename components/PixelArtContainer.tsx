@@ -9,7 +9,7 @@ interface PixelArtContainerProps {
 
 export default function PixelArtContainer({ children }: PixelArtContainerProps) {
   return (
-    <div className="relative w-full min-h-screen bg-g-0 overflow-x-hidden">
+    <div className="relative w-full min-h-screen bg-white overflow-x-hidden">
       {children}
     </div>
   );

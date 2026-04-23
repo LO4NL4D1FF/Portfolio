@@ -9,46 +9,38 @@ export default function ParallaxBackground() {
 
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none -z-0">
-      {/* Three soft gray blobs — give glass something to frost */}
-      <div
-        className="absolute rounded-full"
-        style={{
-          width: '60vmax',
-          height: '60vmax',
-          top: '-20vmax',
-          left: '-20vmax',
-          background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 60%)',
-          filter: 'blur(40px)',
-        }}
-      />
+      {/* Soft tinted blobs — give the glass something to frost against */}
       <div
         className="absolute rounded-full"
         style={{
           width: '55vmax',
           height: '55vmax',
-          top: '20vh',
-          right: '-20vmax',
-          background: 'radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 60%)',
+          top: '-15vmax',
+          left: '-15vmax',
+          background: 'radial-gradient(circle, rgba(180, 190, 210, 0.5) 0%, transparent 65%)',
           filter: 'blur(40px)',
         }}
       />
       <div
         className="absolute rounded-full"
         style={{
-          width: '70vmax',
-          height: '70vmax',
-          bottom: '-30vmax',
-          left: '10vw',
-          background: 'radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 60%)',
+          width: '50vmax',
+          height: '50vmax',
+          top: '15vh',
+          right: '-20vmax',
+          background: 'radial-gradient(circle, rgba(210, 200, 215, 0.45) 0%, transparent 65%)',
           filter: 'blur(40px)',
         }}
       />
-
-      {/* Deep vignette at edges */}
       <div
-        className="absolute inset-0"
+        className="absolute rounded-full"
         style={{
-          background: 'radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.4) 100%)',
+          width: '65vmax',
+          height: '65vmax',
+          bottom: '-25vmax',
+          left: '20vw',
+          background: 'radial-gradient(circle, rgba(200, 210, 225, 0.4) 0%, transparent 65%)',
+          filter: 'blur(40px)',
         }}
       />
     </div>

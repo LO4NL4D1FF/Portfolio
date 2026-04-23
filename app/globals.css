@@ -1,16 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --bg:        #000000;
-  --fg:        #ffffff;
-  --muted:     #a1a1aa;
-  --sub:       #71717a;
-  --line:      rgba(255, 255, 255, 0.08);
-  --line-soft: rgba(255, 255, 255, 0.04);
+  --bg:        #ffffff;
+  --bg-tint:   #f5f5f7;
+  --fg:        #1d1d1f;
+  --fg-soft:   #424245;
+  --muted:     #6e6e73;
+  --sub:       #86868b;
+  --line:      rgba(0, 0, 0, 0.08);
+  --line-soft: rgba(0, 0, 0, 0.04);
 }
 
 * {
@@ -28,58 +30,74 @@ body {
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', Inter, system-ui, sans-serif;
   font-weight: 400;
-  letter-spacing: -0.005em;
+  letter-spacing: -0.01em;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  background-color: #000;
+  /* Soft tinted washes so the glass has something to frost */
+  background-color: #ffffff;
   background-image:
-    radial-gradient(800px circle at 10% 10%, rgba(255, 255, 255, 0.06), transparent 55%),
-    radial-gradient(700px circle at 90% 20%, rgba(255, 255, 255, 0.04), transparent 55%),
-    radial-gradient(900px circle at 50% 100%, rgba(255, 255, 255, 0.05), transparent 55%);
+    radial-gradient(700px circle at 0% 0%,   rgba(10, 10, 30, 0.05), transparent 55%),
+    radial-gradient(700px circle at 100% 0%, rgba(80, 80, 120, 0.04), transparent 55%),
+    radial-gradient(900px circle at 50% 100%, rgba(0, 0, 40, 0.05), transparent 60%);
   background-attachment: fixed;
 }
 
-/* ============== GLASSMORPHISM ============== */
+/* ===================== GLASSMORPHISM ===================== */
 
 .glass {
-  background: rgba(255, 255, 255, 0.045);
-  backdrop-filter: blur(24px) saturate(1.2);
-  -webkit-backdrop-filter: blur(24px) saturate(1.2);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: saturate(1.6) blur(22px);
+  -webkit-backdrop-filter: saturate(1.6) blur(22px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    0 12px 40px rgba(0, 0, 0, 0.05);
 }
 
 .glass-strong {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(32px) saturate(1.3);
-  -webkit-backdrop-filter: blur(32px) saturate(1.3);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: saturate(1.8) blur(28px);
+  -webkit-backdrop-filter: saturate(1.8) blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    0 20px 60px rgba(0, 0, 0, 0.07);
 }
 
 .glass-subtle {
-  background: rgba(255, 255, 255, 0.025);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: saturate(1.5) blur(14px);
+  -webkit-backdrop-filter: saturate(1.5) blur(14px);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.glass-chip {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: saturate(1.6) blur(10px);
+  -webkit-backdrop-filter: saturate(1.6) blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .glass-hover {
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .glass-hover:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 255, 255, 0.9);
 }
 
-/* ============== SCROLLBAR ============== */
+/* ===================== SCROLLBAR ===================== */
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -87,28 +105,19 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.12);
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.22);
 }
 
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
+.custom-scrollbar::-webkit-scrollbar        { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track  { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb  { background: rgba(0, 0, 0, 0.12); border-radius: 999px; }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
-}
-
-/* ============== MINOR UTILS ============== */
+/* ===================== UTILITIES ===================== */
 
 .no-select {
   -webkit-user-select: none;
@@ -116,67 +125,40 @@ body {
   user-select: none;
 }
 
-.safe-area-top {
-  padding-top: max(env(safe-area-inset-top), 12px);
-}
+.safe-area-top    { padding-top: max(env(safe-area-inset-top), 12px); }
+.safe-area-bottom { padding-bottom: max(env(safe-area-inset-bottom), 12px); }
 
-.safe-area-bottom {
-  padding-bottom: max(env(safe-area-inset-bottom), 12px);
-}
-
-/* Hairline divider */
 .hairline {
   height: 1px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.08);
 }
 
-/* ============== LEGACY ALIASES (safe no-ops) ============== */
+/* Hero-scale tightened tracking (matches the large Apple-style headlines) */
+.headline {
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
 
-.btn-press:active        { transform: translate(0, 1px); }
-.scanlines,
-.crt-scanlines,
-.crt-effect,
-.cyber-noise,
-.cyber-panel,
-.cyber-panel-yellow,
-.cyber-panel-cyan,
-.cyber-panel-magenta,
-.cyber-clip,
-.cyber-clip-sm,
-.cyber-clip-lg,
-.cyber-corners,
-.cyber-corners-cyan,
-.glitch,
-.neon-yellow,
-.neon-cyan,
-.neon-magenta,
-.neon-pink,
-.neon-green,
-.neon-white,
-.holo-text,
-.chromatic,
-.pixel-border,
-.pixel-corners,
-.pixel-grid,
-.cyber-grid,
-.cyber-grid-yellow,
-.text-outline,
-.rule-h,
-.rule-v,
-.scan-sweep {
+/* ===================== LEGACY ALIASES (safe no-ops) ===================== */
+
+.btn-press:active { transform: translate(0, 1px); }
+
+.scanlines, .crt-scanlines, .crt-effect, .cyber-noise,
+.cyber-panel, .cyber-panel-yellow, .cyber-panel-cyan, .cyber-panel-magenta,
+.cyber-clip, .cyber-clip-sm, .cyber-clip-lg,
+.cyber-corners, .cyber-corners-cyan,
+.glitch, .neon-yellow, .neon-cyan, .neon-magenta, .neon-pink, .neon-green, .neon-white,
+.holo-text, .chromatic,
+.pixel-border, .pixel-corners, .pixel-grid, .cyber-grid, .cyber-grid-yellow,
+.text-outline, .rule-h, .rule-v, .scan-sweep {
   /* intentional no-ops */
 }
 
-.crt-scanlines::before,
-.crt-scanlines::after,
-.cyber-corners::before,
-.cyber-corners::after,
-.cyber-corners-cyan::before,
-.cyber-corners-cyan::after,
-.glitch::before,
-.glitch::after,
-.scan-sweep::before,
-.cyber-noise::after {
+.crt-scanlines::before, .crt-scanlines::after,
+.cyber-corners::before, .cyber-corners::after,
+.cyber-corners-cyan::before, .cyber-corners-cyan::after,
+.glitch::before, .glitch::after,
+.scan-sweep::before, .cyber-noise::after {
   content: none;
 }
 
@@ -187,6 +169,11 @@ body {
   overflow: hidden;
 }
 
-.border-3 {
-  border-width: 1px;
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
+
+.border-3 { border-width: 1px; }

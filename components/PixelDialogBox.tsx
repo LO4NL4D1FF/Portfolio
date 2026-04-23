@@ -14,27 +14,20 @@ interface PixelDialogBoxProps {
 }
 
 export default function PixelDialogBox({
-  isOpen,
-  onClose,
-  title,
-  children,
+  isOpen, onClose, title, children,
 }: PixelDialogBoxProps) {
   useEffect(() => {
     if (isOpen) {
-      const sounds = getGameSounds();
-      sounds.playOpen();
+      getGameSounds().playOpen();
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
-    return () => {
-      document.body.style.overflow = '';
-    };
+    return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
   const handleClose = () => {
-    const sounds = getGameSounds();
-    sounds.playClose();
+    getGameSounds().playClose();
     setTimeout(() => onClose(), 80);
   };
 
@@ -47,39 +40,37 @@ export default function PixelDialogBox({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="fixed inset-0 bg-black/70 backdrop-blur-md z-40"
+            className="fixed inset-0 bg-black/20 backdrop-blur-md z-40"
           />
 
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.98 }}
+            initial={{ opacity: 0, y: 16, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.98 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
+            exit={{ opacity: 0, y: 16, scale: 0.98 }}
+            transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
             style={{ pointerEvents: 'none' }}
           >
             <div
-              className="w-full max-w-2xl my-auto glass rounded-3xl overflow-hidden"
+              className="w-full max-w-2xl my-auto glass-strong rounded-3xl overflow-hidden"
               style={{ pointerEvents: 'auto' }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Header */}
-              <div className="flex items-center justify-between px-6 md:px-8 py-4 border-b border-white/5">
-                <h2 className="font-medium text-base md:text-lg text-white tracking-tight truncate">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-black/5">
+                <h2 className="font-semibold text-base md:text-lg text-fg tracking-tight truncate">
                   {title}
                 </h2>
                 <button
                   onClick={handleClose}
-                  className="w-9 h-9 rounded-full glass-subtle flex items-center justify-center text-g-800 hover:text-white transition-colors btn-press"
+                  className="w-9 h-9 rounded-full glass-subtle flex items-center justify-center text-muted hover:text-fg transition-colors btn-press"
                   aria-label="Close"
                 >
-                  <X className="w-4 h-4" strokeWidth={1.75} />
+                  <X className="w-4 h-4" strokeWidth={2} />
                 </button>
               </div>
 
-              {/* Body */}
-              <div className="px-6 md:px-8 py-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
-                <div className="text-sm md:text-base text-g-900 leading-relaxed">
+              <div className="px-6 py-5 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                <div className="text-sm text-fg-soft leading-relaxed">
                   {children}
                 </div>
               </div>
