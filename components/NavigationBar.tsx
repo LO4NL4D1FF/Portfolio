@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { ArrowLeft, Home } from 'lucide-react';
 import { getGameSounds } from '@/lib/sounds';
 
 interface NavigationBarProps {
@@ -26,30 +27,28 @@ export default function NavigationBar({ onBack, onHome, title }: NavigationBarPr
     <motion.div
       initial={{ y: -40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed top-0 left-0 right-0 z-40 safe-area-top bg-ink-0/90 backdrop-blur border-b border-ink-line"
+      transition={{ duration: 0.3 }}
+      className="fixed top-4 left-1/2 -translate-x-1/2 z-40 safe-area-top"
     >
-      <div className="max-w-6xl mx-auto px-4 md:px-6 h-14 flex items-center gap-4">
+      <div className="glass rounded-full px-2 py-2 flex items-center gap-1">
         <button
           onClick={handleBack}
-          className="font-mono text-xs tracking-[0.25em] text-dim hover:text-bone transition-colors btn-press"
+          className="w-9 h-9 rounded-full flex items-center justify-center text-g-800 hover:text-white hover:bg-white/5 transition-colors btn-press"
+          aria-label="Back"
         >
-          ← BACK
+          <ArrowLeft className="w-4 h-4" strokeWidth={1.75} />
         </button>
 
-        <span className="h-5 w-px bg-ink-line" />
-
-        <div className="flex-1 flex items-center gap-3 min-w-0">
-          <span className="font-mono text-[11px] tracking-[0.25em] text-slate">/ /</span>
-          <h1 className="font-sans font-light text-base md:text-lg tracking-[0.2em] text-bone truncate uppercase">
-            {title}
-          </h1>
-        </div>
+        <span className="px-4 text-sm font-medium text-white tracking-tight truncate max-w-[50vw]">
+          {title}
+        </span>
 
         <button
           onClick={handleHome}
-          className="font-mono text-xs tracking-[0.25em] text-dim hover:text-amber transition-colors btn-press"
+          className="w-9 h-9 rounded-full flex items-center justify-center text-g-800 hover:text-white hover:bg-white/5 transition-colors btn-press"
+          aria-label="Home"
         >
-          INDEX
+          <Home className="w-4 h-4" strokeWidth={1.75} />
         </button>
       </div>
     </motion.div>

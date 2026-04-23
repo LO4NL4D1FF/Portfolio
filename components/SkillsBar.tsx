@@ -29,37 +29,42 @@ export default function SkillsBar() {
   const avg = Math.round(total / skills.length);
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-6 py-10 space-y-10">
+    <div className="w-full max-w-3xl mx-auto px-5 md:px-8 py-6 pb-24 space-y-6">
       <motion.header
-        initial={{ opacity: 0, y: 8 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
+        className="glass rounded-3xl p-8 md:p-10"
       >
-        <p className="font-mono text-[11px] tracking-[0.3em] text-slate mb-3">
-          / / CAPACITY
+        <p className="text-xs tracking-[0.3em] text-g-700 uppercase mb-3">
+          Capacity
         </p>
-        <h1 className="font-sans font-light text-3xl md:text-4xl tracking-[0.15em] text-bone uppercase">
+        <h1 className="font-sans font-light text-3xl md:text-4xl tracking-tight text-white">
           Skills
         </h1>
-        <div className="mt-5 h-px bg-ink-line" />
+        <p className="mt-3 text-sm md:text-base text-g-800">
+          Technical proficiency by domain.
+        </p>
       </motion.header>
 
       {/* Summary */}
-      <div className="grid grid-cols-2 border-y border-ink-line divide-x divide-ink-line">
-        <div className="py-4 px-4">
-          <p className="font-mono text-[10px] tracking-[0.3em] text-dim mb-1">AVERAGE</p>
-          <p className="font-sans font-light text-3xl text-amber">{avg}<span className="text-lg text-bone/60">%</span></p>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="glass rounded-2xl p-6">
+          <p className="text-[10px] tracking-[0.3em] text-g-700 uppercase mb-2">Average</p>
+          <p className="font-light text-3xl text-white">
+            {avg}<span className="text-lg text-g-700">%</span>
+          </p>
         </div>
-        <div className="py-4 px-4">
-          <p className="font-mono text-[10px] tracking-[0.3em] text-dim mb-1">SKILLS TRACKED</p>
-          <p className="font-sans font-light text-3xl text-bone">{skills.length}</p>
+        <div className="glass rounded-2xl p-6">
+          <p className="text-[10px] tracking-[0.3em] text-g-700 uppercase mb-2">Tracked</p>
+          <p className="font-light text-3xl text-white">{skills.length}</p>
         </div>
       </div>
 
-      {/* Skills list */}
-      <ul className="space-y-4">
+      {/* Skills */}
+      <div className="glass rounded-3xl p-6 md:p-8 space-y-4">
         {skills.map((skill, i) => (
-          <motion.li
+          <motion.div
             key={skill.name}
             initial={{ opacity: 0, x: -8 }}
             animate={mounted ? { opacity: 1, x: 0 } : {}}
@@ -67,30 +72,24 @@ export default function SkillsBar() {
             className="space-y-2"
           >
             <div className="flex items-baseline justify-between gap-3">
-              <div className="flex items-baseline gap-3 min-w-0">
-                <span className="font-mono text-[11px] tracking-[0.2em] text-dim shrink-0">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <span className="font-sans text-base md:text-lg text-bone truncate">
-                  {skill.name}
-                </span>
-              </div>
-              <span className="font-mono text-sm text-amber shrink-0">
-                {skill.level}
+              <span className="text-sm md:text-base text-white truncate">
+                {skill.name}
+              </span>
+              <span className="text-sm text-g-800 shrink-0 tabular-nums">
+                {skill.level}%
               </span>
             </div>
-            <div className="relative h-px bg-ink-line">
+            <div className="relative h-1.5 rounded-full bg-white/5 overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={mounted ? { width: `${skill.level}%` } : {}}
-                transition={{ delay: i * 0.04 + 0.1, duration: 0.8, ease: 'easeOut' }}
-                className="absolute inset-y-0 left-0 bg-amber"
-                style={{ height: '1px' }}
+                transition={{ delay: i * 0.04 + 0.15, duration: 0.9, ease: 'easeOut' }}
+                className="absolute inset-y-0 left-0 rounded-full bg-white/70"
               />
             </div>
-          </motion.li>
+          </motion.div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

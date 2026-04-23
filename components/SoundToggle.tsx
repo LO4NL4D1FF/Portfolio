@@ -23,14 +23,14 @@ export default function SoundToggle() {
   return (
     <button
       onClick={toggle}
-      className="fixed bottom-4 right-4 z-50 w-9 h-9 bg-ink-1 border border-ink-line text-bone/70 hover:text-amber hover:border-amber transition-colors flex items-center justify-center safe-area-bottom btn-press"
+      className="fixed bottom-4 right-4 z-50 w-10 h-10 rounded-full glass glass-hover flex items-center justify-center text-white safe-area-bottom btn-press"
       title={enabled ? 'Mute' : 'Unmute'}
       aria-label={enabled ? 'Mute sounds' : 'Enable sounds'}
     >
       {enabled ? (
-        <Volume2 className="w-4 h-4" strokeWidth={1.5} />
+        <Volume2 className="w-4 h-4" strokeWidth={1.75} />
       ) : (
-        <VolumeX className="w-4 h-4" strokeWidth={1.5} />
+        <VolumeX className="w-4 h-4" strokeWidth={1.75} />
       )}
     </button>
   );

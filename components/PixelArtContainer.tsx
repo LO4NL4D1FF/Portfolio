@@ -7,12 +7,9 @@ interface PixelArtContainerProps {
   showCRT?: boolean;
 }
 
-export default function PixelArtContainer({ children, showCRT = true }: PixelArtContainerProps) {
+export default function PixelArtContainer({ children }: PixelArtContainerProps) {
   return (
-    <div className="relative w-full min-h-screen bg-ink-0 overflow-x-hidden">
-      {showCRT && (
-        <div className="fixed inset-0 scanlines pointer-events-none z-40" />
-      )}
+    <div className="relative w-full min-h-screen bg-g-0 overflow-x-hidden">
       {children}
     </div>
   );

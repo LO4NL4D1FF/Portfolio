@@ -4,39 +4,51 @@ import { useEffect, useState } from 'react';
 
 export default function ParallaxBackground() {
   const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
+  useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none -z-0">
-      {/* Very faint grid */}
-      <div className="absolute inset-0 cyber-grid opacity-60" />
-
-      {/* Soft amber wash at top */}
+      {/* Three soft gray blobs — give glass something to frost */}
       <div
-        className="absolute inset-x-0 top-0 h-[40vh]"
+        className="absolute rounded-full"
         style={{
-          background: 'radial-gradient(ellipse at 50% -20%, rgba(217, 166, 95, 0.06) 0%, transparent 70%)',
+          width: '60vmax',
+          height: '60vmax',
+          top: '-20vmax',
+          left: '-20vmax',
+          background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 60%)',
+          filter: 'blur(40px)',
+        }}
+      />
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: '55vmax',
+          height: '55vmax',
+          top: '20vh',
+          right: '-20vmax',
+          background: 'radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 60%)',
+          filter: 'blur(40px)',
+        }}
+      />
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: '70vmax',
+          height: '70vmax',
+          bottom: '-30vmax',
+          left: '10vw',
+          background: 'radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 60%)',
+          filter: 'blur(40px)',
         }}
       />
 
-      {/* Soft slate wash at bottom */}
-      <div
-        className="absolute inset-x-0 bottom-0 h-[40vh]"
-        style={{
-          background: 'radial-gradient(ellipse at 50% 120%, rgba(107, 142, 145, 0.05) 0%, transparent 70%)',
-        }}
-      />
-
-      {/* Vignette */}
+      {/* Deep vignette at edges */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.5) 100%)',
+          background: 'radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.4) 100%)',
         }}
       />
     </div>

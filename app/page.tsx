@@ -96,17 +96,17 @@ export default function Home() {
   const getScreenTitle = () => {
     switch (currentScreen) {
       case 'about':
-        return 'ABOUT';
+        return 'About';
       case 'projects':
-        return 'PROJECTS';
+        return 'Projects';
       case 'services':
-        return 'SERVICES';
+        return 'Services';
       case 'skills':
-        return 'SKILLS';
+        return 'Skills';
       case 'contact':
-        return 'CONTACT';
+        return 'Contact';
       default:
-        return 'PORTFOLIO';
+        return 'Portfolio';
     }
   };
 
@@ -127,11 +127,11 @@ export default function Home() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={handleRestart}
-          className="fixed bottom-4 left-4 z-50 w-9 h-9 bg-ink-1 border border-ink-line text-bone/70 hover:text-amber hover:border-amber transition-colors flex items-center justify-center safe-area-bottom btn-press"
+          className="fixed bottom-4 left-4 z-50 w-10 h-10 rounded-full glass glass-hover flex items-center justify-center text-white safe-area-bottom btn-press"
           title="Return to start"
           aria-label="Restart"
         >
-          <RotateCcw className="w-4 h-4" strokeWidth={1.5} />
+          <RotateCcw className="w-4 h-4" strokeWidth={1.75} />
         </motion.button>
       )}
 
@@ -153,7 +153,7 @@ export default function Home() {
               onHome={handleHome}
               title={getScreenTitle()}
             />
-            <div className="pt-24 pb-12">
+            <div className="pt-24">
               <AboutSection />
             </div>
           </div>
@@ -166,7 +166,7 @@ export default function Home() {
               onHome={handleHome}
               title={getScreenTitle()}
             />
-            <div className="pt-24 pb-12">
+            <div className="pt-24">
               <ProjectsGrid projects={projects} onProjectClick={handleProjectClick} />
             </div>
           </div>
@@ -179,7 +179,7 @@ export default function Home() {
               onHome={handleHome}
               title={getScreenTitle()}
             />
-            <div className="pt-24 pb-12">
+            <div className="pt-24">
               <ServicesMenu services={services} />
             </div>
           </div>
@@ -192,7 +192,7 @@ export default function Home() {
               onHome={handleHome}
               title={getScreenTitle()}
             />
-            <div className="pt-24 pb-12 min-h-screen flex items-center">
+            <div className="pt-24">
               <SkillsBar />
             </div>
           </div>
@@ -205,7 +205,7 @@ export default function Home() {
               onHome={handleHome}
               title={getScreenTitle()}
             />
-            <div className="pt-24 pb-12">
+            <div className="pt-24">
               <ContactSection />
             </div>
           </div>

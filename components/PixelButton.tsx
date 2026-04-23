@@ -21,15 +21,15 @@ export default function PixelButton({
   disabled = false,
 }: PixelButtonProps) {
   const sizes = {
-    sm: 'px-3 py-1.5 text-xs',
+    sm: 'px-4 py-1.5 text-xs',
     md: 'px-5 py-2.5 text-sm',
     lg: 'px-7 py-3 text-base',
   };
 
   const variants = {
-    primary:   'border border-amber text-amber hover:bg-amber hover:text-ink-0',
-    secondary: 'border border-slate text-slate hover:bg-slate hover:text-ink-0',
-    ghost:     'border border-ink-line text-bone hover:text-amber hover:border-amber',
+    primary:   'glass glass-hover text-white',
+    secondary: 'glass-subtle text-g-900 hover:text-white',
+    ghost:     'text-g-800 hover:text-white',
   };
 
   const handleClick = () => {
@@ -45,7 +45,7 @@ export default function PixelButton({
       onClick={handleClick}
       disabled={disabled}
       className={`
-        font-mono tracking-[0.25em] uppercase transition-colors btn-press
+        rounded-full font-medium tracking-tight transition-colors btn-press
         ${variants[variant]}
         ${sizes[size]}
         ${disabled ? 'opacity-40 cursor-not-allowed' : ''}

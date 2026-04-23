@@ -13,11 +13,11 @@ interface Achievement {
 }
 
 const initial: Achievement[] = [
-  { id: 'explorer',       title: 'EXPLORER',       description: 'Viewed every section',          icon: Circle, unlocked: false },
-  { id: 'project-viewer', title: 'READER',         description: 'Opened a project brief',        icon: Star,   unlocked: false },
-  { id: 'time-traveler',  title: 'LONG VISIT',     description: 'Spent 5+ minutes',              icon: Clock,  unlocked: false },
-  { id: 'contact',        title: 'OUTREACH',       description: 'Visited contact',               icon: Mail,   unlocked: false },
-  { id: 'completionist',  title: 'COMPLETIONIST',  description: 'Unlocked everything',           icon: Trophy, unlocked: false },
+  { id: 'explorer',       title: 'Explorer',        description: 'Viewed every section',          icon: Circle, unlocked: false },
+  { id: 'project-viewer', title: 'Reader',          description: 'Opened a project brief',        icon: Star,   unlocked: false },
+  { id: 'time-traveler',  title: 'Long Visit',      description: 'Spent 5+ minutes',              icon: Clock,  unlocked: false },
+  { id: 'contact',        title: 'Outreach',        description: 'Visited contact',               icon: Mail,   unlocked: false },
+  { id: 'completionist',  title: 'Completionist',   description: 'Unlocked everything',           icon: Trophy, unlocked: false },
 ];
 
 export default function AchievementSystem() {
@@ -85,42 +85,48 @@ export default function AchievementSystem() {
 
   return (
     <>
-      {/* Counter — top-right corner */}
+      {/* Counter pill */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
         className="fixed bottom-16 left-4 z-30 safe-area-bottom"
       >
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-ink-1 border border-ink-line">
-          <Trophy className="w-3.5 h-3.5 text-amber" strokeWidth={1.5} />
-          <span className="font-mono text-xs tracking-[0.2em] text-bone">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full glass">
+          <Trophy className="w-3.5 h-3.5 text-white" strokeWidth={1.75} />
+          <span className="text-xs text-white font-medium tabular-nums">
             {count}/{achievements.length}
           </span>
         </div>
       </motion.div>
 
-      {/* Popup */}
+      {/* Unlock toast */}
       <AnimatePresence>
         {newUnlock && (
           <motion.div
-            initial={{ y: -40, opacity: 0 }}
+            initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -40, opacity: 0 }}
-            className="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm px-4 safe-area-top"
+            exit={{ y: -20, opacity: 0 }}
+            className="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-full max-w-xs px-4 safe-area-top"
           >
-            <div className="bg-ink-1 border border-amber px-4 py-3 flex items-center gap-3">
+            <div className="glass rounded-2xl px-4 py-3 flex items-center gap-3">
               {(() => {
                 const Icon = newUnlock.icon as React.ElementType;
-                return <Icon className="w-4 h-4 text-amber shrink-0" strokeWidth={1.5} />;
+                return (
+                  <div className="w-9 h-9 rounded-xl glass-subtle flex items-center justify-center shrink-0">
+                    <Icon className="w-4 h-4 text-white" strokeWidth={1.75} />
+                  </div>
+                );
               })()}
               <div className="min-w-0">
-                <p className="font-mono text-[9px] tracking-[0.3em] text-slate">
-                  ACHIEVEMENT
+                <p className="text-[10px] tracking-[0.3em] text-g-700 uppercase">
+                  Unlocked
                 </p>
-                <p className="font-sans text-sm text-bone truncate">
+                <p className="text-sm text-white font-medium truncate">
                   {newUnlock.title}
-                  <span className="ml-2 text-dim">· {newUnlock.description}</span>
+                </p>
+                <p className="text-xs text-g-800 truncate">
+                  {newUnlock.description}
                 </p>
               </div>
             </div>

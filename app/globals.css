@@ -1,18 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --amber: #d9a65f;
-  --slate: #6b8e91;
-  --bone: #c8c3b4;
-  --ink-0: #0b0c0f;
-  --ink-1: #101217;
-  --ink-2: #171a21;
-  --line: #262832;
-  --dim: #6b6c73;
+  --bg:        #000000;
+  --fg:        #ffffff;
+  --muted:     #a1a1aa;
+  --sub:       #71717a;
+  --line:      rgba(255, 255, 255, 0.08);
+  --line-soft: rgba(255, 255, 255, 0.04);
 }
 
 * {
@@ -25,20 +23,60 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  background-color: var(--ink-0);
-  color: var(--bone);
+  background-color: var(--bg);
+  color: var(--fg);
 }
 
 body {
-  font-family: 'Rajdhani', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   font-weight: 400;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.005em;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  background-color: #000;
+  background-image:
+    radial-gradient(800px circle at 10% 10%, rgba(255, 255, 255, 0.06), transparent 55%),
+    radial-gradient(700px circle at 90% 20%, rgba(255, 255, 255, 0.04), transparent 55%),
+    radial-gradient(900px circle at 50% 100%, rgba(255, 255, 255, 0.05), transparent 55%);
+  background-attachment: fixed;
 }
 
-/* Scrollbar — minimal, thin, monochrome */
+/* ============== GLASSMORPHISM ============== */
+
+.glass {
+  background: rgba(255, 255, 255, 0.045);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(32px) saturate(1.3);
+  -webkit-backdrop-filter: blur(32px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.glass-subtle {
+  background: rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-hover {
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.glass-hover:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+/* ============== SCROLLBAR ============== */
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -49,12 +87,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--line);
-  border: 0;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--dim);
+  background: rgba(255, 255, 255, 0.14);
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -66,183 +104,78 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--line);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
 }
 
-/* No-op (kept as aliases for legacy class references) */
+/* ============== MINOR UTILS ============== */
+
 .no-select {
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
 }
 
-.btn-press:active {
-  transform: translate(0.5px, 0.5px);
+.safe-area-top {
+  padding-top: max(env(safe-area-inset-top), 12px);
 }
 
-/* Scanlines — very subtle */
-.scanlines {
-  position: relative;
+.safe-area-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom), 12px);
 }
 
-.scanlines::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(255, 255, 255, 0.012),
-    rgba(255, 255, 255, 0.012) 1px,
-    transparent 1px,
-    transparent 3px
-  );
-  pointer-events: none;
-  z-index: 1;
+/* Hairline divider */
+.hairline {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
 }
 
-/* Legacy aliases — collapsed to minimal scanlines */
-.crt-scanlines {
-  position: relative;
-}
+/* ============== LEGACY ALIASES (safe no-ops) ============== */
 
-.crt-scanlines::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(255, 255, 255, 0.012),
-    rgba(255, 255, 255, 0.012) 1px,
-    transparent 1px,
-    transparent 3px
-  );
-  pointer-events: none;
-  z-index: 1;
-}
-
-.crt-effect {
-  /* no-op */
-}
-
-.scan-sweep::before {
-  content: none;
-}
-
-/* Text helpers (legacy-compatible) */
-.text-outline {
-  text-shadow: none;
-}
-
+.btn-press:active        { transform: translate(0, 1px); }
+.scanlines,
+.crt-scanlines,
+.crt-effect,
+.cyber-noise,
+.cyber-panel,
+.cyber-panel-yellow,
+.cyber-panel-cyan,
+.cyber-panel-magenta,
+.cyber-clip,
+.cyber-clip-sm,
+.cyber-clip-lg,
+.cyber-corners,
+.cyber-corners-cyan,
+.glitch,
 .neon-yellow,
 .neon-cyan,
 .neon-magenta,
 .neon-pink,
 .neon-green,
-.neon-white {
-  color: inherit;
-  text-shadow: none;
+.neon-white,
+.holo-text,
+.chromatic,
+.pixel-border,
+.pixel-corners,
+.pixel-grid,
+.cyber-grid,
+.cyber-grid-yellow,
+.text-outline,
+.rule-h,
+.rule-v,
+.scan-sweep {
+  /* intentional no-ops */
 }
 
-.holo-text {
-  color: var(--amber);
-  background: none;
-  -webkit-background-clip: border-box;
-  -webkit-text-fill-color: currentColor;
-  background-clip: border-box;
-}
-
-.chromatic {
-  text-shadow: none;
-}
-
-.glitch {
-  position: relative;
-  display: inline-block;
-  color: var(--bone);
-  text-shadow: none;
-}
-
-.glitch::before,
-.glitch::after {
-  content: none;
-}
-
-/* Legacy cyber-panel / cyber-clip / cyber-corners — all simplified to flat panels */
-.cyber-panel,
-.cyber-panel-yellow,
-.cyber-panel-cyan,
-.cyber-panel-magenta {
-  position: relative;
-  background: var(--ink-1);
-  border: 1px solid var(--line);
-  box-shadow: none;
-}
-
-.cyber-clip,
-.cyber-clip-sm,
-.cyber-clip-lg {
-  clip-path: none;
-}
-
-.cyber-corners,
-.cyber-corners-cyan {
-  position: relative;
-}
-
+.crt-scanlines::before,
+.crt-scanlines::after,
 .cyber-corners::before,
 .cyber-corners::after,
 .cyber-corners-cyan::before,
-.cyber-corners-cyan::after {
-  content: none;
-}
-
-.btn-cyber {
-  position: relative;
-  background: transparent;
-  border: 1px solid var(--amber);
-  color: var(--amber);
-  transition: background 0.15s, color 0.15s;
-  clip-path: none;
-}
-
-.btn-cyber:hover {
-  background: var(--amber);
-  color: var(--ink-0);
-  box-shadow: none;
-}
-
-/* Background grid — extremely faint */
-.pixel-grid,
-.cyber-grid,
-.cyber-grid-yellow {
-  background-image:
-    linear-gradient(rgba(107, 142, 145, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(107, 142, 145, 0.04) 1px, transparent 1px);
-  background-size: 48px 48px;
-}
-
-/* Safe areas */
-.safe-area-top {
-  padding-top: max(env(safe-area-inset-top), 10px);
-}
-
-.safe-area-bottom {
-  padding-bottom: max(env(safe-area-inset-bottom), 10px);
-}
-
-.pixel-corners {
-  clip-path: none;
-}
-
-.pixel-border {
-  border: 1px solid var(--line);
-  box-shadow: none;
-}
-
-.cyber-noise {
-  position: relative;
-}
-
+.cyber-corners-cyan::after,
+.glitch::before,
+.glitch::after,
+.scan-sweep::before,
 .cyber-noise::after {
   content: none;
 }
@@ -256,15 +189,4 @@ body {
 
 .border-3 {
   border-width: 1px;
-}
-
-/* Utility: thin vertical rule */
-.rule-v {
-  width: 1px;
-  background: var(--line);
-}
-
-.rule-h {
-  height: 1px;
-  background: var(--line);
 }

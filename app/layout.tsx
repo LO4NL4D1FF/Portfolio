@@ -3,8 +3,8 @@ import { Analytics } from '@vercel/analytics/react'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Sedo-Ta · Software Engineer Portfolio',
-  description: 'Minimal cyberpunk portfolio of Loan Ladiff Sedo-Ta — software engineer building AI-powered products (Zenix, CORELM, Audify), full-stack apps, and cinematic video work.',
+  title: 'Sedo-Ta — Software Engineer',
+  description: 'Portfolio of Loan Ladiff Sedo-Ta, a software engineer and product builder working on AI-powered apps (Zenix, CORELM, Audify), full-stack web and mobile, and cinematic video.',
   keywords: ['Loan Ladiff', 'Sedo-Ta', 'Software Engineer', 'React', 'React Native', 'AI Integration', 'GPT', 'Claude', 'Next.js', 'TypeScript', 'Adobe Premiere Pro', 'Video Editing', 'Mobile Apps', 'Web Development', 'Liberia', 'Cameroon'],
   authors: [{ name: 'Loan Ladiff Sedo-Ta' }],
   creator: 'Loan Ladiff Sedo-Ta',
@@ -21,7 +21,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#0b0c0f',
+  themeColor: '#000000',
   viewportFit: 'cover',
 }
 

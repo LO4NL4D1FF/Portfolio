@@ -9,8 +9,8 @@ interface ProjectDetailViewProps {
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <section className="py-4 border-b border-ink-line last:border-b-0">
-      <p className="font-mono text-[10px] tracking-[0.3em] text-slate mb-2">
+    <section>
+      <p className="text-[10px] tracking-[0.3em] text-g-700 uppercase mb-2">
         {label}
       </p>
       {children}
@@ -24,62 +24,65 @@ export default function ProjectDetailView({ project }: ProjectDetailViewProps) {
   const isImageIcon = typeof project.icon === 'string' && project.icon.startsWith('/');
 
   return (
-    <div>
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4 pb-5 mb-2 border-b border-ink-line">
+      <div className="flex items-center gap-4">
         {isLucideIcon && (
-          <div className="w-12 h-12 border border-ink-line flex items-center justify-center shrink-0">
-            <IconComponent className="w-5 h-5 text-amber" strokeWidth={1.5} />
+          <div className="w-12 h-12 rounded-xl glass-subtle flex items-center justify-center shrink-0">
+            <IconComponent className="w-6 h-6 text-white" strokeWidth={1.5} />
           </div>
         )}
         {isImageIcon && (
-          <div className="w-12 h-12 border border-ink-line flex items-center justify-center p-1.5 shrink-0">
+          <div className="w-12 h-12 rounded-xl glass-subtle flex items-center justify-center p-1.5 shrink-0">
             <img src={project.icon as string} alt={`${project.name} logo`} className="w-full h-full object-contain opacity-90" />
           </div>
         )}
         <div className="min-w-0">
-          <h3 className="font-sans font-medium text-xl md:text-2xl text-bone tracking-wide">
+          <h3 className="font-medium text-xl md:text-2xl text-white tracking-tight">
             {project.name}
           </h3>
-          <p className="font-mono text-[11px] tracking-[0.25em] text-dim uppercase mt-0.5">
+          <p className="text-[11px] tracking-[0.25em] text-g-700 uppercase mt-0.5">
             {project.category}
           </p>
         </div>
       </div>
 
-      <Row label="MISSION">
-        <p className="font-sans text-sm md:text-base text-bone/90 leading-relaxed">
+      <Row label="Mission">
+        <p className="text-sm md:text-base text-g-900 leading-relaxed">
           {project.mission}
         </p>
       </Row>
 
-      <Row label="PROBLEM">
-        <p className="font-sans text-sm md:text-base text-bone/90 leading-relaxed">
+      <Row label="Problem">
+        <p className="text-sm md:text-base text-g-900 leading-relaxed">
           {project.problem}
         </p>
       </Row>
 
-      <Row label="OVERVIEW">
-        <p className="font-sans text-sm md:text-base text-bone/90 leading-relaxed">
+      <Row label="Overview">
+        <p className="text-sm md:text-base text-g-900 leading-relaxed">
           {project.overview}
         </p>
       </Row>
 
-      <Row label="STACK">
-        <ul className="flex flex-wrap gap-x-4 gap-y-1.5">
+      <Row label="Stack">
+        <div className="flex flex-wrap gap-1.5">
           {project.stack.map((tech, i) => (
-            <li key={i} className="font-mono text-xs tracking-[0.15em] text-bone/85">
+            <span
+              key={i}
+              className="px-2.5 py-0.5 rounded-full glass-subtle text-[11px] text-g-900"
+            >
               {tech}
-            </li>
+            </span>
           ))}
-        </ul>
+        </div>
       </Row>
 
-      <Row label="INSIGHTS">
+      <Row label="Insights">
         <ul className="space-y-2">
           {project.insights.map((insight, i) => (
-            <li key={i} className="flex gap-3 font-sans text-sm md:text-base text-bone/90 leading-relaxed">
-              <span className="text-slate shrink-0">—</span>
+            <li key={i} className="flex gap-3 text-sm md:text-base text-g-900 leading-relaxed">
+              <span className="text-g-700 shrink-0">—</span>
               <span>{insight}</span>
             </li>
           ))}
@@ -87,8 +90,8 @@ export default function ProjectDetailView({ project }: ProjectDetailViewProps) {
       </Row>
 
       {project.github && (
-        <Row label={project.github.available ? 'REPO · OPEN' : 'REPO · PRIVATE'}>
-          <p className="font-sans text-sm text-bone/80">{project.github.accessNote}</p>
+        <Row label={project.github.available ? 'Repository · Public' : 'Repository · Private'}>
+          <p className="text-sm text-g-800">{project.github.accessNote}</p>
         </Row>
       )}
     </div>
