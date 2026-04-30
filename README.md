@@ -38,5 +38,5 @@ public/       Static assets and project logos
 
 ## Notes
 
-- Currently interning at the Avernon Festival in Liberia (administrative coordination).
+- Currently interning at Afriland First Bank Liberia (administrative coordination).
 - Open source project source where listed; private projects available on request.

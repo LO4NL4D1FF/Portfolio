@@ -80,7 +80,7 @@ export default function Hero() {
               <span className="hidden h-4 w-px bg-white/10 sm:inline-block" />
               <span>{profile.focus}</span>
               <span className="hidden h-4 w-px bg-white/10 sm:inline-block" />
-              <span>Currently interning at the Avernon Festival, Liberia</span>
+              <span>Currently interning at Afriland First Bank, Liberia</span>
             </motion.div>
           </div>
 
