@@ -19,7 +19,7 @@ export const profile = {
     { label: 'Learning', value: 'Backend, APIs, Databases' },
   ],
   contacts: {
-    email: 'loanladiff@gmail.com',
+    email: 'difflad@gmail.com',
     github: 'https://github.com/lo4nl4d1ff',
     location: 'Monrovia, Liberia',
   },
