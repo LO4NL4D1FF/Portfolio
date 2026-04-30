@@ -9,13 +9,13 @@ export const profile = {
   bio: [
     'I am a software engineer focused on the frontend, where I have spent the most time crafting interfaces that feel intentional, accessible, and quick. React, Next.js, TypeScript, and Tailwind are the tools I reach for daily.',
     'Right now I am putting deliberate hours into the backend side of the stack: APIs, data modeling, authentication, and the quiet plumbing that makes a product trustworthy. I treat learning as part of the job, not a side quest.',
-    'Outside of code, I am currently interning at the Avernon Festival in Liberia, handling administrative work, coordination, and the operational details that keep a creative production moving. It has sharpened how I plan, communicate, and ship.',
+    'Outside of code, I am currently interning at Afriland First Bank Liberia, handling administrative work, coordination, and the operational details that keep a busy banking environment moving. It has sharpened how I plan, communicate, and ship.',
     'I am easy to work with, curious by default, and serious about getting better. If you are building something thoughtful, I would like to hear about it.',
   ],
   highlights: [
     { label: 'Role', value: 'Software Engineer' },
     { label: 'Specialty', value: 'Frontend Engineering' },
-    { label: 'Currently', value: 'Intern, Avernon Festival Liberia' },
+    { label: 'Currently', value: 'Intern, Afriland First Bank Liberia' },
     { label: 'Learning', value: 'Backend, APIs, Databases' },
   ],
   contacts: {

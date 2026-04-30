@@ -36,7 +36,7 @@ export default function About() {
               {[
                 {
                   k: 'Now',
-                  v: 'Intern, Avernon Festival Liberia. Administrative coordination and operational support.',
+                  v: 'Intern, Afriland First Bank Liberia. Administrative coordination and operational support.',
                 },
                 {
                   k: 'Strength',
