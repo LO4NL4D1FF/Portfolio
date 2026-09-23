@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="HUNTED: a first-person browser horror game. Agent Harry Wade of the Fear Response Team enters Hale House to find out what happened to the Hale family and their baby Cheryl.">
+<title>HUNTED: Hale House</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23000'/%3E%3Cpath d='M32 10c-9 0-15 7-15 16 0 6 3 10 6 13v9h18v-9c3-3 6-7 6-13 0-9-6-16-15-16z' fill='%23d8d0c0'/%3E%3Ccircle cx='26' cy='28' r='4'/%3E%3Ccircle cx='38' cy='28' r='4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IM+Fell+English:ital@0;1&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="src/style.css">
+<script type="importmap">
+{ "imports": { "three": "./vendor/three/three.module.js", "three/addons/": "./vendor/three/addons/" } }
+</script>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<!-- screen effects -->
+<div id="vignette"></div>
+<div id="slats" class="hidden"></div>
+<div id="flash"></div>
+<div id="fade"></div>
+
+<!-- HUD -->
+<div id="hud" class="hidden">
+  <div id="crosshair"></div>
+  <div id="prompt"></div>
+  <div id="objective"><span class="label">OBJECTIVE</span><span id="objective-text"></span></div>
+  <div id="subtitles"></div>
+  <div id="toast"></div>
+  <div id="meters">
+    <div class="meter"><span>LIGHT</span><div class="bar"><i id="battery-bar"></i></div><b id="battery-spares"></b></div>
+    <div class="meter"><span>BREATH</span><div class="bar"><i id="stamina-bar"></i></div></div>
+  </div>
+  <div id="hint-q" class="hidden">Q · wind music box</div>
+  <div id="guide" class="hidden"><span id="guide-arrow"></span><span id="guide-text"></span></div>
+</div>
+
+<!-- inventory -->
+<div id="inventory" class="panel hidden">
+  <h2>Inventory</h2>
+  <ul id="inv-items"></ul>
+  <h2>Documents <small id="doc-count"></small></h2>
+  <ul id="inv-docs"></ul>
+  <p class="dim">Tab / I to close</p>
+</div>
+
+<!-- note reader -->
+<div id="note" class="hidden">
+  <article id="note-paper">
+    <h3 id="note-title"></h3>
+    <pre id="note-body"></pre>
+  </article>
+  <p class="dim center">E / Esc / click to close</p>
+</div>
+
+<!-- keypad -->
+<div id="keypad" class="hidden">
+  <div class="keypad-box">
+    <div id="keypad-display">____</div>
+    <div class="keys"></div>
+    <p class="dim center">Enter the four digits · Esc to step away</p>
+  </div>
+</div>
+
+<!-- title -->
+<div id="title" class="screen">
+  <div class="title-inner">
+    <p class="kicker">Fear Response Team · Case 0411</p>
+    <h1>HUNTED</h1>
+    <p class="subtitle">Hale House, Ashgrove Road</p>
+    <div class="menu">
+      <button id="btn-new" disabled>Loading…</button>
+      <button id="btn-continue" class="hidden">Continue</button>
+      <button id="btn-settings">Settings</button>
+      <button id="btn-howto">How to play</button>
+    </div>
+    <div id="loadbar"><i></i></div>
+    <p class="note-small">Headphones strongly recommended. Contains darkness, blood, sudden scares and a very ugly creature.</p>
+  </div>
+</div>
+
+<div id="howto" class="screen hidden">
+  <div class="panel wide">
+    <h2>How to play</h2>
+    <div class="cols">
+      <div>
+        <h3>Keyboard &amp; mouse</h3>
+        <table>
+          <tr><td>WASD / arrows</td><td>Move</td></tr>
+          <tr><td>Mouse</td><td>Look</td></tr>
+          <tr><td>Shift</td><td>Run (loud)</td></tr>
+          <tr><td>C / Ctrl</td><td>Crouch (silent)</td></tr>
+          <tr><td>E / click</td><td>Interact, open, hide</td></tr>
+          <tr><td>F</td><td>Flashlight</td></tr>
+          <tr><td>R</td><td>Swap batteries</td></tr>
+          <tr><td>Q</td><td>Wind the music box</td></tr>
+          <tr><td>Tab / I</td><td>Inventory &amp; documents</td></tr>
+          <tr><td>H</td><td>Show where to go</td></tr>
+          <tr><td>Esc</td><td>Pause</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>Surviving</h3>
+        <p>She hunts by sound. Walking is quiet; running, slamming doors and the piano are not. Crouching makes you nearly silent.</p>
+        <p>In the dark she is half blind, but a flashlight in her face gives you away. Turn it off when she is close.</p>
+        <p>If she sees you, break line of sight and hide in a wardrobe. If she watched you climb in, it won't save you.</p>
+        <p>Read everything. The house tells you how to leave it. The arrow at the top of the screen always points the way to your next goal, and a small light marks the object when you are close.</p>
+      </div>
+    </div>
+    <button class="back">Back</button>
+  </div>
+</div>
+
+<div id="settings" class="screen hidden">
+  <div class="panel">
+    <h2>Settings</h2>
+    <label>Mouse sensitivity <input type="range" id="set-sens" min="0.2" max="3" step="0.05" value="1"></label>
+    <label>Volume <input type="range" id="set-vol" min="0" max="1" step="0.01" value="0.9"></label>
+    <label>Brightness <input type="range" id="set-bright" min="0.6" max="1.8" step="0.05" value="1"></label>
+    <label>Field of view <input type="range" id="set-fov" min="60" max="95" step="1" value="72"></label>
+    <label>Graphics
+      <select id="set-quality"><option value="high">High (shadows everywhere)</option><option value="medium">Medium</option><option value="low">Low (phones, old laptops)</option></select>
+    </label>
+    <label>Guidance
+      <select id="set-guide"><option value="always">Always show where to go</option><option value="key">Only when I press H</option><option value="off">Off (hardest)</option></select>
+    </label>
+    <label class="check"><input type="checkbox" id="set-invert"> Invert mouse Y</label>
+    <button class="back">Back</button>
+  </div>
+</div>
+
+<div id="pause" class="screen hidden">
+  <div class="panel">
+    <h2>Paused</h2>
+    <button id="btn-resume">Resume</button>
+    <button id="btn-pause-settings">Settings</button>
+    <button id="btn-pause-howto">How to play</button>
+    <button id="btn-quit">Quit to title</button>
+  </div>
+</div>
+
+<div id="death" class="screen hidden">
+  <div class="title-inner">
+    <h1 class="red">SHE FOUND YOU</h1>
+    <p class="subtitle" id="death-tip"></p>
+    <div class="menu"><button id="btn-retry">Try again</button><button id="btn-death-quit">Quit to title</button></div>
+  </div>
+</div>
+
+<div id="ending" class="screen hidden">
+  <div class="ending-inner">
+    <h1 id="ending-title"></h1>
+    <pre id="ending-body"></pre>
+    <p id="ending-stats"></p>
+    <div class="menu"><button id="btn-end-title">Back to title</button></div>
+  </div>
+</div>
+
+<div id="clicktoplay" class="screen hidden"><p>Click to continue</p></div>
+
+<!-- touch controls -->
+<div id="touch" class="hidden">
+  <div id="stick"><div id="stick-knob"></div></div>
+  <div id="tbuttons">
+    <button data-t="use">USE</button>
+    <button data-t="light">LIGHT</button>
+    <button data-t="run">RUN</button>
+    <button data-t="crouch">CROUCH</button>
+    <button data-t="inv">BAG</button>
+    <button data-t="box">BOX</button>
+    <button data-t="hint">WAY</button>
+    <button data-t="pause">II</button>
+  </div>
+</div>
+
+<noscript><p style="color:#ccc;padding:2em">HUNTED needs JavaScript and WebGL.</p></noscript>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

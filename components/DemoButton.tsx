@@ -19,6 +19,14 @@ export default function DemoButton({ project, className = '' }: DemoButtonProps)
   const close = useCallback(() => setOpen(false), []);
   if (!project.demo) return null;
 
+  if (project.demo.kind === 'play') {
+    return (
+      <a href={project.demo.url} target="_blank" rel="noopener" className={`${className} inline-flex items-center justify-center`}>
+        Play now
+      </a>
+    );
+  }
+
   return (
     <>
       <button type="button" onClick={() => setOpen(true)} className={className}>
@@ -52,7 +60,7 @@ function DemoViewer({ project, onClose }: { project: Project; onClose: () => voi
     };
   }, [onClose]);
 
-  if (!demo) return null;
+  if (!demo || demo.kind === 'play') return null;
   // Screens were captured from the apps running locally, so the address bar says so.
   const host = 'localhost:3000';
 

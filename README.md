@@ -25,5 +25,6 @@ npm run dev
 - Type: Schibsted Grotesk throughout.
 - Motion: GSAP (`gsap`, `@gsap/react`, ScrollTrigger). Every animation is skipped when reduced motion is on.
 - Hero stage (`components/hero`): a real iPhone 17 frame (`public/images/devices`, free commercial licence from webmobilefirst.com) showing real app screenshots, a VS Code replica typing real Karrio code, and a Premiere Pro style timeline.
+- Games: HUNTED is a copy of the static build from `LO4NL4D1FF/Hunted`, served from `public/games/hunted`. To update it, copy `index.html`, `src`, `vendor` and `assets` from that repo. Its card uses the `play` demo kind, which opens the game in a new tab.
 - Demos: `lib/projects.ts` `demo` field. Real screenshots live in `public/images/screens`; Notefy runs live from `public/demos/notefy`.
 - The Day job section describes the bank role in general terms only. Never name the bank or its systems.

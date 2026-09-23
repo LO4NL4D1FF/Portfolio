@@ -1,9 +1,12 @@
 /**
  * live: the real app running in an iframe (static builds only).
+ * play: a game that opens full screen in a new tab.
  * screens: real screenshots captured from the running apps, shown in device frames.
  */
 export type Demo =
   | { kind: 'live'; url: string }
+  /** A full-screen game: opens in its own tab so it can capture the mouse. */
+  | { kind: 'play'; url: string }
   | { kind: 'screens'; phone?: string[]; desktop?: string[] };
 
 export interface Project {
@@ -29,6 +32,24 @@ export interface Project {
 
 /** Large rows at the top of the work section. */
 export const featured: Project[] = [
+  {
+    id: 'hunted',
+    demo: { kind: 'play', url: '/games/hunted/index.html' },
+    name: 'HUNTED',
+    year: '2026',
+    kind: 'First-person horror game',
+    status: 'Playable now',
+    summary:
+      'A browser horror game in a haunted mansion. You play an agent searching for a missing colleague while a spider, snake and human creature hunts you by sound and by the beam of your flashlight. Ten documents tell the story of the family who lived there.',
+    stack: ['three.js', 'WebGL', 'Web Audio API', 'JavaScript'],
+    details: [
+      'A two-storey house built from text floor plans, with doors, stairs, collision and a navigation grid the creature uses to hunt',
+      'The creature combines a realistic human model with spider legs that step using inverse kinematics and a tail that follows her real path',
+      'Almost every sound is synthesised live and placed in 3D, so walls muffle what is behind them; footsteps use real recordings',
+    ],
+    logo: '/images/projects/hunted-logo.png',
+    brand: { bg: '#0A0606', accent: '#B01818' },
+  },
   {
     id: 'karrio',
     demo: { kind: 'screens', desktop: ['/images/screens/karrio-desk.jpg'], phone: ['/images/screens/karrio-1.jpg'] },
