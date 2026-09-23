@@ -17,3 +17,6 @@
 | 4 | Remember this working rule and keep this log. | Done: this file |
 | 5 | Clone LO4NL4D1FF/Hunted into the session. | Done: the game lives there |
 | 6 | Make the monster half spider, half snake, half human, with six legs and four hands. Very ugly. | Done: `src/monster.js` in Hunted |
+| 7 | Fix: after leaving the title or pressing Continue nothing could be pressed; only walking worked. | Done: drag-to-look and click-to-use when the page can't capture the mouse; the interaction check no longer depends on frame rate |
+| 8 | Show where to go (easier, but keep some challenge). | Done: route arrow with destination and distance, a marker over the object, and a Guidance setting (always / H key / off) |
+| 9 | Report: closed rooms can be entered. | Checked: closed doors block movement in testing; the missing guidance was the real gap. Waiting on the owner to say which door if it happens again |
