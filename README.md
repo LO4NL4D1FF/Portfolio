@@ -1,42 +1,26 @@
-# Loan Ladiff Sedo-Ta — Portfolio
+# loansedota.com
 
-Personal portfolio for **Loan Ladiff Sedo-Ta**, a software engineer based in Monrovia, Liberia. Frontend specialist, currently learning backend, with a parallel video editing practice.
+Portfolio of Loan Ladiff Sedo-Ta, software engineer in Monrovia, Liberia.
 
-## Stack
+A single static page built with Next.js 15 (App Router), React 18, TypeScript and Tailwind CSS. Deployed on Vercel from `master`.
 
-- Next.js 15 (App Router)
-- React 18 + TypeScript
-- Tailwind CSS
-- Framer Motion
-- Lucide icons
-- Vercel Analytics
-
-## Local development
+## Run it
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open http://localhost:3000.
+## Where things live
 
-## Build
+- `lib/profile.ts`: bio, facts, skills and contact details
+- `lib/projects.ts`: featured and other projects (logos in `public/images/projects`)
+- `lib/services.ts`: services and starting prices
+- `app/globals.css`: color tokens (light and dark) and the dock animation
+- `components/`: one file per page section
 
-```bash
-npm run build
-npm run start
-```
+## Design notes
 
-## Structure
-
-```
-app/          Next.js App Router entry, layout, globals
-components/   UI sections (Hero, About, Skills, Projects, Services, Contact)
-lib/          Data layer (profile, projects, services)
-public/       Static assets and project logos
-```
-
-## Notes
-
-- Currently interning at Afriland First Bank Liberia (administrative coordination).
-- Open source project source where listed; private projects available on request.
+- Palette: mist `#E6EAEE`, Atlantic navy `#0E1A2B`, slate `#4C5A6B`, rule `#C3CCD5`, mango `#F0B429`. Mango is only ever a fill, never text on the light background.
+- Type: Schibsted Grotesk throughout.
+- The hero dock of app icons is the one animated moment; it is skipped when reduced motion is on.

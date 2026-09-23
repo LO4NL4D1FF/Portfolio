@@ -1,61 +1,34 @@
-'use client';
-
-import { motion } from 'framer-motion';
-import { profile } from '@/lib/profile';
+import { profile, skillGroups } from '@/lib/profile';
 
 export default function About() {
   return (
-    <section id="about" className="relative py-24 sm:py-28">
-      <div className="container-page">
-        <div className="grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <p className="section-eyebrow">About</p>
-            <h2 className="mt-2 section-title">
-              Frontend at home, backend in progress.
-            </h2>
-            <p className="mt-4 text-sm text-cream-300">
-              A working portrait of where I am right now, written without
-              decoration.
-            </p>
+    <section id="about" className="border-t border-line bg-surface py-20 sm:py-28">
+      <div className="page grid gap-14 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-20">
+        <div>
+          <h2 className="heading">About me</h2>
+          <div className="mt-8 max-w-prose space-y-5 text-lg leading-relaxed">
+            {profile.bio.map((p) => (
+              <p key={p}>{p}</p>
+            ))}
           </div>
+        </div>
 
-          <div className="lg:col-span-8">
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 0.6 }}
-              className="space-y-5 text-base leading-relaxed text-cream-200"
-            >
-              {profile.bio.map((p, i) => (
-                <p key={i}>{p}</p>
-              ))}
-            </motion.div>
+        <div className="space-y-12">
+          <dl className="divide-y divide-line border-y border-line">
+            {profile.facts.map((f) => (
+              <div key={f.term} className="grid grid-cols-[7.5rem_1fr] gap-4 py-3.5">
+                <dt className="text-slate">{f.term}</dt>
+                <dd className="font-medium">{f.detail}</dd>
+              </div>
+            ))}
+          </dl>
 
-            <div className="mt-10 grid gap-4 sm:grid-cols-3">
-              {[
-                {
-                  k: 'Now',
-                  v: 'Intern, Afriland First Bank Liberia. Administrative coordination and operational support.',
-                },
-                {
-                  k: 'Strength',
-                  v: 'Frontend engineering with React, Next.js, and TypeScript.',
-                },
-                {
-                  k: 'Learning',
-                  v: 'Backend, APIs, databases, and the quiet plumbing of trustworthy products.',
-                },
-              ].map((c) => (
-                <div key={c.k} className="surface p-5">
-                  <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-accent-300">
-                    {c.k}
-                  </p>
-                  <p className="mt-2 text-sm text-cream-100">{c.v}</p>
-                </div>
-              ))}
+          {skillGroups.map((group) => (
+            <div key={group.title}>
+              <h3 className="font-bold">{group.title}</h3>
+              <p className="mt-2 leading-relaxed text-slate">{group.items.join(', ')}</p>
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>

@@ -1,73 +1,53 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google';
+import { Schibsted_Grotesk } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import './globals.css';
 
-const inter = Inter({
+const schibsted = Schibsted_Grotesk({
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-schibsted',
   display: 'swap',
 });
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  variable: '--font-space-grotesk',
-  display: 'swap',
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-});
+const description =
+  'Loan Ladiff Sedo-Ta is a software engineer in Monrovia, Liberia, building mobile and web apps: Karrio, Gamefy, Audify and more.';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://loanladiff.dev'),
+  metadataBase: new URL('https://loansedota.com'),
   title: {
-    default: 'Loan Ladiff Sedo-Ta — Software Engineer',
-    template: '%s — Loan Ladiff Sedo-Ta',
+    default: 'Loan Ladiff Sedo-Ta, software engineer',
+    template: '%s | Loan Ladiff Sedo-Ta',
   },
-  description:
-    'Software engineer focused on the frontend, learning the backend, and editing video on the side. Based in Monrovia, Liberia.',
-  keywords: [
-    'Loan Ladiff',
-    'Sedo-Ta',
-    'Software Engineer',
-    'Frontend Engineer',
-    'Liberia',
-    'Next.js',
-    'React',
-    'TypeScript',
-    'Videography',
-  ],
+  description,
+  keywords: ['Loan Ladiff Sedo-Ta', 'Software Engineer', 'Liberia', 'Monrovia', 'React Native', 'Next.js', 'TypeScript', 'Supabase'],
   authors: [{ name: 'Loan Ladiff Sedo-Ta' }],
   creator: 'Loan Ladiff Sedo-Ta',
+  manifest: '/manifest.json',
+  icons: { icon: '/favicon.svg' },
+  alternates: { canonical: '/' },
   openGraph: {
-    title: 'Loan Ladiff Sedo-Ta — Software Engineer',
-    description:
-      'Frontend specialist, backend in progress. Video work on the side. Based in Monrovia.',
+    title: 'Loan Ladiff Sedo-Ta, software engineer',
+    description,
+    url: 'https://loansedota.com',
+    siteName: 'Loan Ladiff Sedo-Ta',
     type: 'website',
   },
   robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {
-  themeColor: '#0B0D14',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#E6EAEE' },
+    { media: '(prefers-color-scheme: dark)', color: '#0B1422' },
+  ],
   width: 'device-width',
   initialScale: 1,
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
-    >
-      <body className="font-sans">
+    <html lang="en" className={schibsted.variable}>
+      <body>
         {children}
         <Analytics />
       </body>

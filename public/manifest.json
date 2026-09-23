@@ -1,16 +1,10 @@
 {
-  "name": "Loan Ladiff Sedo-Ta — Software Engineer",
-  "short_name": "Loan Ladiff",
-  "description": "Software engineer focused on the frontend, learning the backend, and editing video on the side.",
+  "name": "Loan Ladiff Sedo-Ta, software engineer",
+  "short_name": "Loan Sedo-Ta",
+  "description": "Mobile and web apps built in Monrovia, Liberia.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0B0D14",
-  "theme_color": "#0B0D14",
-  "icons": [
-    {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
-    }
-  ]
+  "background_color": "#E6EAEE",
+  "theme_color": "#0E1A2B",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
 }

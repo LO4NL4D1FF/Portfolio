@@ -1,222 +1,193 @@
-export type ProjectCategory = 'app' | 'service' | 'creative';
-
 export interface Project {
   id: string;
   name: string;
-  category: ProjectCategory;
-  tagline: string;
+  /** Label under the dock icon; defaults to name. */
+  short?: string;
+  year: string;
+  kind: string;
   summary: string;
   stack: string[];
-  highlights: string[];
+  details?: string[];
   logo?: string;
-  accent: string;
-  source: {
-    public: boolean;
-    note: string;
-  };
+  /** Tile color behind a transparent logo; defaults to white. */
+  logoBg?: string;
+  repo?: string;
+  status?: string;
 }
 
-export const projects: Project[] = [
+/** Large rows at the top of the work section. */
+export const featured: Project[] = [
   {
-    id: 'easysave',
-    name: 'EasySave',
-    category: 'app',
-    tagline: 'Personal finance assistant for weekly savings goals.',
+    id: 'karrio',
+    name: 'Karrio',
+    year: '2026',
+    kind: 'Delivery platform',
+    status: 'Heading to launch',
     summary:
-      'A focused web app for tracking savings, setting weekly goals, and following progress with a clean dashboard. Includes user profiles, motivational prompts, and an admin panel for oversight.',
-    stack: ['Next.js', 'React', 'Tailwind CSS', 'API Routes'],
-    highlights: [
-      'Weekly goal framework that beats vague monthly targets in practice',
-      'Profile and progress dashboard built around clarity, not novelty',
-      'Self-hosted auth via Next.js API routes, no third-party lock-in',
+      'A multi-vendor delivery app for Monrovia covering restaurants and supermarkets. Four apps share one Supabase backend: customer and driver apps in Expo, plus web apps for vendors and admins. It started as my thesis and is now being prepared for real customers.',
+    stack: ['React Native', 'Expo', 'Supabase', 'PostgreSQL', 'PWA'],
+    details: [
+      'Customer, vendor, driver and admin apps with their own roles and permissions on one database',
+      'Order and vendor flows designed as state machines before any screen was drawn',
+      'Payments built against test mode first, with mobile money support planned for launch',
     ],
-    logo: '/images/projects/easysave-logo.png',
-    accent: 'from-emerald-400/20 via-emerald-500/10 to-transparent',
-    source: { public: true, note: 'Open source on GitHub.' },
+    logo: '/images/projects/karrio-logo.png',
+  },
+  {
+    id: 'gamefy',
+    name: 'Gamefy',
+    year: '2026',
+    kind: 'Multiplayer web games',
+    status: 'In progress',
+    summary:
+      'Two TV quiz formats rebuilt as browser games for one to six players in the same room. Staff manage questions from an admin studio, target them at different audiences, and each player reads the same question in their own language.',
+    stack: ['Angular', 'NestJS', 'Colyseus', 'TypeScript', 'Zod'],
+    details: [
+      'Authoritative game server so every screen in a room stays in step',
+      'Shared game rules and message protocol live in their own packages, tested first',
+      'Translations are linked per question and layouts are ready for right-to-left scripts',
+    ],
+    logo: '/images/projects/gamefy-logo.png',
   },
   {
     id: 'audify',
     name: 'Audify',
-    category: 'app',
-    tagline: 'AI-assisted music streaming with a DJ-style listening flow.',
+    year: '2025',
+    kind: 'Music streaming app',
     summary:
-      'A streaming experience that blends Spotify metadata with YouTube playback for full-song coverage, then layers AI commentary at playlist midpoints for a radio-like feel.',
-    stack: ['React Native', 'Expo', 'TypeScript', 'Spotify API', 'YouTube API', 'GPT'],
-    highlights: [
-      'Hybrid source matching keeps tracks playable when one provider fails',
-      'Persistent mini player keeps context across the app',
-      'Sixty-frame animations and a quiet, considered dark UI',
+      'A streaming app that pairs Spotify metadata with YouTube playback so full songs stay available, then drops short AI DJ commentary into a playlist to make it feel like radio.',
+    stack: ['React Native', 'Expo', 'TypeScript', 'Zustand', 'Spotify API', 'OpenAI'],
+    details: [
+      'Track matching across sources, with a fallback when one provider has nothing',
+      'A mini player that keeps playing and keeps its place as you move around',
+      '“Because you listened to” rows that recommend without spending AI tokens',
     ],
     logo: '/images/projects/audify-logo.png',
-    accent: 'from-violet-400/20 via-violet-500/10 to-transparent',
-    source: { public: false, note: 'Private repo, access on request.' },
+  },
+];
+
+/** Compact list below the featured rows. */
+export const others: Project[] = [
+  {
+    id: 'lsh',
+    name: 'Liberia Smart Health',
+    short: 'LSH',
+    year: '2026',
+    kind: 'AI health assistant',
+    summary:
+      'A health companion you can speak to. Whisper handles voice input, answers are read back aloud, and the prompts are tuned for careful, safety-first guidance.',
+    stack: ['Next.js', 'Supabase', 'OpenAI', 'Whisper'],
+    logo: '/images/projects/lsh-logo.png',
+  },
+  {
+    id: 'dollar-na-hand',
+    name: 'Dollar & Crypto Na Hand',
+    short: 'Na Hand',
+    year: '2026',
+    kind: 'Exchange rate app',
+    summary:
+      'USD, USDT, BTC and ETH to Liberian dollars at a glance. Tap a rate to convert. Cached rates keep it useful when the connection drops.',
+    stack: ['React Native', 'Expo', 'CoinGecko API'],
+    logo: '/images/projects/dollarnahand-logo.png',
+  },
+  {
+    id: 'hawkeye',
+    name: 'HawkEye',
+    year: '2026',
+    kind: 'Activity monitoring',
+    summary:
+      'A browser extension and admin dashboard that give schools and companies a live view of device activity, with privacy limits built in.',
+    stack: ['Chrome extension', 'React', 'Vite', 'Supabase Realtime'],
+  },
+  {
+    id: 'securecam',
+    name: 'SecureCam AI',
+    year: '2026',
+    kind: 'Security camera system',
+    summary:
+      'Watches USB and IP cameras, detects people with YOLOv8, asks a vision model when it is unsure, and sends alerts to a phone.',
+    stack: ['Python', 'FastAPI', 'YOLOv8', 'WebSockets'],
   },
   {
     id: 'devmatch',
     name: 'DevMatch',
-    category: 'app',
-    tagline: 'Location-aware networking for developers.',
+    year: '2025',
+    kind: 'Networking app',
     summary:
-      'A swipe-style discovery app pairing developers based on intent, skill overlap, and proximity. Built for finding co-founders, freelance partners, and mentors.',
-    stack: ['React Native', 'Expo', 'TypeScript', 'Supabase', 'PostgreSQL', 'PostGIS'],
-    highlights: [
-      'Intent matching prevents misaligned connections from the start',
-      'PostGIS-driven proximity for real local discovery',
-      'Realtime chat triggered the moment a match lands',
-    ],
+      'Swipe to find developers nearby, matched on skills and on what they want: a co-founder, freelance work or a mentor.',
+    stack: ['React Native', 'Supabase', 'PostGIS'],
     logo: '/images/projects/devmatch-logo.png',
-    accent: 'from-sky-400/20 via-indigo-500/10 to-transparent',
-    source: { public: false, note: 'Private repo, access on request.' },
   },
   {
     id: 'sharry',
     name: 'Sharry',
-    category: 'app',
-    tagline: 'Offline file sharing across many devices at once.',
+    year: '2025',
+    kind: 'Offline file sharing',
     summary:
-      'A peer-to-peer file sharing app using Wi-Fi hotspot transport. Works fully offline, supports ten or more devices in one session, and preserves original file quality.',
-    stack: ['React Native', 'Expo', 'TypeScript', 'Zustand', 'Socket.io', 'Express'],
-    highlights: [
-      'In-app HTTP server and websockets for live transfer state',
-      'Original quality kept for 4K images and full resolution media',
-      'QR pairing and explicit device approval for safe sessions',
-    ],
+      'Send files to ten or more phones at once over a Wi-Fi hotspot. No internet, no compression, pair with a QR code.',
+    stack: ['React Native', 'Express', 'Socket.io'],
     logo: '/images/projects/sharry-logo.png',
-    accent: 'from-teal-400/20 via-emerald-500/10 to-transparent',
-    source: { public: false, note: 'Private repo, access on request.' },
+    logoBg: '#166534',
+  },
+  {
+    id: 'smartbase',
+    name: 'SmartBase',
+    year: '2025',
+    kind: 'School management system',
+    summary:
+      'Grades, attendance, timetables, report cards and fee receipts for a school, with separate views for admins, teachers and students.',
+    stack: ['React', 'Vite', 'Firebase', 'Gemini'],
+  },
+  {
+    id: 'zenix',
+    name: 'Zenix',
+    year: '2025',
+    kind: 'AI learning app',
+    summary:
+      'Upload study material and get practice questions back, with streaks and subscription tiers that keep AI costs in check.',
+    stack: ['Expo', 'Supabase', 'Gemini', 'Flutterwave'],
+    repo: 'https://github.com/LO4NL4D1FF/zenix-lite',
   },
   {
     id: 'notefy',
     name: 'Notefy',
-    category: 'app',
-    tagline: 'A fast, offline Markdown vault with no build step.',
+    year: '2025',
+    kind: 'Markdown notes',
     summary:
-      'A lightweight notes app written in vanilla JavaScript. Tabbed editor, live tag highlighting, full-text search, cover images, and complete offline support as a PWA.',
-    stack: ['Vanilla JS', 'HTML5', 'CSS3', 'IndexedDB', 'Service Workers', 'PWA'],
-    highlights: [
-      'No framework, no bundler, around fifty kilobytes shipped',
-      'LocalStorage for metadata, IndexedDB for image-heavy notes',
-      'Sanitized Markdown, debounced autosave, fifty-step undo',
-    ],
+      'A fast notes vault in plain JavaScript. Tabs, inline tags, search and full offline support, in about 50 KB.',
+    stack: ['JavaScript', 'IndexedDB', 'Service Workers'],
     logo: '/images/projects/notefy-logo.png',
-    accent: 'from-amber-400/20 via-orange-500/10 to-transparent',
-    source: { public: true, note: 'Open source on GitHub.' },
   },
   {
-    id: 'lsh',
-    name: 'Liberia Smart Health',
-    category: 'app',
-    tagline: 'A voice-first AI health companion for Liberian communities.',
+    id: 'easysave',
+    name: 'EasySave',
+    year: '2025',
+    kind: 'Savings tracker',
     summary:
-      'A conversational health assistant tailored for Liberia. Voice input via Whisper, text-to-speech responses, and a system prompt tuned for empathetic, safety-aware guidance.',
-    stack: ['Next.js 14', 'TypeScript', 'Tailwind', 'shadcn/ui', 'Supabase', 'GPT-4', 'Whisper'],
-    highlights: [
-      'Voice-first design lowers the literacy barrier for rural users',
-      'Conversation memory enables real continuity across sessions',
-      'Mobile-first UI tuned for low-bandwidth conditions',
-    ],
-    logo: '/images/projects/lsh-logo.png',
-    accent: 'from-cyan-400/20 via-sky-500/10 to-transparent',
-    source: { public: false, note: 'Private repo, access on request.' },
+      'Weekly savings goals, a progress dashboard and an admin panel. Weekly targets turned out easier to keep than monthly ones.',
+    stack: ['Next.js', 'Tailwind CSS'],
+    logo: '/images/projects/easysave-logo.png',
+    repo: 'https://github.com/LO4NL4D1FF/smart-save',
   },
   {
-    id: 'videography',
-    name: 'Videography Studio',
-    category: 'creative',
-    tagline: 'Cinematic short films, reels, and experimental edits.',
+    id: 'libraryms',
+    name: 'LibraryMS',
+    year: '2026',
+    kind: 'Library management',
     summary:
-      'A separate creative practice. I edit short-form and long-form video with a focus on pacing, rhythm, and emotional restraint. Premiere Pro for cinematic work, CapCut for fast mobile cuts.',
-    stack: ['Adobe Premiere Pro', 'After Effects', 'CapCut', 'DaVinci Resolve'],
-    highlights: [
-      'Pacing carries the emotion, effects only support it',
-      'Cuts on beat for subconscious rhythm with the viewer',
-      'Color and sound design tuned to mood, not trend',
-    ],
-    accent: 'from-rose-400/20 via-orange-500/10 to-transparent',
-    source: { public: false, note: 'Reels and full pieces shared on request.' },
+      'Books, members, categories and loans with overdue tracking, built on Django and SQLite.',
+    stack: ['Python', 'Django', 'SQLite'],
+  },
+  {
+    id: 'pixel-perfect',
+    name: 'Pixel Perfect',
+    year: '2026',
+    kind: 'Agency website',
+    summary:
+      'A seven-page site for a Monrovia media and marketing agency. Static HTML and CSS, no build step, quick on any phone.',
+    stack: ['HTML', 'CSS', 'JavaScript'],
   },
 ];
 
-export interface Service {
-  id: string;
-  name: string;
-  description: string;
-  pricing: string;
-  details: string[];
-}
-
-export const services: Service[] = [
-  {
-    id: 'web-dev',
-    name: 'Website Development',
-    description: 'Modern, responsive sites with attention to performance and detail.',
-    pricing: 'From $450',
-    details: [
-      'Next.js or React, depending on the brief',
-      'Responsive across phone, tablet, and desktop',
-      'On-page SEO and meta setup',
-      'CMS integration on request',
-      'Deployment to Vercel or your provider of choice',
-    ],
-  },
-  {
-    id: 'mobile-dev',
-    name: 'Mobile App Development',
-    description: 'Cross-platform apps with React Native and Expo.',
-    pricing: 'From $1,200',
-    details: [
-      'iOS and Android from a single codebase',
-      'Authentication, push notifications, analytics',
-      'Backend integration or Supabase setup',
-      'App Store and Play Store submission support',
-    ],
-  },
-  {
-    id: 'frontend-engineering',
-    name: 'Frontend Engineering',
-    description: 'Component work, refactors, and interface engineering inside your existing product.',
-    pricing: 'From $35/hour',
-    details: [
-      'Feature work in React or Next.js codebases',
-      'Design-system contributions and refactors',
-      'Accessibility and performance passes',
-      'Code review and pairing on request',
-    ],
-  },
-  {
-    id: 'ai-integration',
-    name: 'AI Integration',
-    description: 'Practical AI features wired into real products, not demos.',
-    pricing: 'From $600',
-    details: [
-      'Chat, summarization, and search features',
-      'GPT and Claude integration with sane prompts',
-      'Cost-aware streaming, caching, and rate limits',
-      'Clear handoff with documentation',
-    ],
-  },
-  {
-    id: 'ui-ux',
-    name: 'UI / UX Design',
-    description: 'Interfaces designed for clarity first, novelty second.',
-    pricing: 'From $300',
-    details: [
-      'Wireframes and prototypes in Figma',
-      'Component-level design systems',
-      'User flow review and simplification',
-      'Developer-ready handoff',
-    ],
-  },
-  {
-    id: 'video-editing',
-    name: 'Video Editing',
-    description: 'Cinematic edits, reels, and brand pieces in Premiere Pro and CapCut.',
-    pricing: 'From $90 per project',
-    details: [
-      'Short-form for Reels, TikTok, and Shorts',
-      'Long-form edits and documentary work',
-      'Color grading and sound design',
-      'Titles, transitions, and motion accents',
-    ],
-  },
-];
+/** Icons shown in the hero dock, in order. */
+export const dock = [...featured, ...others].filter((p) => p.logo);

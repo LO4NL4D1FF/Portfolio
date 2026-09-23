@@ -2,21 +2,15 @@ import Link from 'next/link';
 
 export default function NotFound() {
   return (
-    <main className="flex min-h-screen items-center justify-center px-6">
-      <div className="surface-strong max-w-md p-10 text-center">
-        <p className="font-mono text-xs uppercase tracking-[0.22em] text-accent-300">
-          404
-        </p>
-        <h1 className="mt-3 font-display text-2xl font-semibold text-cream-50">
-          That page does not exist.
-        </h1>
-        <p className="mt-3 text-sm text-cream-300">
-          The link is dead, but the rest of the site is alive.
-        </p>
-        <Link href="/" className="btn-primary mt-6">
-          Back home
-        </Link>
-      </div>
+    <main className="page flex min-h-screen flex-col justify-center py-20">
+      <p className="font-semibold text-slate">Error 404</p>
+      <h1 className="heading mt-3 max-w-[16ch]">There’s no page at this address.</h1>
+      <p className="mt-5 max-w-prose text-lg text-slate">
+        The link may be old or mistyped. Everything on the site is on the home page.
+      </p>
+      <Link href="/" className="btn-solid mt-8 self-start">
+        Go to the home page
+      </Link>
     </main>
   );
 }
