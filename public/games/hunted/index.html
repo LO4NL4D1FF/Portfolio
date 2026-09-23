@@ -62,7 +62,8 @@
   <div class="keypad-box">
     <div id="keypad-display">____</div>
     <div class="keys"></div>
-    <p class="dim center">Enter the four digits · Esc to step away</p>
+    <p class="dim center">Enter the four digits</p>
+    <button type="button" id="keypad-close" aria-label="Step away from the safe">×</button>
   </div>
 </div>
 
@@ -162,18 +163,20 @@
 
 <div id="clicktoplay" class="screen hidden"><p>Click to continue</p></div>
 
-<!-- touch controls -->
+<!-- touch controls: joystick bottom-left, action cluster bottom-right, menu column on the right -->
 <div id="touch" class="hidden">
-  <div id="stick"><div id="stick-knob"></div></div>
-  <div id="tbuttons">
-    <button data-t="use">USE</button>
-    <button data-t="light">LIGHT</button>
-    <button data-t="run">RUN</button>
-    <button data-t="crouch">CROUCH</button>
-    <button data-t="inv">BAG</button>
-    <button data-t="box">BOX</button>
-    <button data-t="hint">WAY</button>
-    <button data-t="pause">II</button>
+  <div id="stick"><div id="stick-ring"></div><div id="stick-knob"></div></div>
+  <div id="actions">
+    <button type="button" data-t="use" class="tb big" aria-label="Use"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11V5.5a1.5 1.5 0 013 0V10m0-.5V4.5a1.5 1.5 0 013 0V10m0-.5V6a1.5 1.5 0 013 0v7.5A6.5 6.5 0 0110.5 20h-.3a5 5 0 01-4-2L3.6 14.2a1.6 1.6 0 012.3-2.2L8 14"/></svg><span>Use</span></button>
+    <button type="button" data-t="run" class="tb " aria-label="Run"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3.5a1.8 1.8 0 110 3.6 1.8 1.8 0 010-3.6z M6 21l3.5-6 3 2.5V22 M8.5 12.5 11 8l4 2 3.5 3 M11 8 6.5 10"/></svg><span>Run</span></button>
+    <button type="button" data-t="crouch" class="tb " aria-label="Crouch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l6 5 6-5 M6 13l6 5 6-5"/></svg><span>Crouch</span></button>
+    <button type="button" data-t="light" class="tb " aria-label="Light"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8l-1.5 5h-5z M9.5 8h5v12a1 1 0 01-1 1h-3a1 1 0 01-1-1z M12 12v2"/></svg><span>Light</span></button>
+  </div>
+  <div id="menu-btns">
+    <button type="button" data-t="pause" class="tb small" aria-label="Pause"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12 M15 6v12"/></svg><span>Pause</span></button>
+    <button type="button" data-t="inv" class="tb small" aria-label="Bag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1.2 12H6.2z M9 8V6.5a3 3 0 016 0V8"/></svg><span>Bag</span></button>
+    <button type="button" data-t="box" class="tb small" aria-label="Music box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l10-2v12 M9 18a2 2 0 11-4 0 2 2 0 014 0z M19 16a2 2 0 11-4 0 2 2 0 014 0z"/></svg><span>Music box</span></button>
+    <button type="button" data-t="hint" class="tb small" aria-label="Way"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 8.5 13.5 13.5 8.5 15.5 10.5 10.5z"/><circle cx="12" cy="12" r="9"/></svg><span>Way</span></button>
   </div>
 </div>
 
