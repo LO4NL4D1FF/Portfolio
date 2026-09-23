@@ -318,11 +318,17 @@ export function furnish(world) {
   // hanging pans
   for (let i = 0; i < 4; i++) p.at(1.2 + i * 0.4, 0.1, 0, 0).cyl('iron', 0, 1.7, 0.04, 0.1 + i * 0.015, 0.09, 0.05, 14, Math.PI / 2);
   refs.notes.grocery = paperOn(world, 1.6, 0.925, 0.35, 0.6);
-  // the drawer with the fuse
-  const drawer = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.16, 0.04), M.lightWood);
-  drawer.position.set(4.35, 0.75, 0.64); drawer.castShadow = true; world.scene.add(drawer);
+  // the drawer with the fuse: a front panel with a handle and a tray that slides out
+  const drawer = new THREE.Group();
+  const df = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.16, 0.03), M.lightWood); df.castShadow = true; drawer.add(df);
+  const dh = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.022, 0.03), M.brass); dh.position.set(0, 0, 0.03); drawer.add(dh);
+  const tray = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.012, 0.32), M.lightWood); tray.position.set(0, -0.07, -0.17); drawer.add(tray);
+  for (const sx of [-1, 1]) { const side = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.12, 0.32), M.lightWood); side.position.set(sx * 0.23, -0.02, -0.17); drawer.add(side); }
+  const dHit = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.4, 0.5), new THREE.MeshBasicMaterial({ visible: false })); dHit.position.z = -0.05; drawer.add(dHit);
+  drawer.position.set(4.35, 0.75, 0.64); world.scene.add(drawer);
   refs.drawer = drawer;
-  refs.fuse = itemMesh(world, 'fuse', 4.35, 0.72, 0.5);
+  refs.fuse = itemMesh(world, 'fuse', 4.35, 0.69, 0.5);
+  refs.fuse.scale.setScalar(1.8);
   refs.fuse.visible = false;
   refs.lights.kitchen = lamp(world, 3.7, 2.9, 2.6, 0xfff0d8, 7, 9, { r: 0.08, flicker: 0.02 });
   p.at(3.7, 2.6, 0, 0).cyl('paintedWhite', 0, 3.05, 0, 0.01, 0.01, 0.3, 6).cyl('enamel', 0, 2.9, 0, 0.08, 0.28, 0.16, 18);
@@ -366,15 +372,25 @@ export function furnish(world) {
   refs.frontKey = itemMesh(world, 'frontKey', 21.6, 1.36, 0.05); refs.frontKey.visible = false;
   refs.notes.confession = paperOn(world, 21.55, 1.26, 0.06, 0); refs.notes.confession.visible = false;
 
-  // --- Utility room (x 0-3, z 5-7)
-  p.at(1.6, 5.3, 0, 0).box('metalGrey', 0, 0.9, 0, 1.2, 0.04, 0.4).box('metalGrey', 0, 1.5, 0, 1.2, 0.04, 0.4).box('metalGrey', 0, 0.3, 0, 1.2, 0.04, 0.4)
-    .box('iron', -0.58, 0.9, 0, 0.03, 1.8, 0.4).box('iron', 0.58, 0.9, 0, 0.03, 1.8, 0.4).box('fabricBeige', -0.3, 1.05, 0, 0.3, 0.26, 0.3).cyl('enamel', 0.3, 1.64, 0, 0.1, 0.1, 0.24, 12).solid(-0.6, -0.22, 0.6, 0.22);
-  p.at(0.5, 6.5, R / 2, 0).cyl('enamel', 0, 0.8, 0, 0.3, 0.3, 1.6, 20).solid(-0.32, -0.32, 0.32, 0.32);
+  // --- Utility room (x 0-3, z 5-7): kept clear so the fuse box on the west wall is easy to reach
+  p.at(1.9, 6.78, Math.PI, 0).box('metalGrey', 0, 0.9, 0, 1.2, 0.04, 0.4).box('metalGrey', 0, 1.5, 0, 1.2, 0.04, 0.4).box('metalGrey', 0, 0.3, 0, 1.2, 0.04, 0.4)
+    .box('iron', -0.58, 0.9, 0, 0.03, 1.8, 0.4).box('iron', 0.58, 0.9, 0, 0.03, 1.8, 0.4).box('fabricBeige', -0.3, 1.05, 0, 0.3, 0.26, 0.3).cyl('enamel', 0.3, 1.64, 0, 0.1, 0.1, 0.24, 12).solid(-0.6, -0.22, 0.6, 0.22, false);
+  p.at(0.42, 6.6, R / 2, 0).cyl('enamel', 0, 0.8, 0, 0.28, 0.28, 1.6, 20).solid(-0.3, -0.3, 0.3, 0.3, false);
+  // the fuse box: a big grey panel with a blinking red light and a label
   const fuseBox = new THREE.Group();
-  const fb = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.55, 0.42), M.metalGrey); fuseBox.add(fb);
-  const fbd = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.5, 0.38), M.iron); fbd.position.x = 0.04; fuseBox.add(fbd);
-  fuseBox.position.set(0.12, 1.5, 5.4); world.scene.add(fuseBox);
-  refs.fuseBox = fuseBox;
+  const fb = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.72, 0.52), M.metalGrey); fuseBox.add(fb);
+  const fbd = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.64, 0.46), M.iron); fbd.position.x = 0.06; fuseBox.add(fbd);
+  for (let i = 0; i < 4; i++) { const sock = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.03, 12), i === 2 ? M.black : M.porcelain); sock.rotation.z = Math.PI / 2; sock.position.set(0.075, 0.12 - i * 0.1, -0.08); fuseBox.add(sock); }
+  const led = new THREE.Mesh(new THREE.SphereGeometry(0.018, 10, 8), new THREE.MeshBasicMaterial({ color: 0xff2a1a })); led.position.set(0.075, 0.26, 0.16); fuseBox.add(led);
+  const lc = document.createElement('canvas'); lc.width = 256; lc.height = 64; const lx = lc.getContext('2d');
+  lx.fillStyle = '#e8dcc0'; lx.fillRect(0, 0, 256, 64); lx.fillStyle = '#1a1208'; lx.font = 'bold 40px sans-serif'; lx.textAlign = 'center'; lx.textBaseline = 'middle'; lx.fillText('FUSES', 128, 34);
+  const lt = new THREE.CanvasTexture(lc); lt.colorSpace = THREE.SRGBColorSpace;
+  const label = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.075), new THREE.MeshStandardMaterial({ map: lt, roughness: 0.8 }));
+  label.rotation.y = Math.PI / 2; label.position.set(0.072, 0.42, 0); fuseBox.add(label);
+  // generous invisible hit area in front of the panel
+  const fbHit = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.0, 0.8), new THREE.MeshBasicMaterial({ visible: false })); fbHit.position.x = 0.2; fuseBox.add(fbHit);
+  fuseBox.position.set(0.14, 1.45, 5.75); world.scene.add(fuseBox);
+  refs.fuseBox = fuseBox; refs.fuseLed = led;
   refs.lights.utility = lamp(world, 1.5, 3.0, 6, 0xfff4e0, 3, 5, { r: 0.05, flicker: 0.12 });
 
   // --- Hall (x 3-24, z 5-7)

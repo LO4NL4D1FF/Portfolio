@@ -529,7 +529,7 @@ function setupInteractions() {
 function applyContainers() {
   // drawer slides out to reveal the fuse
   refs.drawer.position.z = G.flags.drawer ? 0.94 : 0.64;
-  refs.fuse.position.z = G.flags.drawer ? 0.84 : 0.5;
+  refs.fuse.position.z = G.flags.drawer ? 0.78 : 0.5;
   refs.fuse.visible = !!G.flags.drawer && !G.taken.has('fuse');
   refs.jewelLid.rotation.x = G.flags.jewel ? -1.4 : 0;
   refs.jewelLid.position.set(0, G.flags.jewel ? 0.15 : 0.105, G.flags.jewel ? -0.08 : 0);
@@ -722,6 +722,7 @@ function setTvOn(on) {
   refs.tv.material.map = on ? tvTex : null; refs.tv.material.color.set(on ? 0xffffff : 0x000000); refs.tv.material.needsUpdate = true;
   G.tvOn = on;
 }
+function updateFuseLed() { if (refs && refs.fuseLed) refs.fuseLed.visible = !G.flags.power && Math.sin(time * 6) > 0; }
 function updateTv() {
   if (!G.tvOn || !tvCtx) return;
   const img = tvCtx.createImageData(80, 60);
@@ -965,14 +966,22 @@ function updateGuide(dt) {
   guideT -= dt;
   if (guideT <= 0) {
     guideT = 0.4;
-    // steer toward a point a few cells along the route
+    // steer toward the farthest point along the route that is actually in view
     const path = world.findPath(player.pos, t.pos);
     guideWay = null;
-    if (path && path.length > 2) {
-      const n = path[Math.min(path.length - 1, 3)];
-      guideWay = new THREE.Vector3(n.x + 0.5, n.y + 1.2, n.z + 0.5);
+    if (path && path.length > 1) {
+      let pick = null;
+      for (let i = 1; i < Math.min(path.length, 12); i++) {
+        const n = path[i];
+        const p = new THREE.Vector3(n.x + 0.5, n.y + 1.2, n.z + 0.5);
+        if (!world.lineOfSight(camera.position, p)) break;
+        pick = p;
+      }
+      guideWay = pick || new THREE.Vector3(path[1].x + 0.5, path[1].y + 1.2, path[1].z + 0.5);
       guideWay.dist = path.length;
     }
+    const tv = world.wallsBetween(camera.position, t.pos, 1) === 0 && Math.abs(t.pos.y - camera.position.y) < 2.2;
+    if (tv && camera.position.distanceTo(t.pos) < 4) guideWay = null; // it's right there: point at it
   }
   const aim = guideWay || t.pos;
   const dx = aim.x - camera.position.x, dz = aim.z - camera.position.z;
@@ -982,7 +991,8 @@ function updateGuide(dt) {
   const dy = t.pos.y - player.pos.y;
   const floorNote = dy > 2 ? ' · upstairs' : dy < -1.5 ? ' · downstairs' : '';
   $('guide-arrow').style.transform = `rotate(${-rel}rad)`;
-  $('guide-text').textContent = `${t.label} · ${dist} m${floorNote}`;
+  const close = !guideWay && camera.position.distanceTo(t.pos) < 4;
+  $('guide-text').textContent = close ? `${t.label} · here, look for the light` : `${t.label} · ${dist} m${floorNote}`;
   el.classList.remove('hidden');
   // marker over the object when it's close and in view
   const near = camera.position.distanceTo(t.pos) < 9 && world.wallsBetween(camera.position, t.pos, 1) === 0;
@@ -1193,8 +1203,36 @@ function updateFocus() {
     if (e.pickup && h.distance < firstDist + 0.6) { focus = e; break; }
     if (h.distance > firstDist + 0.6) break;
   }
+  if (!focus) focus = nearbyInteractable();
   $('prompt').innerHTML = focus ? `<kbd>${isTouch ? 'USE' : 'E'}</kbd>${focus.label()}` : '';
   $('crosshair').classList.toggle('active', !!focus);
+}
+// When the crosshair isn't exactly on anything, pick the closest usable thing
+// right in front of the player (within arm's reach), so small objects and
+// phone players don't need pixel-perfect aim.
+const _wp = new THREE.Vector3(), _look = new THREE.Vector3();
+function nearbyInteractable() {
+  camera.getWorldDirection(_look); _look.y = 0; _look.normalize();
+  let best = null, bestScore = Infinity;
+  for (const e of interactables) {
+    const o = e.objs[0];
+    let vis = o.visible; o.traverseAncestors(a => { if (!a.visible) vis = false; });
+    if (!vis) continue;
+    o.getWorldPosition(_wp);
+    const dy = _wp.y - player.pos.y;
+    if (dy < -0.3 || dy > 2.3) continue;
+    const dx = _wp.x - camera.position.x, dz = _wp.z - camera.position.z;
+    const d = Math.hypot(dx, dz);
+    if (d > 1.7) continue;
+    const facing = (dx * _look.x + dz * _look.z) / Math.max(d, 0.01);
+    if (facing < (d < 1 ? 0.3 : 0.55)) continue;
+    if (world.wallsBetween(camera.position, _wp, 1) > 0) continue;
+    const label = e.label();
+    if (!label) continue;
+    const score = d * (2 - facing) - (e.pickup ? 0.3 : 0);
+    if (score < bestScore) { bestScore = score; best = e; }
+  }
+  return best;
 }
 function interact() {
   if (G.mode !== 'play' || G.paused) return;
@@ -1391,6 +1429,7 @@ function update(dt) {
     updateLightning(dt);
     updateLights(dt);
     updateTv();
+    updateFuseLed();
     // fear: proximity + chase
     const md = mother && mother.root.visible ? mother.pos.distanceTo(player.pos) : 99;
     const targetFear = mother && mother.root.visible ? Math.max(G.chase ? 0.9 : 0, Math.max(0, 1 - md / 12) * (mother.seesPlayer ? 1 : 0.7)) : 0;
