@@ -17,7 +17,9 @@ const store = {
   del(k) { try { localStorage.removeItem(k); } catch { /* storage unavailable */ } },
 };
 const SAVE_KEY = 'hunted-save-v1', SETTINGS_KEY = 'hunted-settings-v1';
-const isTouch = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
+// A phone or tablet: the main pointer is a finger. Touchscreen laptops have a
+// mouse or trackpad as their main pointer, so they get mouse controls.
+const isTouch = matchMedia('(pointer: coarse)').matches;
 
 // ---------------------------------------------------------------- settings
 const settings = Object.assign({ sens: 1, vol: 0.9, bright: 1, fov: 72, quality: isTouch ? 'low' : 'high', invert: false, guide: 'always' }, store.get(SETTINGS_KEY) || {});
@@ -401,7 +403,7 @@ function updateLightning(dt) {
   }
   if (bolt) { bolt.visible = f > 0.05; bolt.material.opacity = Math.min(1, f * 1.4); }
   moon.intensity = 0.7 + f * 28;
-  hemi.intensity = (0.45 + f * 2.2) * settings.bright;
+  hemi.intensity = ((G.flags.power ? 0.9 : 0.45) + f * 2.2) * settings.bright;
   scene.background.copy(skyColor).lerp(skyFlash, f * 0.8);
   scene.fog.color.copy(fogColor).lerp(skyFlash, f * 0.25);
   if (world && world.materials.glass) {
@@ -412,11 +414,14 @@ function updateLightning(dt) {
 }
 
 // ---------------------------------------------------------------- lights & power
+const POWER_BOOST = 3;
 function setPower(on, instant = false) {
   G.flags.power = on;
   for (const L of world.lights) {
     if (!L.power) continue;
     L.on = on;
+    if (!L.dist0) L.dist0 = L.light.distance;
+    L.light.distance = L.dist0 * (on ? 1.5 : 1);
     if (on && !instant) { L.bootT = Math.random() * 1.2; L.booting = true; }
   }
 }
@@ -424,15 +429,16 @@ function updateLights(dt) {
   const mp = mother && mother.root.visible ? mother.pos : null;
   let lit = false;
   for (const L of world.lights) {
-    let target = L.on ? L.base : 0;
+    // mains lights are bright enough to explore by once the power is back
+    let target = L.on ? L.base * (L.power ? POWER_BOOST : 1) : 0;
     if (L.booting) { L.bootT -= dt; target = L.bootT > 0 ? 0 : (Math.random() < 0.5 ? target : target * 0.1); if (L.bootT < -0.6) L.booting = false; }
-    if (L.flicker && L.on && Math.random() < L.flicker * 0.2) target *= 0.3 + Math.random() * 0.5;
+    if (L.flicker && L.on && Math.random() < L.flicker * (L.power ? 0.08 : 0.2)) target *= 0.3 + Math.random() * 0.5;
     if (L.candle && L.on) target *= 0.75 + Math.sin(time * 13 + L.base) * 0.1 + Math.random() * 0.15;
     if (mp && L.on && L.light.position.distanceTo(mp) < 6 && Math.random() < 0.35) target *= Math.random() * 0.4;
     if (G.blackout > 0) target *= 0.02;
     L.light.intensity = target;
     L.bulb.material.emissiveIntensity = target > 0 ? 3 + target : 0;
-    if (target > 0.5 && player.head.distanceTo(L.light.position) < Math.max(2.5, L.light.distance * 0.35) && L.light.position.y - player.pos.y < 3.3 && L.light.position.y > player.pos.y) lit = true;
+    if (target > 0.5 && player.head.distanceTo(L.light.position) < Math.max(2.5, (L.dist0 || L.light.distance) * 0.35) && L.light.position.y - player.pos.y < 3.3 && L.light.position.y > player.pos.y) lit = true;
   }
   player.lit = lit;
 }
@@ -789,7 +795,7 @@ function startFinale() {
   say(RADIO.safe);
   audio.play(audio.buffers.scream, { gain: 0.9, pos: new THREE.Vector3(12, H, 6) });
   G.blackout = 1.2;
-  mother.aggression = 1.2;
+  mother.aggression = 1.1;
   if (!G.flags.hunt) G.flags.hunt = true;
   // she comes for you from the hall
   const spot = new THREE.Vector3(9.5, 0, 6);
@@ -1065,28 +1071,42 @@ function retry() {
 const keys = new Set();
 const touch = { mx: 0, mz: 0, run: false, crouch: false };
 let pointerLocked = false;
-// Some embeds (sandboxed frames) never allow pointer lock. Then the game
-// switches to drag-to-look: hold a mouse button and move to look, click to use.
-let lockBroken = false;
+// The mouse turns the view through pointer lock. Browsers refuse a lock that
+// isn't started by a click, or one asked for within about a second of leaving
+// it with Esc; then the game shows "Click to continue" and the next click locks.
+// Only sandboxed frames that never allow it switch to drag-to-look: hold a
+// mouse button and move to look, click to use.
+const inFrame = (() => { try { return window.self !== window.top; } catch { return true; } })();
+let lockBroken = !canvas.requestPointerLock;
+let lockFails = 0;
 function lockUnavailable() {
   if (lockBroken) return;
   lockBroken = true;
   if (!$('clicktoplay').classList.contains('hidden')) showScreen(null);
   if (G.mode === 'play') toast('Drag with the mouse to look around. Click to use things.', 6);
 }
-document.addEventListener('pointerlockerror', lockUnavailable);
+let lastLockGesture = false;
+function lockFailed() {
+  if (pointerLocked || lockBroken) return;
+  // a frame that refuses even a real click, twice, will never allow it
+  if (inFrame && lastLockGesture && ++lockFails >= 2) { lockUnavailable(); return; }
+  if (G.mode === 'play' && !G.ui && !G.paused) showScreen('clicktoplay');
+}
+document.addEventListener('pointerlockerror', lockFailed);
 function capturePointer() {
   if (isTouch || lockBroken || G.mode !== 'play' || G.ui || G.paused || document.pointerLockElement === canvas) return;
+  lastLockGesture = navigator.userActivation ? navigator.userActivation.isActive : true;
   try {
     const p = canvas.requestPointerLock();
-    if (p && p.catch) p.catch((err) => { if (err && /sandbox|not supported|NotSupported|WrongDocument/i.test(String(err.message || err.name))) lockUnavailable(); });
-  } catch { lockUnavailable(); }
-  // if the browser refused because there was no click, ask for one
+    if (p && p.catch) p.catch(() => {});
+  } catch { lockFailed(); }
+  // if the browser quietly ignored the request, ask for a click
   setTimeout(() => { if (!pointerLocked && !lockBroken && G.mode === 'play' && !G.ui && !G.paused) showScreen('clicktoplay'); }, 400);
 }
 function releasePointer() { if (document.pointerLockElement) document.exitPointerLock(); }
 document.addEventListener('pointerlockchange', () => {
   pointerLocked = document.pointerLockElement === canvas;
+  if (pointerLocked) { lockFails = 0; if (!$('clicktoplay').classList.contains('hidden')) showScreen(null); }
   if (!pointerLocked && G.mode === 'play' && !G.ui && !G.paused) pause(true);
 });
 canvas.addEventListener('click', () => {

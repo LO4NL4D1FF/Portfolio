@@ -304,13 +304,14 @@ export class Mother {
         this.lostTimer = 0;
         if (this.state !== 'chase') {
           this.state = 'chase'; this.path = null; this.repath = 0;
+          this.chargeDelay = 1.0; // she screams before she charges: your head start
           this.onChaseStart && this.onChaseStart();
         }
       }
     }
     if (this.state === 'chase' && !this.seesPlayer) {
       this.lostTimer += dt;
-      if (this.lostTimer > 4.5) {
+      if (this.lostTimer > 3.5) {
         this.state = 'search'; this.goal = this.lastSeen ? this.lastSeen.clone() : player.pos.clone();
         this.path = null; this.searchTimer = 0;
         this.onChaseEnd && this.onChaseEnd();
@@ -349,7 +350,9 @@ export class Mother {
         }
         break;
       case 'chase':
-        speed = 3.2 * this.aggression;
+        // slower than a sprint (4.3), so running and breaking sight works
+        speed = this.chargeDelay > 0 ? 0 : 2.8 * this.aggression;
+        if (this.chargeDelay > 0) this.chargeDelay -= dt;
         this.repath -= dt;
         if (this.repath <= 0 || !this.path) {
           this.repath = 0.35;
