@@ -643,6 +643,7 @@ function openKeypad() {
   $('keypad').classList.remove('hidden');
   releasePointer();
 }
+$('keypad-close').addEventListener('click', () => closeKeypad());
 function closeKeypad() { $('keypad').classList.add('hidden'); G.ui = null; capturePointer(); }
 function renderCode(bad = false) { $('keypad-display').textContent = (code + '____').slice(0, 4); $('keypad-display').classList.toggle('bad', bad); }
 function pressKey(k) {
@@ -1205,37 +1206,61 @@ function interact() {
 // touch controls
 if (isTouch) {
   const stick = $('stick'), knob = $('stick-knob');
-  let sid = null, cx = 0, cy = 0;
-  stick.addEventListener('pointerdown', (e) => { sid = e.pointerId; const r = stick.getBoundingClientRect(); cx = r.left + r.width / 2; cy = r.top + r.height / 2; stick.setPointerCapture(sid); });
+  const buzz = (ms) => { try { navigator.vibrate && navigator.vibrate(ms); } catch { /* not supported */ } };
+  let sid = null, cx = 0, cy = 0, reach = 50;
+  stick.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    sid = e.pointerId; const r = stick.getBoundingClientRect(); cx = r.left + r.width / 2; cy = r.top + r.height / 2; reach = r.width * 0.38;
+    try { stick.setPointerCapture(sid); } catch { /* synthetic events have no capture */ }
+    stick.classList.add('active'); buzz(8);
+  });
   stick.addEventListener('pointermove', (e) => {
     if (e.pointerId !== sid) return;
-    let dx = e.clientX - cx, dy = e.clientY - cy; const l = Math.hypot(dx, dy), m = 55;
-    if (l > m) { dx = dx / l * m; dy = dy / l * m; }
+    let dx = e.clientX - cx, dy = e.clientY - cy; const l = Math.hypot(dx, dy);
+    if (l > reach) { dx = dx / l * reach; dy = dy / l * reach; }
     knob.style.transform = `translate(${dx}px, ${dy}px)`;
-    touch.mx = dx / m; touch.mz = dy / m;
+    touch.mx = dx / reach; touch.mz = dy / reach;
   });
-  const end = () => { sid = null; knob.style.transform = ''; touch.mx = touch.mz = 0; };
+  const end = (e) => { if (e && e.pointerId !== sid) return; sid = null; knob.style.transform = ''; touch.mx = touch.mz = 0; stick.classList.remove('active'); };
   stick.addEventListener('pointerup', end); stick.addEventListener('pointercancel', end);
   let lid = null, lx = 0, ly = 0;
   canvas.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'touch') return; lid = e.pointerId; lx = e.clientX; ly = e.clientY; });
   canvas.addEventListener('pointermove', (e) => { if (e.pointerId !== lid || G.ui) return; look((e.clientX - lx) * 1.6, (e.clientY - ly) * 1.6); lx = e.clientX; ly = e.clientY; });
   canvas.addEventListener('pointerup', (e) => { if (e.pointerId === lid) lid = null; });
   canvas.style.touchAction = 'none';
-  for (const b of document.querySelectorAll('#tbuttons button')) {
+  for (const b of document.querySelectorAll('#touch .tb')) {
+    const release = () => b.classList.remove('pressed');
+    b.addEventListener('pointerup', release); b.addEventListener('pointercancel', release); b.addEventListener('pointerleave', release);
     b.addEventListener('pointerdown', (e) => {
       e.preventDefault();
+      b.classList.add('pressed'); buzz(12);
       const t = b.dataset.t;
       if (G.ui === 'note') { closeNote(); return; }
       if (t === 'use') interact();
       if (t === 'light') toggleFlashlight();
-      if (t === 'run') { touch.run = !touch.run; b.classList.toggle('on', touch.run); }
-      if (t === 'crouch') { player.crouchToggle = !player.crouchToggle; b.classList.toggle('on', player.crouchToggle); }
+      if (t === 'run') touch.run = !touch.run;
+      if (t === 'crouch') { player.crouchToggle = !player.crouchToggle; if (player.crouchToggle) touch.run = false; }
       if (t === 'inv') toggleInventory();
       if (t === 'box') useMusicBox();
       if (t === 'pause') pause(true);
       if (t === 'hint') showHint();
+      syncTouch();
     });
   }
+}
+// Keep the round buttons showing the real state: lit when on, USE pulses
+// when something can be used, the music box dims until you own it.
+function syncTouch() {
+  if (!isTouch) return;
+  // panels (notes, keypad, pause, death) sit above the game: hide the controls under them
+  $('touch').classList.toggle('covered', !!(G.ui === 'note' || G.ui === 'keypad' || G.paused || G.mode !== 'play'));
+  const q = (t) => document.querySelector(`#touch [data-t="${t}"]`);
+  q('light').classList.toggle('on', player.flashlightOn && G.battery > 0);
+  q('run').classList.toggle('on', !!touch.run);
+  q('crouch').classList.toggle('on', !!player.crouchToggle);
+  q('use').classList.toggle('ready', !!focus || !!player.hidden);
+  q('box').classList.toggle('off', !G.inv.has('musicBox'));
+  q('hint').classList.toggle('on', settings.guide === 'key' && G.playTime < hintUntil);
 }
 
 // ---------------------------------------------------------------- player update
@@ -1380,6 +1405,7 @@ function update(dt) {
     });
     updateUI(dt);
     if (G.mode === 'play') updateGuide(dt);
+    syncTouch();
   }
 }
 function render() {
@@ -1425,6 +1451,7 @@ function startGame(state) {
 function pause(on) {
   if (G.mode !== 'play') return;
   G.paused = on;
+  syncTouch();
   if (on) G.pausedAt = performance.now();
   if (on) { releasePointer(); showScreen('pause'); if (audio.ctx) audio.ctx.suspend(); }
   else { showScreen(null); if (audio.ctx) audio.ctx.resume(); if (!isTouch && !lockBroken) showScreen('clicktoplay'); }
