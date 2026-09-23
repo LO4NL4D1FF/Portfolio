@@ -1,0 +1,42 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" fill="none">
+
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="7" result="blur"></feGaussianBlur>
+      <feMerge>
+        <feMergeNode in="blur"></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+    <radialGradient id="irisGrad" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#60a5fa"></stop>
+      <stop offset="100%" stop-color="#1d4ed8"></stop>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="#020617"/>
+
+  <!-- Main hawk/horus eye outline -->
+  <path d="M70 260
+       Q160 150 256 170
+       Q360 150 442 260
+       Q360 310 256 305
+       Q150 310 70 260Z" stroke="#3b82f6" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"></path>
+
+  <!-- Upper hawk brow -->
+  <path d="M120 210 L256 175 L392 210" stroke="#3b82f6" stroke-width="14" stroke-linecap="round" filter="url(#glow)"></path>
+
+  <!-- Iris -->
+  <circle cx="256" cy="255" r="60" fill="url(#irisGrad)" filter="url(#glow)"></circle>
+
+  <!-- Pupil -->
+  <circle cx="256" cy="255" r="26" fill="#020617"></circle>
+
+  <!-- Egyptian-style tear line -->
+  <path d="M210 300
+       Q220 350 190 380
+       Q240 360 250 330" stroke="#3b82f6" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"></path>
+
+  <!-- Hawk tail extension -->
+  <path d="M440 260 L485 250" stroke="#3b82f6" stroke-width="12" stroke-linecap="round" filter="url(#glow)"></path>
+
+</svg>

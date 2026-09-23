@@ -34,7 +34,7 @@ export const services: Service[] = [
     name: 'AI features',
     price: 'From $600',
     description: 'Chat, summaries and search wired into a real product, with costs you can predict.',
-    includes: ['OpenAI, Claude or Gemini', 'streaming, caching and rate limits', 'a written handover'],
+    includes: ['Claude, OpenAI or Gemini', 'streaming, caching and rate limits', 'a written handover'],
   },
   {
     id: 'design',

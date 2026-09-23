@@ -1,3 +1,11 @@
+/**
+ * live: the real app running in an iframe (static builds only).
+ * screens: real screenshots captured from the running apps, shown in device frames.
+ */
+export type Demo =
+  | { kind: 'live'; url: string }
+  | { kind: 'screens'; phone?: string[]; desktop?: string[] };
+
 export interface Project {
   id: string;
   name: string;
@@ -13,12 +21,17 @@ export interface Project {
   logoBg?: string;
   repo?: string;
   status?: string;
+  /** What opens when someone asks to see the project. */
+  demo?: Demo;
+  /** Brand colors for the featured card. */
+  brand?: { bg: string; accent: string };
 }
 
 /** Large rows at the top of the work section. */
 export const featured: Project[] = [
   {
     id: 'karrio',
+    demo: { kind: 'screens', desktop: ['/images/screens/karrio-desk.jpg'], phone: ['/images/screens/karrio-1.jpg'] },
     name: 'Karrio',
     year: '2026',
     kind: 'Delivery platform',
@@ -32,9 +45,11 @@ export const featured: Project[] = [
       'Payments built against test mode first, with mobile money support planned for launch',
     ],
     logo: '/images/projects/karrio-logo.png',
+    brand: { bg: '#041A2F', accent: '#FE5500' },
   },
   {
     id: 'gamefy',
+    demo: { kind: 'screens', desktop: ['/images/screens/gamefy-desk.jpg'], phone: ['/images/screens/gamefy-1.jpg'] },
     name: 'Gamefy',
     year: '2026',
     kind: 'Multiplayer web games',
@@ -48,6 +63,7 @@ export const featured: Project[] = [
       'Translations are linked per question and layouts are ready for right-to-left scripts',
     ],
     logo: '/images/projects/gamefy-logo.png',
+    brand: { bg: '#1C1410', accent: '#E0A93B' },
   },
   {
     id: 'audify',
@@ -63,6 +79,7 @@ export const featured: Project[] = [
       '“Because you listened to” rows that recommend without spending AI tokens',
     ],
     logo: '/images/projects/audify-logo.png',
+    brand: { bg: '#0B0710', accent: '#9B5CF6' },
   },
 ];
 
@@ -70,6 +87,7 @@ export const featured: Project[] = [
 export const others: Project[] = [
   {
     id: 'lsh',
+    demo: { kind: 'screens', desktop: ['/images/screens/lsh-desk.jpg'], phone: ['/images/screens/lsh-1.jpg'] },
     name: 'Liberia Smart Health',
     short: 'LSH',
     year: '2026',
@@ -98,6 +116,7 @@ export const others: Project[] = [
     summary:
       'A browser extension and admin dashboard that give schools and companies a live view of device activity, with privacy limits built in.',
     stack: ['Chrome extension', 'React', 'Vite', 'Supabase Realtime'],
+    logo: '/images/projects/hawkeye-logo.svg',
   },
   {
     id: 'securecam',
@@ -107,9 +126,11 @@ export const others: Project[] = [
     summary:
       'Watches USB and IP cameras, detects people with YOLOv8, asks a vision model when it is unsure, and sends alerts to a phone.',
     stack: ['Python', 'FastAPI', 'YOLOv8', 'WebSockets'],
+    logo: '/images/projects/securecam-logo.svg',
   },
   {
     id: 'devmatch',
+    demo: { kind: 'screens', phone: ['/images/screens/devmatch-1.jpg', '/images/screens/devmatch-2.jpg'] },
     name: 'DevMatch',
     year: '2025',
     kind: 'Networking app',
@@ -120,6 +141,7 @@ export const others: Project[] = [
   },
   {
     id: 'sharry',
+    demo: { kind: 'screens', phone: ['/images/screens/sharry-1.jpg', '/images/screens/sharry-3.jpg'] },
     name: 'Sharry',
     year: '2025',
     kind: 'Offline file sharing',
@@ -137,15 +159,18 @@ export const others: Project[] = [
     summary:
       'Grades, attendance, timetables, report cards and fee receipts for a school, with separate views for admins, teachers and students.',
     stack: ['React', 'Vite', 'Firebase', 'Gemini'],
+    logo: '/images/projects/smartbase-logo.svg',
   },
   {
     id: 'zenix',
+    demo: { kind: 'screens', phone: ['/images/screens/zenix-1.jpg'] },
     name: 'Zenix',
     year: '2025',
     kind: 'AI learning app',
     summary:
       'Upload study material and get practice questions back, with streaks and subscription tiers that keep AI costs in check.',
     stack: ['Expo', 'Supabase', 'Gemini', 'Flutterwave'],
+    logo: '/images/projects/zenix-logo.png',
     repo: 'https://github.com/LO4NL4D1FF/zenix-lite',
   },
   {
@@ -156,6 +181,7 @@ export const others: Project[] = [
     summary:
       'A fast notes vault in plain JavaScript. Tabs, inline tags, search and full offline support, in about 50 KB.',
     stack: ['JavaScript', 'IndexedDB', 'Service Workers'],
+    demo: { kind: 'live', url: '/demos/notefy/index.html' },
     logo: '/images/projects/notefy-logo.png',
   },
   {
@@ -177,15 +203,18 @@ export const others: Project[] = [
     summary:
       'Books, members, categories and loans with overdue tracking, built on Django and SQLite.',
     stack: ['Python', 'Django', 'SQLite'],
+    logo: '/images/projects/libraryms-logo.svg',
   },
   {
     id: 'pixel-perfect',
+    demo: { kind: 'screens', desktop: ['/images/screens/pp-desk.jpg', '/images/screens/pp-desk2.jpg'], phone: ['/images/screens/pp-1.jpg'] },
     name: 'Pixel Perfect',
     year: '2026',
     kind: 'Agency website',
     summary:
       'A seven-page site for a Monrovia media and marketing agency. Static HTML and CSS, no build step, quick on any phone.',
     stack: ['HTML', 'CSS', 'JavaScript'],
+    logo: '/images/projects/pixelperfect-logo.png',
   },
 ];
 

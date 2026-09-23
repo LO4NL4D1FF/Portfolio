@@ -3,36 +3,27 @@
 @tailwind utilities;
 
 /*
-  Palette
-  paper  #E6EAEE  cool mist, the page
-  ink    #0E1A2B  Atlantic navy, text and the work band
-  slate  #4C5A6B  secondary text
-  line   #C3CCD5  rules
-  sun    #F0B429  mango yellow, the single accent (fills only, never text on paper)
+  Palette: black first, white second, two accents.
+  paper  #000000  the page
+  surface#111111  raised panels on black
+  ink    #FFFFFF  text on black
+  slate  #A1A1A1  secondary text on black
+  line   #262626  rules on black
+  sun    #F5B82E  mango, primary accent
+  sky    #5B8CFF  signal blue, secondary accent
+  navy / mist are the fixed "dark band" pair: black and white.
 */
 :root {
-  --paper: 230 234 238;
-  --surface: 244 246 248;
-  --ink: 14 26 43;
-  --slate: 76 90 107;
-  --line: 195 204 213;
-  --sun: 240 180 41;
-  /* fixed values for the always-dark work band */
-  --navy: 14 26 43;
-  --mist: 230 234 238;
-  color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: 11 20 34;
-    --surface: 19 33 53;
-    --ink: 230 234 238;
-    --slate: 154 168 184;
-    --line: 36 52 76;
-    --navy: 19 33 53;
-    color-scheme: dark;
-  }
+  --paper: 0 0 0;
+  --surface: 17 17 17;
+  --ink: 255 255 255;
+  --slate: 161 161 161;
+  --line: 38 38 38;
+  --sun: 245 184 46;
+  --sky: 91 140 255;
+  --navy: 0 0 0;
+  --mist: 255 255 255;
+  color-scheme: dark;
 }
 
 @layer base {
@@ -47,7 +38,7 @@
   }
 
   ::selection {
-    @apply bg-sun text-[rgb(14_26_43)];
+    @apply bg-sun text-black;
   }
 
   :focus-visible {
@@ -94,28 +85,55 @@
   }
 }
 
-/* The one orchestrated moment: dock icons rise in on load. */
-@keyframes dock-rise {
-  from {
-    opacity: 0;
-    transform: translateY(18px) scale(0.92);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.dock-item {
-  animation: dock-rise 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  animation-delay: calc(var(--i) * 55ms + 150ms);
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-  .dock-item {
+}
+
+/* Monogram draws itself in: each stroke has pathLength=1. */
+.logo-stroke {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: logo-draw 900ms cubic-bezier(0.65, 0, 0.35, 1) forwards 200ms;
+}
+.logo-stroke-late {
+  animation-delay: 650ms;
+}
+@keyframes logo-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.badge-spin {
+  animation: badge-spin 14s linear infinite;
+}
+@keyframes badge-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.marquee-track {
+  animation: marquee 38s linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-stroke {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .badge-spin,
+  .marquee-track {
     animation: none;
   }
 }

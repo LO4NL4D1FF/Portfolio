@@ -21,6 +21,9 @@ npm run dev
 
 ## Design notes
 
-- Palette: mist `#E6EAEE`, Atlantic navy `#0E1A2B`, slate `#4C5A6B`, rule `#C3CCD5`, mango `#F0B429`. Mango is only ever a fill, never text on the light background.
+- Palette: black `#000000` first, white second, mango `#F5B82E` and signal blue `#5B8CFF` as accents.
 - Type: Schibsted Grotesk throughout.
-- The hero dock of app icons is the one animated moment; it is skipped when reduced motion is on.
+- Motion: GSAP (`gsap`, `@gsap/react`, ScrollTrigger). Every animation is skipped when reduced motion is on.
+- Hero stage (`components/hero`): a real iPhone 17 frame (`public/images/devices`, free commercial licence from webmobilefirst.com) showing real app screenshots, a VS Code replica typing real Karrio code, and a Premiere Pro style timeline.
+- Demos: `lib/projects.ts` `demo` field. Real screenshots live in `public/images/screens`; Notefy runs live from `public/demos/notefy`.
+- The Day job section describes the bank role in general terms only. Never name the bank or its systems.

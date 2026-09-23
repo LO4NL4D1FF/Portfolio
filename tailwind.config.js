@@ -19,6 +19,7 @@ module.exports = {
         slate: token('slate'),
         line: token('line'),
         sun: token('sun'),
+        sky: token('sky'),
         navy: token('navy'),
         mist: token('mist'),
       },

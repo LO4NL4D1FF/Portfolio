@@ -18,6 +18,7 @@ export default function ProjectMark({ project, size, className = '' }: ProjectMa
         alt=""
         width={size}
         height={size}
+        unoptimized={project.logo.endsWith('.svg')}
         className={`${shape} object-cover`}
         style={{ width: size, height: size, background: project.logoBg ?? '#fff' }}
       />
@@ -27,7 +28,7 @@ export default function ProjectMark({ project, size, className = '' }: ProjectMa
   return (
     <span
       aria-hidden
-      className={`${shape} grid place-items-center bg-sun font-extrabold text-[rgb(14_26_43)]`}
+      className={`${shape} grid place-items-center bg-sun font-extrabold text-black`}
       style={{ width: size, height: size, fontSize: size * 0.42 }}
     >
       {project.name.charAt(0)}
