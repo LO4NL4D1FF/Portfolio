@@ -75,7 +75,7 @@ export const ROOMS = {
 const E = (f, a, b) => { const [p, q] = [a, b].sort((u, v) => u[0] - v[0] || u[1] - v[1]); return `${f}:${p[0]},${p[1]}:${q[0]},${q[1]}`; };
 export const edgeKey = E;
 
-const DOORS = [
+export const DOORS = [
   { id: 'front', f: 0, a: [11, 12], b: [11, 13], lock: 'frontKey', open: true, swingTo: 'a', front: true },
   { id: 'living', f: 0, a: [8, 10], b: [7, 10], swingTo: 'b' },
   { id: 'music', f: 0, a: [15, 11], b: [16, 11], swingTo: 'b' },
@@ -92,13 +92,13 @@ const DOORS = [
   { id: 'library', f: 1, a: [11, 6], b: [11, 7], swingTo: 'b', open: true },
   { id: 'chapel', f: 1, a: [22, 8], b: [22, 9], swingTo: 'b' },
 ];
-const OPENINGS = [
+export const OPENINGS = [
   ...[10, 11, 12, 13].map(x => E(0, [x, 6], [x, 7])),       // foyer arch to hall
   ...[11, 12].map(x => E(0, [x, 4], [x, 5])),               // dining arch
   ...[7, 8].map(z => E(0, [15, z], [16, z])),               // foot of stairs
   ...[7, 8].map(z => E(1, [21, z], [22, z])),               // top of stairs
 ];
-const RAILINGS = [
+export const RAILINGS = [
   ...[16, 17, 18, 19, 20, 21].map(x => E(1, [x, 6], [x, 7])),
 ];
 

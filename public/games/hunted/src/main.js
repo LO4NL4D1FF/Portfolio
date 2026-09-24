@@ -4,6 +4,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
 import { World, H } from './world.js';
 import { furnish } from './props.js';
+import { MiniMap, star, playerIcon, monsterIcon, pill } from './minimap.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { Mother } from './monster.js';
 import { AudioEngine } from './audio.js';
@@ -22,7 +23,7 @@ const SAVE_KEY = 'hunted-save-v1', SETTINGS_KEY = 'hunted-settings-v1';
 const isTouch = matchMedia('(pointer: coarse)').matches;
 
 // ---------------------------------------------------------------- settings
-const settings = Object.assign({ sens: 1, vol: 0.9, bright: 1, fov: 72, quality: isTouch ? 'low' : 'high', invert: false, guide: 'always' }, store.get(SETTINGS_KEY) || {});
+const settings = Object.assign({ sens: 1, vol: 0.9, bright: 1, fov: 72, quality: isTouch ? 'low' : 'high', invert: false, guide: 'always', autoQuality: true, showFps: false }, store.get(SETTINGS_KEY) || {});
 
 // ---------------------------------------------------------------- renderer
 const canvas = $('game');
@@ -109,10 +110,22 @@ flashlight.target = flashTarget;
 const spill = new THREE.PointLight(0xffe8d0, 0, 5, 2);
 spill.position.set(0, 0, -0.5); camera.add(spill);
 
+// Every lit surface pays for every light in the scene, so the house is lit by
+// a fixed pool of point lights handed to the lamps that matter most near the
+// camera each frame (updateLights). Far lamps keep their glowing bulbs.
+const lightPool = [];
+function sizeLightPool(n) {
+  while (lightPool.length > n) scene.remove(lightPool.pop());
+  while (lightPool.length < n) { const l = new THREE.PointLight(0xffffff, 0, 5, 2); lightPool.push(l); scene.add(l); }
+}
+// Resolution drops a step at a time when the frame rate stays low (see perfWatch).
+let resScale = 1;
 function applyQuality() {
   const q = settings.quality;
-  const pr = q === 'high' ? Math.min(devicePixelRatio, 1.5) : q === 'medium' ? Math.min(devicePixelRatio, 1) : Math.min(devicePixelRatio, 0.8);
+  const pr = (q === 'high' ? Math.min(devicePixelRatio, 1.5) : q === 'medium' ? Math.min(devicePixelRatio, 1) : Math.min(devicePixelRatio, 0.8)) * resScale;
   renderer.setPixelRatio(pr);
+  sizeLightPool(q === 'high' ? 8 : q === 'medium' ? 6 : 4);
+  flashlight.castShadow = q !== 'low';
   renderer.setSize(innerWidth, innerHeight, false);
   moon.castShadow = q !== 'low';
   moon.shadow.mapSize.set(q === 'high' ? 2048 : 1024, q === 'high' ? 2048 : 1024);
@@ -127,7 +140,7 @@ addEventListener('resize', applyQuality);
 
 // ---------------------------------------------------------------- game state
 const audio = new AudioEngine();
-let world, refs, mother, kowalski;
+let world, refs, mother, kowalski, minimap;
 let lastT = performance.now();
 let time = 0;
 const G = {
@@ -243,6 +256,7 @@ async function load() {
   progress(0.2);
   world.build();
   refs = furnish(world);
+  minimap = new MiniMap(world, refs);
   world.buildNav();
   progress(0.35);
   const [michelle, soldier] = await Promise.all([loadModel('assets/models/Michelle.glb', 0.8), loadModel('assets/models/Soldier.glb', 0.9)]);
@@ -391,8 +405,9 @@ function setupExterior() {
   const lanternMat = new THREE.MeshStandardMaterial({ color: 0x111111, emissive: 0xffb060, emissiveIntensity: 4 });
   const lanterns = [];
   for (const x of [5.2, 17.8]) {
-    const l = new THREE.PointLight(0xffb870, 5, 9, 2); l.position.set(x, 2.35, 13.6); scene.add(l);
+    const l = new THREE.PointLight(0xffb870, 0, 9, 2); l.position.set(x, 2.35, 13.6);
     const glass = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.24, 0.16), lanternMat); glass.position.set(x, 2.35, 13.42); scene.add(glass);
+    world.lights.push({ light: l, bulb: glass, base: 5, power: false, flicker: 0.05, on: true, candle: false });
     const cap = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.12, 4), new THREE.MeshStandardMaterial({ color: 0x0b0b0b, roughness: 0.6 }));
     cap.position.set(x, 2.53, 13.42); cap.rotation.y = Math.PI / 4; scene.add(cap);
     lanterns.push(l);
@@ -589,10 +604,40 @@ function updateLights(dt) {
     if (mp && L.on && L.light.position.distanceTo(mp) < 6 && Math.random() < 0.35) target *= Math.random() * 0.4;
     if (G.blackout > 0) target *= 0.02;
     L.light.intensity = target;
+    L.target = target;
     L.bulb.material.emissiveIntensity = target > 0 ? 3 + target : 0;
     if (target > 0.5 && player.head.distanceTo(L.light.position) < Math.max(2.5, (L.dist0 || L.light.distance) * 0.35) && L.light.position.y - player.pos.y < 3.3 && L.light.position.y > player.pos.y) lit = true;
   }
   player.lit = lit;
+  assignLightPool();
+}
+const _cp = new THREE.Vector3();
+function assignLightPool() {
+  // score each lit lamp by how much light it throws at the camera; lamps on
+  // the other floor barely count. Lamps already in the pool get a bonus so
+  // they don't swap back and forth.
+  _cp.copy(camera.position);
+  const camLevel = _cp.y > H + 0.4 ? 1 : 0;
+  const scored = [];
+  for (const L of world.lights) {
+    if (!(L.target > 0)) { L.pooled = false; continue; }
+    const p = L.light.position, dist = L.light.distance || 10;
+    const d = p.distanceTo(_cp);
+    if (d > dist + 4) { L.pooled = false; continue; }
+    const lv = p.y > H + 0.3 ? 1 : 0;
+    let score = (L.base + 1) / (1 + d * d * 0.15) * (lv === camLevel ? 1 : 0.15);
+    if (L.pooled) score *= 1.4;
+    scored.push([score, L]);
+  }
+  scored.sort((a, b) => b[0] - a[0]);
+  for (let i = 0; i < lightPool.length; i++) {
+    const P = lightPool[i], e = scored[i];
+    if (!e) { P.intensity = 0; continue; }
+    const L = e[1]; L.pooled = true;
+    P.position.copy(L.light.position); P.color.copy(L.light.color);
+    P.distance = L.light.distance; P.decay = L.light.decay; P.intensity = L.target;
+  }
+  for (let i = lightPool.length; i < scored.length; i++) scored[i][1].pooled = false;
 }
 
 // ---------------------------------------------------------------- interactions
@@ -1106,7 +1151,7 @@ function guideTarget() {
   if (!inv.has('frontKey')) return { pos: refs.frontKey.position, label: 'Study: the front door key in the safe' };
   return { pos: refs.frontDoorPos, label: 'Front door: GET OUT' };
 }
-let guideMarker = null, guideT = 0, guideWay = null, hintUntil = 0;
+let guideMarker = null, guideT = 0, guideWay = null, guidePath = null, hintUntil = 0;
 function showHint() {
   if (settings.guide === 'off') { toast('Guidance is off. Turn it on in Settings.'); return; }
   hintUntil = G.playTime + 10;
@@ -1119,13 +1164,16 @@ function updateGuide(dt) {
     guideMarker = new THREE.Mesh(new THREE.OctahedronGeometry(0.06), new THREE.MeshBasicMaterial({ color: 0xffe2a8, transparent: true, opacity: 0.85, depthTest: false }));
     guideMarker.renderOrder = 10; scene.add(guideMarker);
   }
-  if (!on || player.hidden || G.mode !== 'play') { el.classList.add('hidden'); guideMarker.visible = false; return; }
+  G.guideOn = on;
+  el.classList.add('hidden'); // the mini-map shows the way now
+  if (!on || G.mode !== 'play') { guideMarker.visible = false; guidePath = null; $('mm-goal').classList.add('hidden'); return; }
   const t = guideTarget();
   guideT -= dt;
   if (guideT <= 0) {
     guideT = 0.4;
     // steer toward the farthest point along the route that is actually in view
     const path = world.findPath(player.pos, t.pos);
+    guidePath = path;
     guideWay = null;
     if (path && path.length > 1) {
       let pick = null;
@@ -1151,7 +1199,10 @@ function updateGuide(dt) {
   $('guide-arrow').style.transform = `rotate(${-rel}rad)`;
   const close = !guideWay && camera.position.distanceTo(t.pos) < 4;
   $('guide-text').textContent = close ? `${t.label} · here, look for the light` : `${t.label} · ${dist} m${floorNote}`;
-  el.classList.remove('hidden');
+  G.goal = t; G.goalText = close ? 'Right here: look for the small light' : `${dist} m away${dy > 2 ? ' · take the STAIRS UP' : dy < -1.5 ? ' · take the STAIRS DOWN' : ''}`;
+  const g = $('mm-goal');
+  g.innerHTML = `<b>${t.label}</b><span>${G.goalText}</span>`;
+  g.classList.remove('hidden');
   // marker over the object when it's close and in view
   const near = camera.position.distanceTo(t.pos) < 9 && world.wallsBetween(camera.position, t.pos, 1) === 0;
   guideMarker.visible = near;
@@ -1159,6 +1210,112 @@ function updateGuide(dt) {
   guideMarker.rotation.y += dt * 2;
   guideMarker.material.opacity = 0.55 + Math.sin(time * 4) * 0.3;
 }
+
+// ---------------------------------------------------------------- mini-map
+const mmCanvas = $('minimap'), mmCtx = mmCanvas.getContext('2d');
+let mmT = 0;
+function sizeCanvas(c) {
+  const r = c.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1);
+  const w = Math.round(r.width * d), h = Math.round(r.height * d);
+  if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
+  return d;
+}
+function mapInfo(level) {
+  return { path: G.guideOn ? guidePath : null, fromHere: true, level, px: player.pos.x, pz: player.pos.z, t: time };
+}
+function monsterShown() {
+  // she appears on the map only when she is hunting you or in plain sight
+  if (!mother || !mother.root.visible || !G.flags.hunt) return false;
+  return G.chase || (mother.pos.distanceTo(player.pos) < 9 && world.lineOfSight(camera.position, mother.headPos()));
+}
+function updateMinimap(dt) {
+  mmT -= dt;
+  if (mmT > 0 || !minimap) return;
+  mmT = 1 / 30;
+  const wrap = $('minimap-wrap');
+  const show = G.mode === 'play' && !player.hidden;
+  wrap.classList.toggle('hidden', !show);
+  if (!show) return;
+  const d = sizeCanvas(mmCanvas);
+  const w = mmCanvas.width, h = mmCanvas.height, R = w / 2;
+  const ctx = mmCtx;
+  ctx.clearRect(0, 0, w, h);
+  ctx.save();
+  ctx.beginPath(); ctx.arc(R, R, R - 2 * d, 0, Math.PI * 2); ctx.clip();
+  ctx.fillStyle = '#0b0d10'; ctx.fillRect(0, 0, w, h);
+  const level = player.pos.y > H * 0.5 ? 1 : 0;
+  const scale = w / 16; // about 16 m across
+  const view = { cx: player.pos.x, cz: player.pos.z, rot: player.yaw, scale, w, h };
+  const toScreen = minimap.drawFloor(ctx, level, view, mapInfo(level));
+  // goal: a star on the map, or on the rim pointing the way when it's far
+  const t = G.guideOn && G.goal;
+  if (t) {
+    const tl = t.pos.y > H * 0.6 ? 1 : 0;
+    let gx = t.pos.x, gz = t.pos.z;
+    if (tl !== level) { gx = tl > level ? 21.5 : 16.5; gz = 8; } // the stairs take you there
+    let [sx, sy] = toScreen(gx, gz);
+    const dx = sx - R, dy = sy - R, dl = Math.hypot(dx, dy), max = R - 14 * d;
+    if (dl > max) { sx = R + dx / dl * max; sy = R + dy / dl * max; }
+    star(ctx, sx, sy, 7 * d, time);
+  }
+  if (monsterShown()) { const [mx, my] = toScreen(mother.pos.x, mother.pos.z); monsterIcon(ctx, mx, my, 5 * d, time); }
+  playerIcon(ctx, R, R, 7 * d, 0, player.flashlightOn && G.battery > 0);
+  ctx.restore();
+  // rim, north marker and floor badge
+  ctx.lineWidth = 3 * d; ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+  ctx.beginPath(); ctx.arc(R, R, R - 2 * d, 0, Math.PI * 2); ctx.stroke();
+  const na = -Math.PI / 2 + player.yaw;
+  const nx = R + Math.cos(na) * (R - 2 * d), ny = R + Math.sin(na) * (R - 2 * d);
+  ctx.fillStyle = '#c33'; ctx.beginPath(); ctx.arc(nx, ny, 8 * d, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.font = `800 ${10 * d}px Inter, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('N', nx, ny + 0.5);
+  $('mm-floor').textContent = level ? 'UPSTAIRS' : 'GROUND FLOOR';
+  const room = world.roomAt(player.pos);
+  $('mm-room').textContent = room ? room.name : 'Outside';
+}
+function toggleMap(force) {
+  const open = force !== undefined ? force : G.ui !== 'map';
+  if (open) {
+    if (G.ui || G.mode !== 'play') return;
+    G.ui = 'map'; $('bigmap').classList.remove('hidden'); releasePointer(); drawBigMap();
+  } else if (G.ui === 'map') {
+    G.ui = null; $('bigmap').classList.add('hidden'); capturePointer();
+  }
+  syncTouch();
+}
+function drawBigMap() {
+  if (G.ui !== 'map') return;
+  requestAnimationFrame(drawBigMap);
+  const c = $('bigmap-canvas'); const d = sizeCanvas(c);
+  const ctx = c.getContext('2d'), w = c.width, h = c.height;
+  ctx.clearRect(0, 0, w, h);
+  // both floors side by side (stacked on tall screens), north up
+  const side = w > h * 1.2;
+  const pw = side ? w / 2 : w, ph = side ? h : h / 2;
+  const scale = Math.min((pw - 24 * d) / 25, (ph - 44 * d) / 16);
+  const level = player.pos.y > H * 0.5 ? 1 : 0;
+  const t = G.guideOn && G.goal;
+  const tl = t ? (t.pos.y > H * 0.6 ? 1 : 0) : -1;
+  for (const f of [0, 1]) {
+    const ox = side ? f * pw : 0, oy = side ? 0 : f * ph;
+    ctx.save(); ctx.translate(ox, oy + 20 * d);
+    const view = { cx: 12, cz: 7.5, rot: 0, scale, w: pw, h: ph - 20 * d };
+    ctx.beginPath(); ctx.rect(0, 0, pw, ph - 20 * d); ctx.clip();
+    const toScreen = minimap.drawFloor(ctx, f, view, { ...mapInfo(level), fromHere: f === level });
+    if (t && tl === f) { const [sx, sy] = toScreen(t.pos.x, t.pos.z); star(ctx, sx, sy, 11 * d, time); }
+    if (f === level) {
+      if (monsterShown()) { const [mx, my] = toScreen(mother.pos.x, mother.pos.z); monsterIcon(ctx, mx, my, 7 * d, time); }
+      const [px, py] = toScreen(player.pos.x, player.pos.z);
+      playerIcon(ctx, px, py, 10 * d, -player.yaw, player.flashlightOn && G.battery > 0);
+      pill(ctx, px, py - 24 * d, 'YOU', 10 * d, '#000', '#fff');
+    }
+    ctx.restore();
+    pill(ctx, ox + pw / 2, oy + 14 * d, f ? 'UPSTAIRS' : 'GROUND FLOOR', 12 * d, f === level ? '#000' : '#fff', f === level ? '#ffe2a8' : 'rgba(255,255,255,0.15)');
+  }
+  $('bigmap-goal').innerHTML = t ? `<b>Next:</b> ${t.label} <span>${G.goalText || ''}</span>` : (settings.guide === 'off' ? 'Guidance is off (Settings).' : '');
+}
+$('minimap-wrap').addEventListener('click', () => toggleMap(true));
+$('bigmap-close').addEventListener('click', () => toggleMap(false));
+$('bigmap').addEventListener('click', (e) => { if (e.target.id === 'bigmap') toggleMap(false); });
 
 // ---------------------------------------------------------------- death
 function kill() {
@@ -1305,6 +1462,7 @@ addEventListener('keydown', (e) => {
   }
   if (G.ui === 'note') { if (['Escape', 'KeyE', 'Space', 'Enter'].includes(e.code)) closeNote(); return; }
   if (G.ui === 'inventory') { if (['Escape', 'Tab', 'KeyI'].includes(e.code)) toggleInventory(); return; }
+  if (G.ui === 'map') { if (['Escape', 'KeyM', 'Tab'].includes(e.code)) toggleMap(false); return; }
   if (G.mode !== 'play') return;
   if (e.code === 'Escape') { if (!pointerLocked && performance.now() - (G.pausedAt || 0) > 400) pause(!G.paused); return; }
   if (G.paused) return;
@@ -1315,6 +1473,7 @@ addEventListener('keydown', (e) => {
   if (e.code === 'KeyR') swapBattery();
   if (e.code === 'KeyQ') useMusicBox();
   if (e.code === 'KeyH') showHint();
+  if (e.code === 'KeyM') toggleMap();
   if (e.code === 'Tab' || e.code === 'KeyI') toggleInventory();
   if (e.code === 'KeyC' || e.code === 'ControlLeft') player.crouchToggle = !player.crouchToggle;
 });
@@ -1453,7 +1612,7 @@ if (isTouch) {
       if (t === 'inv') toggleInventory();
       if (t === 'box') useMusicBox();
       if (t === 'pause') pause(true);
-      if (t === 'hint') showHint();
+      if (t === 'hint') { showHint(); toggleMap(); }
       syncTouch();
     });
   }
@@ -1463,14 +1622,14 @@ if (isTouch) {
 function syncTouch() {
   if (!isTouch) return;
   // panels (notes, keypad, pause, death) sit above the game: hide the controls under them
-  $('touch').classList.toggle('covered', !!(G.ui === 'note' || G.ui === 'keypad' || G.paused || G.mode !== 'play'));
+  $('touch').classList.toggle('covered', !!(G.ui === 'note' || G.ui === 'keypad' || G.ui === 'map' || G.paused || G.mode !== 'play'));
   const q = (t) => document.querySelector(`#touch [data-t="${t}"]`);
   q('light').classList.toggle('on', player.flashlightOn && G.battery > 0);
   q('run').classList.toggle('on', !!touch.run);
   q('crouch').classList.toggle('on', !!player.crouchToggle);
   q('use').classList.toggle('ready', !!focus || !!player.hidden);
   q('box').classList.toggle('off', !G.inv.has('musicBox'));
-  q('hint').classList.toggle('on', settings.guide === 'key' && G.playTime < hintUntil);
+  q('hint').classList.toggle('on', G.ui === 'map');
 }
 
 // ---------------------------------------------------------------- player update
@@ -1555,11 +1714,62 @@ function updateFlashlight(dt) {
   flashTarget.position.set(G.fx + Math.sin(time * 1.3) * 0.03, Math.cos(time * 1.1) * 0.03 - 0.2, -6);
 }
 
+// ---------------------------------------------------------------- performance
+// What the browser is drawing with. A software renderer means hardware
+// acceleration is off (or the GPU is blocked), which makes any 3D game crawl.
+const gpu = (() => {
+  try {
+    const gl = renderer.getContext(); const ext = gl.getExtension('WEBGL_debug_renderer_info');
+    const name = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+    // "ANGLE (Intel, Intel(R) UHD Graphics 620 (0x5917) Direct3D11 vs_5_0 ps_5_0, D3D11)" -> "Intel(R) UHD Graphics 620"
+    const m = String(name).match(/^ANGLE \((.*)\)$/);
+    const parts = m ? m[1].split(', ') : [String(name)];
+    const clean = (parts.length > 1 ? parts[1] : parts[0]).replace(/\(0x[0-9a-f]+\)/i, '').replace(/Direct3D\S* .*$/, '').replace(/\s+/g, ' ').trim();
+    const software = /swiftshader|llvmpipe|softpipe|basic render|software/i.test(name);
+    const integrated = /intel|uhd|iris|hd graphics|mali|adreno|powervr|apple gpu|radeon\(tm\) graphics|vega \d+ graphics/i.test(name);
+    return { name: clean || 'Unknown', software, integrated };
+  } catch { return { name: 'Unknown', software: false, integrated: false }; }
+})();
+// first run: built-in graphics chips start on Medium, software rendering on Low
+if (!(store.get(SETTINGS_KEY) || {}).quality && !isTouch && (gpu.integrated || gpu.software)) { settings.quality = gpu.software ? 'low' : 'medium'; applyQuality(); }
+const perf = { acc: 0, n: 0, slow: 0, fps: 0 };
+function perfWatch(ms) {
+  if (ms <= 0 || ms > 1000) return; // tab was in the background
+  perf.acc += ms; perf.n++;
+  if (perf.acc < 2000) return;
+  perf.fps = Math.round(1000 * perf.n / perf.acc); perf.acc = 0; perf.n = 0;
+  const fpsEl = $('fps');
+  fpsEl.classList.toggle('hidden', !settings.showFps);
+  if (settings.showFps) fpsEl.textContent = `${perf.fps} fps · ${gpu.name}${resScale < 1 ? ` · ${Math.round(resScale * 100)}% res` : ''}`;
+  $('perf-info').textContent = perfSummary();
+  if (G.mode !== 'play' || G.paused || G.ui || !settings.autoQuality) { perf.slow = 0; return; }
+  perf.slow = perf.fps < 40 ? perf.slow + 1 : 0;
+  if (perf.slow >= 2) { perf.slow = 0; lowerGraphics(); }
+}
+function lowerGraphics() {
+  if (resScale > 0.6) { resScale = Math.round((resScale - 0.15) * 100) / 100; applyQuality(); return; }
+  if (settings.quality === 'low') return;
+  settings.quality = settings.quality === 'high' ? 'medium' : 'low';
+  resScale = 0.85;
+  store.set(SETTINGS_KEY, settings); $('set-quality').value = settings.quality;
+  applyQuality();
+  toast(`It was lagging, so graphics were lowered to ${settings.quality}. You can change this in Settings.`, 5);
+}
+function perfSummary() {
+  const f = perf.fps ? `${perf.fps} fps` : 'measuring…';
+  let why = '';
+  if (gpu.software) why = ' Your browser is NOT using your graphics card (hardware acceleration is off or blocked), so any 3D game will lag. Turn on "Use graphics acceleration" in your browser settings and restart it.';
+  else if (gpu.integrated && perf.fps && perf.fps < 45) why = ' This is a built-in (integrated) graphics chip: use Medium or Low, and plug in your laptop so it isn\'t in power-saving mode.';
+  else if (perf.fps && perf.fps < 45) why = ' Try Medium or Low graphics, close other tabs, and plug in your laptop.';
+  return `Graphics: ${gpu.name} · ${f}.${why}`;
+}
+
 // ---------------------------------------------------------------- main loop
 function frame() {
   requestAnimationFrame(frame);
-  const nowT = performance.now(); const dt = Math.min(0.05, (nowT - lastT) / 1000); lastT = nowT;
+  const nowT = performance.now(); const realMs = nowT - lastT; const dt = Math.min(0.05, realMs / 1000); lastT = nowT;
   if (!world) return;
+  perfWatch(realMs);
   update(dt);
   render();
 }
@@ -1616,6 +1826,7 @@ function update(dt) {
     });
     updateUI(dt);
     if (G.mode === 'play') updateGuide(dt);
+    updateMinimap(dt);
     syncTouch();
   }
 }
@@ -1706,7 +1917,9 @@ bind('set-sens', 'sens');
 bind('set-vol', 'vol', Number, () => audio.setVolume('master', settings.vol));
 bind('set-bright', 'bright');
 bind('set-fov', 'fov', Number, () => { camera.fov = settings.fov; camera.updateProjectionMatrix(); });
-bind('set-quality', 'quality', String, applyQuality);
+bind('set-quality', 'quality', String, () => { resScale = 1; applyQuality(); });
+bind('set-auto', 'autoQuality', Boolean);
+bind('set-fps', 'showFps', Boolean, () => $('fps').classList.toggle('hidden', !settings.showFps));
 bind('set-invert', 'invert', Boolean);
 bind('set-guide', 'guide', String);
 

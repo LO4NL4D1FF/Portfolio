@@ -223,12 +223,12 @@ export class Props {
   }
 }
 
-// Creates a point light with a visible bulb. Lights stay in the scene with
-// intensity 0 until the power comes back, so shaders never recompile.
+// A lamp with a visible bulb. Its PointLight is not added to the scene: the
+// game lights the scene with a small fixed pool of real lights and hands them
+// to whichever lamps matter most near the camera each frame (see main.js).
 function lamp(world, x, y, z, color, intensity, dist, opts = {}) {
   const l = new THREE.PointLight(color, 0, dist, 2);
   l.position.set(x, y, z);
-  world.scene.add(l);
   const bulb = new THREE.Mesh(new THREE.SphereGeometry(opts.r || 0.05, 10, 8), world.materials.bulb.clone());
   bulb.position.set(x, y, z);
   world.scene.add(bulb);
