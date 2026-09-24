@@ -90,7 +90,7 @@ const postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 // ---------------------------------------------------------------- lights
 const hemi = new THREE.HemisphereLight(0x5a6890, 0x1e1812, 0.45);
 scene.add(hemi);
-const moon = new THREE.DirectionalLight(0x9ab4e0, 0.7);
+const moon = new THREE.DirectionalLight(0x9ab4e0, 1.15);
 moon.position.set(4, 13, 30); moon.target.position.set(12, 0, 6);
 scene.add(moon); scene.add(moon.target);
 Object.assign(moon.shadow.camera, { left: -18, right: 18, top: 18, bottom: -18, near: 1, far: 60 });
@@ -232,6 +232,10 @@ async function load() {
   for (let i = 0; i < 5; i++) for (const k of ['wood', 'carpet', 'concrete']) steps.push([k, `assets/sounds/step_${k}_${i}.ogg`]);
   for (let i = 0; i < 10; i++) steps.push(['boot', `assets/sounds/step_boot_0${i}.ogg`]);
   for (let i = 1; i <= 3; i++) steps.push(['heavy', `assets/sounds/step_heavy_${i}.ogg`]);
+  // real storm recordings (CC0 field recordings, see README)
+  // Ogg where the browser plays it, AAC (m4a) for Safari
+  const ext = new Audio().canPlayType('audio/ogg; codecs="vorbis"') ? 'ogg' : 'm4a';
+  steps.push(['rainHeavy', `assets/sounds/rain_heavy.${ext}`], ['rainSoft', `assets/sounds/rain_soft.${ext}`], ['thunderRec', `assets/sounds/thunder_storm.${ext}`], ['windRec', `assets/sounds/wind_crack.${ext}`]);
   audio.preloadSamples(steps);
   world = new World(scene);
   progress(0.05);
@@ -285,46 +289,194 @@ function makeKowalski(soldier) {
 
 // ---------------------------------------------------------------- atmosphere
 let rain, dust;
-function setupRain() {
-  // Streaks fall all around the house (not inside it) so rain is visible
-  // through every window and from the porch.
-  const N = 7000; const pos = new Float32Array(N * 6);
-  let i = 0;
-  while (i < N) {
-    const x = -14 + Math.random() * 52, z = -14 + Math.random() * 56, y = Math.random() * 12;
-    if (x > -0.3 && x < 24.3 && z > -0.3 && z < 13.3) continue;
-    const len = 0.35 + Math.random() * 0.35;
-    pos.set([x, y, z, x + 0.06, y - len, z + 0.02], i * 6); i++;
+// Real rain at night is only seen where light catches it: in the torch beam,
+// under the porch lamp, against the lanterns and in lightning. So the drops
+// are soft, tapered streaks lit by those lights, not flat white lines.
+const rainU = {
+  uTime: { value: 0 }, uFlash: { value: 0 }, uCam: { value: new THREE.Vector3() },
+  uWind: { value: new THREE.Vector2(0.9, 0.35) }, uTorchPos: { value: new THREE.Vector3() }, uTorchDir: { value: new THREE.Vector3(0, 0, -1) },
+  uTorch: { value: 1 }, uLampPos: { value: [] }, uLampCol: { value: [] },
+};
+const RAIN_LIGHT = `
+  uniform float uFlash; uniform vec3 uTorchPos; uniform vec3 uTorchDir; uniform float uTorch;
+  uniform vec3 uLampPos[4]; uniform vec3 uLampCol[4];
+  vec3 rainLight(vec3 w) {
+    vec3 c = vec3(0.08, 0.1, 0.15) + vec3(0.85, 0.9, 1.0) * uFlash * 2.2;
+    for (int i = 0; i < 4; i++) { vec3 d = uLampPos[i] - w; c += uLampCol[i] / (1.0 + dot(d, d) * 0.9); }
+    vec3 t = w - uTorchPos; float tl = length(t);
+    float cone = smoothstep(0.86, 0.975, dot(t / max(tl, 1e-3), uTorchDir));
+    c += vec3(1.0, 0.95, 0.85) * cone * uTorch * 3.5 / (1.0 + tl * tl * 0.12);
+    return c;
+  }
+  bool inHouse(vec3 w) {
+    if (w.x > -0.25 && w.x < 24.25 && w.z > -0.25 && w.z < 13.25 && w.y < 9.5) return true;
+    if (w.x > 7.8 && w.x < 16.2 && w.z < 15.2 && w.y < 3.25) return true;
+    return w.y < -0.36;
+  }`;
+function rainStreaks(count, opts) {
+  // one quad per drop: aSeed = (x, z, phase, random), aCorner = (side, end)
+  const seed = new Float32Array(count * 16), corner = new Float32Array(count * 8), idx = new Uint32Array(count * 6);
+  for (let i = 0; i < count; i++) {
+    const sx = opts.fixed ? opts.fixed(i) : [Math.random(), Math.random()];
+    const r = [sx[0], sx[1], Math.random(), Math.random()];
+    for (let k = 0; k < 4; k++) { seed.set(r, (i * 4 + k) * 4); corner.set([k & 1 ? 1 : -1, k >> 1], (i * 4 + k) * 2); }
+    idx.set([i * 4, i * 4 + 1, i * 4 + 2, i * 4 + 1, i * 4 + 3, i * 4 + 2], i * 6);
   }
   const g = new THREE.BufferGeometry();
-  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(count * 12), 3));
+  g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 4));
+  g.setAttribute('aCorner', new THREE.BufferAttribute(corner, 2));
+  g.setIndex(new THREE.BufferAttribute(idx, 1));
   const m = new THREE.ShaderMaterial({
-    uniforms: { uTime: { value: 0 }, uFlash: { value: 0 } },
-    transparent: true, depthWrite: false,
-    vertexShader: `uniform float uTime; varying vec3 vP;
-      void main(){ vec3 p = position; float top = 12.0; float fall = mod(p.y - uTime * 11.0 + position.x * 0.37, top) - 0.4; p.x += (top - fall) * 0.06; p.y = fall; vP = p;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0); }`,
-    fragmentShader: `uniform float uFlash; varying vec3 vP;
-      void main(){ if (vP.x > 7.8 && vP.x < 16.2 && vP.z < 15.2 && vP.y < 3.2) discard; if (vP.y < -0.35) discard;
-        gl_FragColor = vec4(vec3(0.62, 0.68, 0.8) * (0.55 + uFlash * 3.0), 0.32 + uFlash * 0.4); }`,
+    uniforms: Object.assign({ uBox: { value: opts.box || 34 }, uTop: { value: opts.top || 14 }, uBottom: { value: opts.bottom ?? -0.4 }, uFixed: { value: opts.fixed ? 1 : 0 }, uGain: { value: opts.gain || 1 } }, rainU),
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+    vertexShader: `uniform float uTime; uniform vec3 uCam; uniform vec2 uWind; uniform float uBox; uniform float uTop; uniform float uBottom; uniform float uFixed;
+      attribute vec4 aSeed; attribute vec2 aCorner; varying vec2 vC; varying vec3 vW; varying float vDist;
+      void main() {
+        float speed = uFixed > 0.5 ? 5.0 + aSeed.w * 2.0 : 8.5 + aSeed.w * 2.5;
+        float span = uTop - uBottom;
+        float fall = mod(aSeed.z * span + uTime * speed, span);
+        vec3 p;
+        if (uFixed > 0.5) p = vec3(aSeed.x, uTop - fall, aSeed.y);
+        else {
+          vec2 xz = aSeed.xy * uBox; xz = uCam.xz + mod(xz - uCam.xz + uBox * 0.5, uBox) - uBox * 0.5;
+          p = vec3(xz.x, uTop - fall, xz.y);
+          p.xz += uWind * (fall / speed) * (0.8 + aSeed.w * 0.4);
+        }
+        vec3 dir = normalize(vec3(uFixed > 0.5 ? vec2(0.0) : uWind, -speed).xzy);
+        float len = uFixed > 0.5 ? 0.08 + aSeed.w * 0.14 : 0.22 + aSeed.w * 0.35;
+        vec3 toCam = normalize(uCam - p);
+        vec3 side = normalize(cross(dir, toCam));
+        float dist = distance(uCam, p);
+        float width = (uFixed > 0.5 ? 0.0028 : 0.0045) + dist * 0.0009;
+        vec3 w = p - dir * len * aCorner.y + side * width * aCorner.x;
+        vC = aCorner; vW = w; vDist = dist;
+        gl_Position = projectionMatrix * viewMatrix * vec4(w, 1.0);
+      }`,
+    fragmentShader: `uniform float uGain; varying vec2 vC; varying vec3 vW; varying float vDist;
+      ${RAIN_LIGHT}
+      void main() {
+        if (vDist < 0.35 || inHouse(vW)) discard;
+        float across = 1.0 - vC.x * vC.x;
+        float along = smoothstep(0.0, 0.25, vC.y) * (1.0 - smoothstep(0.45, 1.0, vC.y));
+        float fade = exp(-vDist * 0.055) * smoothstep(0.5, 2.0, vDist);
+        vec3 c = rainLight(vW) * across * along * fade * 0.55 * uGain;
+        gl_FragColor = vec4(c, 1.0);
+      }`,
   });
-  rain = new THREE.LineSegments(g, m); rain.frustumCulled = false; scene.add(rain);
-  // splashes on the ground and the porch steps
-  const S = 1600; const sp = new Float32Array(S * 3); const ph = new Float32Array(S);
-  for (let k = 0; k < S; k++) {
-    let x, z; do { x = -6 + Math.random() * 36; z = -4 + Math.random() * 34; } while (x > -0.3 && x < 24.3 && z > -0.3 && z < 15.2);
-    sp.set([x, -0.33, z], k * 3); ph[k] = Math.random();
+  const mesh = new THREE.Mesh(g, m); mesh.frustumCulled = false; mesh.renderOrder = 2;
+  scene.add(mesh);
+  return mesh;
+}
+function rainCurtainTexture() {
+  const c = document.createElement('canvas'); c.width = 256; c.height = 512;
+  const x = c.getContext('2d');
+  x.fillStyle = '#000'; x.fillRect(0, 0, 256, 512);
+  for (let i = 0; i < 900; i++) {
+    const px = Math.random() * 256, py = Math.random() * 512, l = 20 + Math.random() * 60, a = 0.05 + Math.random() * 0.25;
+    const gr = x.createLinearGradient(px, py, px + l * 0.08, py + l);
+    gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(0.5, `rgba(220,230,255,${a})`); gr.addColorStop(1, 'rgba(255,255,255,0)');
+    x.strokeStyle = gr; x.lineWidth = 0.6 + Math.random() * 0.8;
+    x.beginPath(); x.moveTo(px, py); x.lineTo(px + l * 0.08, py + l); x.stroke();
+    // wrap vertically so the scroll is seamless
+    if (py + l > 512) { x.beginPath(); x.moveTo(px, py - 512); x.lineTo(px + l * 0.08, py + l - 512); x.stroke(); }
   }
-  const sg = new THREE.BufferGeometry();
-  sg.setAttribute('position', new THREE.BufferAttribute(sp, 3)); sg.setAttribute('phase', new THREE.BufferAttribute(ph, 1));
-  const sm = new THREE.ShaderMaterial({
-    uniforms: { uTime: rain.material.uniforms.uTime, uFlash: rain.material.uniforms.uFlash },
-    transparent: true, depthWrite: false,
-    vertexShader: `uniform float uTime; attribute float phase; varying float vA;
-      void main(){ float t = fract(uTime * 2.3 + phase * 7.0); vA = (1.0 - t) * step(0.0, 0.25 - t) * 4.0; vec4 mv = modelViewMatrix * vec4(position + vec3(0.0, t * 0.08, 0.0), 1.0); gl_PointSize = max(1.0, 30.0 / -mv.z) * (0.5 + t); gl_Position = projectionMatrix * mv; }`,
-    fragmentShader: `uniform float uFlash; varying float vA; void main(){ vec2 c = gl_PointCoord - 0.5; if (dot(c, c) > 0.25) discard; gl_FragColor = vec4(vec3(0.7, 0.75, 0.85) * (0.5 + uFlash * 3.0), vA * 0.45); }`,
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+let rainCurtains = [], ripples, drips;
+// Lights outside the house, so its front reads from the garden and the title
+// screen: two old wall lanterns and a sodium-free street lamp down the drive.
+function setupExterior() {
+  const lanternMat = new THREE.MeshStandardMaterial({ color: 0x111111, emissive: 0xffb060, emissiveIntensity: 4 });
+  const lanterns = [];
+  for (const x of [5.2, 17.8]) {
+    const l = new THREE.PointLight(0xffb870, 5, 9, 2); l.position.set(x, 2.35, 13.6); scene.add(l);
+    const glass = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.24, 0.16), lanternMat); glass.position.set(x, 2.35, 13.42); scene.add(glass);
+    const cap = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.12, 4), new THREE.MeshStandardMaterial({ color: 0x0b0b0b, roughness: 0.6 }));
+    cap.position.set(x, 2.53, 13.42); cap.rotation.y = Math.PI / 4; scene.add(cap);
+    lanterns.push(l);
+  }
+  const street = new THREE.SpotLight(0xa8bcff, 220, 40, 0.75, 0.6, 1.6);
+  street.position.set(21, 6.5, 27); street.target.position.set(12, 2.5, 13); scene.add(street); scene.add(street.target);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 10, 8), new THREE.MeshBasicMaterial({ color: 0xdfe8ff }));
+  head.position.copy(street.position); scene.add(head);
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 6.9, 8), new THREE.MeshStandardMaterial({ color: 0x151515, roughness: 0.5, metalness: 0.6 }));
+  pole.position.set(21.3, 3.1, 27.2); scene.add(pole);
+  const porch = refs.lights.porch.light.position;
+  rainU.uLampPos.value = [porch.clone(), lanterns[0].position.clone(), lanterns[1].position.clone(), street.position.clone().add(new THREE.Vector3(-0.4, -0.6, -0.5))];
+  rainU.uLampCol.value = [new THREE.Vector3(1.0, 0.8, 0.55).multiplyScalar(1.4), new THREE.Vector3(1, 0.72, 0.44), new THREE.Vector3(1, 0.72, 0.44), new THREE.Vector3(0.6, 0.7, 1.0).multiplyScalar(2.2)];
+}
+function setupRain() {
+  setupExterior();
+  const q = settings.quality;
+  // the falling rain, wrapped around the camera so it never runs out
+  rain = rainStreaks(q === 'low' ? 5000 : q === 'medium' ? 9000 : 14000, { box: 34, top: 14 });
+  // water pouring off the porch roof edge, brighter under the lamp
+  drips = rainStreaks(420, { fixed: () => [7.9 + Math.random() * 8.2, 15.24 + Math.random() * 0.05], top: 3.15, bottom: -0.3, gain: 0.8 });
+  // far sheets of rain: the storm has depth past the garden
+  const tex = rainCurtainTexture();
+  for (const [r, rep, sp] of [[20, 14, 0.9], [30, 20, 0.65]]) {
+    const t = tex.clone(); t.needsUpdate = true; t.repeat.set(rep, 2.2);
+    const m = new THREE.MeshBasicMaterial({ map: t, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, color: 0x8090b0 });
+    const cyl = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 18, 48, 1, true), m);
+    cyl.position.set(12, 8.6, 6.5);
+    cyl.userData.speed = sp;
+    scene.add(cyl); rainCurtains.push(cyl);
+  }
+  // ripples in the puddles and small splash crowns where the drops land
+  const S = q === 'low' ? 900 : 1800;
+  const pos = new Float32Array(S * 12), sd = new Float32Array(S * 16), idx = new Uint32Array(S * 6);
+  for (let i = 0; i < S; i++) {
+    const r = [Math.random(), Math.random(), Math.random(), 0.5 + Math.random() * 0.8];
+    for (let k = 0; k < 4; k++) { pos.set([k & 1 ? 1 : -1, 0, k >> 1 ? 1 : -1], (i * 4 + k) * 3); sd.set(r, (i * 4 + k) * 4); }
+    idx.set([i * 4, i * 4 + 2, i * 4 + 1, i * 4 + 1, i * 4 + 2, i * 4 + 3], i * 6);
+  }
+  const rg = new THREE.BufferGeometry();
+  rg.setAttribute('position', new THREE.BufferAttribute(pos, 3)); rg.setAttribute('aSeed', new THREE.BufferAttribute(sd, 4)); rg.setIndex(new THREE.BufferAttribute(idx, 1));
+  const rm = new THREE.ShaderMaterial({
+    uniforms: rainU, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    vertexShader: `uniform float uTime; uniform vec3 uCam; attribute vec4 aSeed; varying vec2 vL; varying vec3 vW; varying float vT; varying float vDist;
+      void main() {
+        float box = 22.0;
+        vec2 xz = aSeed.xy * box; xz = uCam.xz + mod(xz - uCam.xz + box * 0.5, box) - box * 0.5;
+        float cyc = uTime * 1.6 * aSeed.w + aSeed.z * 13.0;
+        // each ripple spot jumps to a new place every cycle
+        xz += vec2(fract(sin(floor(cyc) * 12.9898 + aSeed.x * 78.233) * 43758.5453), fract(sin(floor(cyc) * 39.346 + aSeed.y * 11.135) * 24634.6345)) * 1.5 - 0.75;
+        vT = fract(cyc);
+        float size = 0.03 + vT * 0.11 * (0.7 + aSeed.w * 0.3);
+        vL = position.xz; vW = vec3(xz.x, -0.335, xz.y); vDist = distance(uCam, vW);
+        gl_Position = projectionMatrix * viewMatrix * vec4(vW + vec3(position.x, 0.0, position.z) * size, 1.0);
+      }`,
+    fragmentShader: `varying vec2 vL; varying vec3 vW; varying float vT; varying float vDist;
+      ${RAIN_LIGHT}
+      void main() {
+        if (inHouse(vW + vec3(0.0, 0.1, 0.0))) discard;
+        if (vW.x > 7.6 && vW.x < 16.4 && vW.z < 15.9) discard;
+        float r = length(vL);
+        float ring = (1.0 - smoothstep(0.0, 0.1, abs(r - 0.8))) * (1.0 - vT);
+        float crown = (1.0 - smoothstep(0.0, 0.35, r)) * (1.0 - smoothstep(0.0, 0.18, vT)) * 1.5;
+        float fade = exp(-vDist * 0.09);
+        gl_FragColor = vec4(rainLight(vW + vec3(0.0, 0.3, 0.0)) * (ring * 0.9 + crown) * fade, 1.0);
+      }`,
   });
-  const splashes = new THREE.Points(sg, sm); splashes.frustumCulled = false; scene.add(splashes);
+  ripples = new THREE.Mesh(rg, rm); ripples.frustumCulled = false; ripples.renderOrder = 2; scene.add(ripples);
+}
+const _tdir = new THREE.Vector3();
+let rainT = 0;
+function updateRain() {
+  if (!rain) return;
+  const dt = Math.max(0, Math.min(0.1, time - rainT)); rainT = time;
+  rainU.uTime.value = time;
+  rainU.uCam.value.copy(camera.position);
+  // gusty wind leans the rain
+  const gust = Math.sin(time * 0.31) * 0.6 + Math.sin(time * 0.87 + 1.3) * 0.35 + Math.sin(time * 2.1) * 0.12;
+  rainU.uWind.value.set(0.8 + gust, 0.3 + gust * 0.4);
+  camera.getWorldDirection(_tdir);
+  rainU.uTorchPos.value.copy(camera.position); rainU.uTorchDir.value.copy(_tdir);
+  rainU.uTorch.value = G.mode === 'play' && player.flashlightOn && G.battery > 0 ? Math.min(1, flashlight.intensity / FLASH) : 0;
+  const f = rainU.uFlash.value;
+  for (const c of rainCurtains) { c.material.map.offset.y += dt * c.userData.speed; c.material.map.offset.x = gust * 0.02; c.material.opacity = 0.07 + f * 0.5; }
 }
 function setupDust() {
   const N = 500; const p = new Float32Array(N * 3);
@@ -349,7 +501,7 @@ function setupDust() {
 }
 
 let nextLightning = 5, lightningT = -1, bolt = null, strikeDist = 1;
-const skyColor = new THREE.Color(0x010102), skyFlash = new THREE.Color(0x8a96c0), fogColor = new THREE.Color(0x020203);
+const skyColor = new THREE.Color(0x06080e), skyFlash = new THREE.Color(0x8a96c0), fogColor = new THREE.Color(0x020203);
 // A jagged, branching bolt built from thin tubes, placed in the sky around the house.
 function makeBolt() {
   if (bolt) { scene.remove(bolt); bolt.geometry.dispose(); }
@@ -402,7 +554,7 @@ function updateLightning(dt) {
     if (t > 0.7) { lightningT = -1; moon.position.set(4, 13, 30); }
   }
   if (bolt) { bolt.visible = f > 0.05; bolt.material.opacity = Math.min(1, f * 1.4); }
-  moon.intensity = 0.7 + f * 28;
+  moon.intensity = 1.15 + f * 28;
   hemi.intensity = ((G.flags.power ? 0.9 : 0.45) + f * 2.2) * settings.bright;
   scene.background.copy(skyColor).lerp(skyFlash, f * 0.8);
   scene.fog.color.copy(fogColor).lerp(skyFlash, f * 0.25);
@@ -410,7 +562,7 @@ function updateLightning(dt) {
     world.materials.glass.emissiveIntensity = 1 + f * 30;
     if (world.materials.glass.map) world.materials.glass.map.offset.y += dt * 0.06;
   }
-  if (rain) rain.material.uniforms.uFlash.value = f;
+  rainU.uFlash.value = f;
 }
 
 // ---------------------------------------------------------------- lights & power
@@ -1473,7 +1625,7 @@ function render() {
   const f = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion), up = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
   audio.setListener(camera.position, f, up);
   // shaders
-  if (rain) rain.material.uniforms.uTime.value = time;
+  updateRain();
   if (dust) { const u = dust.material.uniforms; u.uTime.value = time; u.uCam.value.copy(camera.position); u.uDir.value.copy(f); u.uOn.value = flashlight.intensity / FLASH; }
   scene.fog.density = G.mode === 'title' ? 0.03 : (player.pos.z > 12.9 ? 0.04 : 0.055);
   U.uTime.value = time; U.uFear.value = G.fear; U.uDamage.value = G.damage; U.uExposure.value = settings.bright * 1.3;

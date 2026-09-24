@@ -550,6 +550,18 @@ export class AudioEngine {
     this.rainIn.g.gain.setTargetAtTime(0.12 - outside * 0.05, t, 0.4);
     this.patter.g.gain.setTargetAtTime(0.09 + outside * 0.25, t, 0.4);
     this.patter.f.frequency.setTargetAtTime(outside ? 700 : 1600, t, 0.4);
+    if (this.rec) {
+      // real recordings take over; the synthesised beds stay only as a faint bed
+      const R = this.rec, fadeIn = Math.min(1, (t - R.startAt) / 3);
+      R.out.g.gain.setTargetAtTime((0.04 + outside * 0.6) * fadeIn, t, 0.5);
+      R.roof.g.gain.setTargetAtTime((0.5 - outside * 0.3) * fadeIn, t, 0.5);
+      if (R.glass) R.glass.g.gain.setTargetAtTime((0.1 - outside * 0.05) * fadeIn, t, 0.5);
+      if (R.storm) R.storm.g.gain.setTargetAtTime((0.22 + outside * 0.2) * fadeIn, t, 0.8);
+      if (R.wind) R.wind.g.gain.setTargetAtTime((1 - outside) * 0.07 * fadeIn, t, 0.8);
+      this.rainOut.g.gain.setTargetAtTime(0.004, t, 0.4);
+      this.rainIn.g.gain.setTargetAtTime(0.02, t, 0.4);
+      this.patter.g.gain.setTargetAtTime(0.03 + outside * 0.05, t, 0.4);
+    }
     this.hideFilter.frequency.setTargetAtTime(this.muffled ? 900 : 20000, t, 0.15);
     // Wind gusts
     this.nextWindGust -= dt;
@@ -609,6 +621,43 @@ export class AudioEngine {
       } catch { /* this browser can't decode Ogg: synthesized steps are used instead */ }
     }
     this.samples = out;
+    this.startRecordedAmbience();
+  }
+
+  // ---------- recorded storm (CC0 field recordings in assets/sounds) ----------
+  // Real rain replaces the synthesised noise beds once the files are decoded.
+  startRecordedAmbience() {
+    const S = this.samples || {};
+    if (this.rec || !S.rainHeavy) return;
+    const t = this.ctx.currentTime;
+    const loop = (buf, type, freq, q = 0.7) => {
+      const r = this.loopNoise(buf, type, freq, q, 0);
+      r.src.playbackRate.value = 1;
+      return r;
+    };
+    this.rec = {
+      // outdoors: the full, bright downpour
+      out: loop(S.rainHeavy[0], 'lowpass', 16000),
+      // indoors: the same storm through walls and the roof
+      roof: loop(S.rainHeavy[0], 'lowpass', 650, 0.5),
+      // drops hitting the window glass
+      glass: S.rainSoft ? loop(S.rainSoft[0], 'highpass', 1400) : null,
+      // a distant storm rolling underneath everything
+      storm: S.thunderRec ? loop(S.thunderRec[0], 'lowpass', 900) : null,
+      // wind whistling through the old window frames
+      wind: S.windRec ? loop(S.windRec[0], 'bandpass', 900, 0.6) : null,
+    };
+    // start the roof layer a little later in the file so the two don't phase
+    for (const k of ['roof', 'glass']) if (this.rec[k]) { const r = this.rec[k]; r.src.stop(); const n = this.ctx.createBufferSource(); n.buffer = r.src.buffer; n.loop = true; n.connect(r.f); n.start(t, r.src.buffer.duration * (k === 'roof' ? 0.45 : 0.2)); r.src = n; }
+    // loud moments in the thunder recording, used for strikes
+    if (S.thunderRec) {
+      const b = S.thunderRec[0], d = b.getChannelData(0), win = Math.floor(b.sampleRate * 0.25), env = [];
+      for (let i = 0; i + win < d.length; i += win) { let e = 0; for (let j = 0; j < win; j += 4) e += d[i + j] * d[i + j]; env.push(e); }
+      const med = [...env].sort((x, y) => x - y)[Math.floor(env.length / 2)] || 1e-6;
+      this.thunderOnsets = [];
+      for (let i = 1; i < env.length - 20; i++) if (env[i] > med * 3 && env[i] > env[i - 1] * 1.6 && (!this.thunderOnsets.length || i * 0.25 - this.thunderOnsets[this.thunderOnsets.length - 1] > 5)) this.thunderOnsets.push(Math.max(0, i * 0.25 - 0.4));
+    }
+    this.rec.startAt = t;
   }
   // One footstep on a surface: wood, carpet, tile, concrete, porch or stairs.
   // style: 'walk' | 'run' | 'crouch'. side: -1 left foot, 1 right foot.
@@ -648,6 +697,21 @@ export class AudioEngine {
   thunder(delay, strength = 1, close = false) {
     if (!this.ready) return;
     if (close) this.play(this.buffers.crack, { gain: 1.1, when: Math.max(0, delay - 0.05), reverb: 0.5, rate: rand(0.9, 1.1), bus: 'amb' });
+    const S = this.samples || {};
+    if (S.thunderRec && this.thunderOnsets && this.thunderOnsets.length) {
+      // a real rumble from the recording, plus a softer synthesised tail under it
+      const ctx = this.ctx, b = S.thunderRec[0], at = ctx.currentTime + delay;
+      const off = this.thunderOnsets[Math.floor(Math.random() * this.thunderOnsets.length)], len = 7;
+      const src = ctx.createBufferSource(); src.buffer = b; src.playbackRate.value = rand(0.85, 1.0);
+      const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = close ? 9000 : 2500;
+      const g = ctx.createGain(); const peak = (close ? 1.4 : 0.9) * (0.6 + strength * 0.5);
+      g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(peak, at + 0.08); g.gain.setTargetAtTime(0, at + len * 0.55, 1.2);
+      src.connect(f); f.connect(g); g.connect(this.amb);
+      const rs = ctx.createGain(); rs.gain.value = 0.3; g.connect(rs); rs.connect(this.reverbSend);
+      src.start(at, off, len + 3);
+      this.play(this.buffers.thunder, { gain: 0.3 + strength * 0.3, when: delay, reverb: 0.35, rate: rand(0.75, 1.05), bus: 'amb' });
+      return;
+    }
     this.play(this.buffers.thunder, { gain: 0.6 + strength * 0.7, when: delay, reverb: 0.35, rate: rand(0.75, 1.05), bus: 'amb' });
   }
 
