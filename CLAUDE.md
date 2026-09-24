@@ -39,3 +39,4 @@
 | 26 | Make an UNO game with multiplayer rooms and a No Mercy mode, like Mattel's UNO but with more realistic, animated cards. Claude chooses realistic or cartoon. "Anything else?" | In progress: owner chose a third game in Gamefy, named "Yolo!", with Classic, No Mercy, house-rule toggles and bots; Claude chose the look (realistic cards, animated) |
 | 27 | Forgetting to press the YOLO button at one card left costs four cards. | In progress: part of the Yolo! build in Gamefy |
 | 28 | Add sound effects: text sounds, card sounds and realistic game sounds like UNO. Pressing YOLO says "YOLO"; playing a card says what it is ("skip", "reverse", "draw four", "draw two"). Real sounds only, nothing fake. | In progress |
+| 29 | Show screenshots of the whole game. | In progress |
