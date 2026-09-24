@@ -83,7 +83,7 @@ canvas#game { position: fixed; inset: 0; width: 100vw; height: 100vh; display: b
 .keys button:active { transform: translateY(1px); background: #1a1917; }
 
 .screen { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,0.7); padding: 16px; }
-#title { background: radial-gradient(ellipse at 50% 60%, rgba(20,10,8,0.2), rgba(0,0,0,0.92) 70%); }
+#title { background: radial-gradient(ellipse at 50% 60%, rgba(20,10,8,0.05), rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.85) 100%); }
 .title-inner { text-align: center; max-width: 640px; }
 .kicker { font-size: 12px; letter-spacing: .45em; color: var(--dim); text-transform: uppercase; }
 h1 { font-family: 'IM Fell English', serif; font-weight: 400; font-size: clamp(64px, 16vw, 150px); letter-spacing: .12em; margin: 8px 0 0; color: var(--bone); text-shadow: 0 0 40px rgba(140,20,20,0.35); animation: flick 7s infinite; }
