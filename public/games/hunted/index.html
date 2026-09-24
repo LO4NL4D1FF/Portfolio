@@ -36,6 +36,13 @@
     <div class="meter"><span>BREATH</span><div class="bar"><i id="stamina-bar"></i></div></div>
   </div>
   <div id="hint-q" class="hidden">Q · wind music box</div>
+  <div id="fps" class="hidden"></div>
+  <div id="minimap-wrap" class="hidden" title="Map (M)">
+    <div id="mm-floor"></div>
+    <canvas id="minimap"></canvas>
+    <div id="mm-room"></div>
+    <div id="mm-goal" class="hidden"></div>
+  </div>
   <div id="guide" class="hidden"><span id="guide-arrow"></span><span id="guide-text"></span></div>
 </div>
 
@@ -46,6 +53,26 @@
   <h2>Documents <small id="doc-count"></small></h2>
   <ul id="inv-docs"></ul>
   <p class="dim">Tab / I to close</p>
+</div>
+
+<!-- full map -->
+<div id="bigmap" class="hidden">
+  <div class="bigmap-box">
+    <p id="bigmap-goal"></p>
+    <canvas id="bigmap-canvas"></canvas>
+    <ul class="legend">
+      <li><i class="lg-you"></i>You (pointing where you face)</li>
+      <li><i class="lg-goal">★</i>Your next goal</li>
+      <li><i class="lg-route"></i>The way there</li>
+      <li><i class="lg-door"></i>Closed door</li>
+      <li><i class="lg-open"></i>Open door</li>
+      <li><i class="lg-locked"></i>Locked: needs a key</li>
+      <li><i class="lg-hide"></i>Hiding place</li>
+      <li><i class="lg-her">!</i>She sees you</li>
+    </ul>
+    <p class="dim center">M / Esc / tap outside to close</p>
+    <button type="button" id="bigmap-close" aria-label="Close the map">×</button>
+  </div>
 </div>
 
 <!-- note reader -->
@@ -100,6 +127,7 @@
           <tr><td>R</td><td>Swap batteries</td></tr>
           <tr><td>Q</td><td>Wind the music box</td></tr>
           <tr><td>Tab / I</td><td>Inventory &amp; documents</td></tr>
+          <tr><td>M</td><td>Full map</td></tr>
           <tr><td>H</td><td>Show where to go</td></tr>
           <tr><td>Esc</td><td>Pause</td></tr>
         </table>
@@ -110,7 +138,7 @@
         <p>In the dark she is half blind, but a flashlight in her face gives you away. Turn it off when she is close.</p>
         <p>If she sees you, break line of sight and hide in a wardrobe. If she watched you climb in, it won't save you.</p>
         <p>When she spots you she screams first. That second is your head start: sprint, turn a corner, and she is slower than you at full run.</p>
-        <p>Read everything. The house tells you how to leave it. The arrow at the top of the screen always points the way to your next goal, and a small light marks the object when you are close.</p>
+        <p>Read everything. The house tells you how to leave it. The map in the corner turns with you: the white arrow is you, the gold star is your next goal and the moving gold line is the way there. Press M (or tap the map) for the full map of both floors. A small light marks the object when you are close.</p>
       </div>
     </div>
     <button class="back">Back</button>
@@ -131,6 +159,9 @@
       <select id="set-guide"><option value="always">Always show where to go</option><option value="key">Only when I press H</option><option value="off">Off (hardest)</option></select>
     </label>
     <label class="check"><input type="checkbox" id="set-invert"> Invert mouse Y</label>
+    <label class="check"><input type="checkbox" id="set-auto"> Lower graphics automatically if it lags</label>
+    <label class="check"><input type="checkbox" id="set-fps"> Show frame rate (FPS)</label>
+    <p class="perf-info" id="perf-info"></p>
     <button class="back">Back</button>
   </div>
 </div>
@@ -177,7 +208,7 @@
     <button type="button" data-t="pause" class="tb small" aria-label="Pause"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12 M15 6v12"/></svg><span>Pause</span></button>
     <button type="button" data-t="inv" class="tb small" aria-label="Bag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1.2 12H6.2z M9 8V6.5a3 3 0 016 0V8"/></svg><span>Bag</span></button>
     <button type="button" data-t="box" class="tb small" aria-label="Music box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l10-2v12 M9 18a2 2 0 11-4 0 2 2 0 014 0z M19 16a2 2 0 11-4 0 2 2 0 014 0z"/></svg><span>Music box</span></button>
-    <button type="button" data-t="hint" class="tb small" aria-label="Way"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 8.5 13.5 13.5 8.5 15.5 10.5 10.5z"/><circle cx="12" cy="12" r="9"/></svg><span>Way</span></button>
+    <button type="button" data-t="hint" class="tb small" aria-label="Map"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z M9 4v14 M15 6v14"/></svg><span>Map</span></button>
   </div>
 </div>
 
