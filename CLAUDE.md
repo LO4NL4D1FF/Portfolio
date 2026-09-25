@@ -58,3 +58,4 @@
 | 45 | Add Gamefy (Yolo!) to the portfolio. | Done: Gamefy is the second featured project, with a Play now button that opens Yolo! on the live site and updated text; live on loansedota.com once merged |
 | 46 | Mark it as complete. | Done: Gamefy's badge reads "Complete" |
 | 47 | In the game, the G logo is not showing: verify and fix it properly. | Done and live (LO4NL4D1FF/Gamefy#3): the G's outline in `icon.svg` was bare text inside a group, not a path, so the home screen's brand mark, the tab icon and the app manifest's first icon showed an empty dark tile. Now a real path in the brand gold; every icon file checked, and the home screen shows the G |
+| 48 | "Deploy it now." | Done: everything was already deployed and checked: Render (gamefy-qm3a.onrender.com) and both Vercel Gamefy projects are live on the logo fix (ad6436d), and the portfolio (loansedota.com) is live on the Gamefy card (Portfolio#10) |
