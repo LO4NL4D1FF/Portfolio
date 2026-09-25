@@ -55,3 +55,5 @@
 | 42 | Rename "No Mercy" to "Inferno". | Done and live: "Inferno" everywhere players see it, in French and English (the internal id stays noMercy so saved settings and rooms keep working) |
 | 43 | Make the clapping sound and the gasps really sound right. | Done and live (read "gaps" as gasps): applause is now 14 to 50 separate people clapping at their own pace, joining in and stopping at their own times, with a roar under big moments; a gasp is the room catching its breath with a few falling "oh"s; both in a room echo. Applause for YOLO and round wins, gasps for pick-ups of 4 or more, forgotten YOLOs and knock-outs. Sample WAVs sent. Real recordings are still blocked by the network policy (see 28) |
 | 44 | "Can I play now? It's live?" | Answered in chat |
+| 45 | Add Gamefy (Yolo!) to the portfolio. | Done: Gamefy is the second featured project, with a Play now button that opens Yolo! on the live site and updated text; live on loansedota.com once merged |
+| 46 | Mark it as complete. | Done: Gamefy's badge reads "Complete" |
