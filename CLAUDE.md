@@ -45,3 +45,4 @@
 | 32 | Opponents' fans must show exactly as many cards as they hold, so their remaining cards can be seen. | In progress |
 | 33 | Players must not sit on one horizontal line: each has their own place (axis) around the table. | In progress |
 | 34 | Better sound: a loud shouted "YOLO! You only live once!", and the voice announces cards being received ("take two cards", "take four cards"…) along with the other card calls. | In progress |
+| 35 | Team play: two against two (two people on one team, two on the other). | In progress |
