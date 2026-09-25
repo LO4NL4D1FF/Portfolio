@@ -51,6 +51,24 @@ export const featured: Project[] = [
     brand: { bg: '#0A0606', accent: '#B01818' },
   },
   {
+    id: 'gamefy',
+    demo: { kind: 'play', url: 'https://gamefy-qm3a.onrender.com/?jeu=yolo' },
+    name: 'Gamefy',
+    year: '2026',
+    kind: 'Multiplayer web games',
+    status: 'Complete',
+    summary:
+      'Three browser games for one to six players in the same room: two TV quiz formats and Yolo!, a card game in the spirit of UNO with a Classic mode and a brutal Inferno mode. Play alone against bots or share a room code with friends; every phone stays in step.',
+    stack: ['Angular', 'three.js', 'NestJS', 'Colyseus', 'TypeScript', 'Web Audio API'],
+    details: [
+      'Yolo! plays on a 3D stage for each mode, a funfair pier for Classic and a lava crater for Inferno, with every opponent\'s cards lying on the table in front of them',
+      'Authoritative game server with rooms, bots that fill empty seats and two-against-two team play; each device only ever sees its own hand',
+      'A voice calls every action card, and the crowd claps and gasps, modelled clap by clap and breath by breath in Web Audio',
+    ],
+    logo: '/images/projects/gamefy-logo.png',
+    brand: { bg: '#1C1410', accent: '#E0A93B' },
+  },
+  {
     id: 'karrio',
     demo: { kind: 'screens', desktop: ['/images/screens/karrio-desk.jpg'], phone: ['/images/screens/karrio-1.jpg'] },
     name: 'Karrio',
@@ -67,24 +85,6 @@ export const featured: Project[] = [
     ],
     logo: '/images/projects/karrio-logo.png',
     brand: { bg: '#041A2F', accent: '#FE5500' },
-  },
-  {
-    id: 'gamefy',
-    demo: { kind: 'screens', desktop: ['/images/screens/gamefy-desk.jpg'], phone: ['/images/screens/gamefy-1.jpg'] },
-    name: 'Gamefy',
-    year: '2026',
-    kind: 'Multiplayer web games',
-    status: 'In progress',
-    summary:
-      'Two TV quiz formats rebuilt as browser games for one to six players in the same room. Staff manage questions from an admin studio, target them at different audiences, and each player reads the same question in their own language.',
-    stack: ['Angular', 'NestJS', 'Colyseus', 'TypeScript', 'Zod'],
-    details: [
-      'Authoritative game server so every screen in a room stays in step',
-      'Shared game rules and message protocol live in their own packages, tested first',
-      'Translations are linked per question and layouts are ready for right-to-left scripts',
-    ],
-    logo: '/images/projects/gamefy-logo.png',
-    brand: { bg: '#1C1410', accent: '#E0A93B' },
   },
   {
     id: 'audify',
