@@ -57,3 +57,4 @@
 | 44 | "Can I play now? It's live?" | Answered in chat |
 | 45 | Add Gamefy (Yolo!) to the portfolio. | Done: Gamefy is the second featured project, with a Play now button that opens Yolo! on the live site and updated text; live on loansedota.com once merged |
 | 46 | Mark it as complete. | Done: Gamefy's badge reads "Complete" |
+| 47 | Say Loan holds a BSc IT (not still studying), and help Google rank Loan and AnonTech at the top. | Done: Education fact and bio say BSc in Information Technology, BlueCrest University College (2026); Company fact Founder and CEO, AnonTech; Person structured data (JSON-LD), robots.txt and sitemap.xml; title and keywords name AnonTech |

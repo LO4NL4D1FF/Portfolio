@@ -10,23 +10,46 @@ const schibsted = Schibsted_Grotesk({
 });
 
 const description =
-  'Loan Ladiff Sedo-Ta is a software engineer in Monrovia, Liberia, building mobile and web apps: Karrio, Gamefy, Audify and more.';
+  'Loan Ladiff Sedo-Ta is a software engineer in Monrovia, Liberia, founder and CEO of AnonTech, and a BSc IT graduate of BlueCrest University College. Mobile and web apps: Karrio, Gamefy, Audify and more.';
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Loan Ladiff Sedo-Ta',
+  alternateName: ['Loan Sedo-Ta', 'Loan Ladiff'],
+  url: 'https://loansedota.com',
+  jobTitle: 'Software engineer, Founder and CEO of AnonTech',
+  description,
+  worksFor: { '@type': 'Organization', name: 'AnonTech', url: 'https://www.anontech.website' },
+  founder: { '@type': 'Organization', name: 'AnonTech', url: 'https://www.anontech.website' },
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'BlueCrest University College' },
+  hasCredential: {
+    '@type': 'EducationalOccupationalCredential',
+    credentialCategory: 'degree',
+    name: 'BSc in Information Technology',
+    recognizedBy: { '@type': 'CollegeOrUniversity', name: 'BlueCrest University College' },
+  },
+  address: { '@type': 'PostalAddress', addressLocality: 'Monrovia', addressCountry: 'LR' },
+  nationality: 'Cameroon',
+  knowsAbout: ['Software engineering', 'React', 'Next.js', 'React Native', 'TypeScript', 'Supabase', 'Mobile Money integration'],
+  sameAs: ['https://github.com/LO4NL4D1FF', 'https://www.anontech.website'],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://loansedota.com'),
   title: {
-    default: 'Loan Ladiff Sedo-Ta, software engineer',
+    default: 'Loan Ladiff Sedo-Ta | Software engineer, founder of AnonTech',
     template: '%s | Loan Ladiff Sedo-Ta',
   },
   description,
-  keywords: ['Loan Ladiff Sedo-Ta', 'Software Engineer', 'Liberia', 'Monrovia', 'React Native', 'Next.js', 'TypeScript', 'Supabase'],
+  keywords: ['Loan Ladiff Sedo-Ta', 'Loan Sedo-Ta', 'AnonTech', 'AnonTech founder', 'BlueCrest University College', 'BSc IT', 'Software Engineer', 'Liberia', 'Monrovia', 'React Native', 'Next.js', 'TypeScript', 'Supabase'],
   authors: [{ name: 'Loan Ladiff Sedo-Ta' }],
   creator: 'Loan Ladiff Sedo-Ta',
   manifest: '/manifest.json',
   icons: { icon: '/favicon.svg' },
   alternates: { canonical: '/' },
   openGraph: {
-    title: 'Loan Ladiff Sedo-Ta, software engineer',
+    title: 'Loan Ladiff Sedo-Ta | Software engineer, founder of AnonTech',
     description,
     url: 'https://loansedota.com',
     siteName: 'Loan Ladiff Sedo-Ta',
@@ -45,6 +68,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={schibsted.variable}>
       <body>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
         {children}
         <Analytics />
       </body>
